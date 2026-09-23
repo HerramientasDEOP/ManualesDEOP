@@ -100,14 +100,91 @@
     opacity:0;visibility:hidden;transition:opacity .25s ease;
   }
   #loadingOverlay.show{opacity:1;visibility:visible;}
+  #loadingOverlay{background:rgba(16,16,102,.6);}
   .loading-card{
-    background:#fff;border-radius:20px;padding:26px 30px 24px;max-width:360px;width:90%;
+    background:#fff;border-radius:20px;padding:0 0 24px;max-width:360px;width:90%;overflow:hidden;
     display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;
-    box-shadow:0 12px 40px rgba(0,0,0,.3);
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
   }
-  .loading-card video{width:100%;max-width:280px;height:auto;aspect-ratio:16/9;object-fit:contain;border-radius:14px;background:#eef1f6;}
-  .loading-title{margin:0;font-size:15px;font-weight:700;color:var(--navy-dark);line-height:1.4;}
-  .loading-sub{margin:0;font-size:11.5px;color:#8a8f99;line-height:1.5;font-style:italic;}
+  .loading-card-header{width:100%;background:linear-gradient(120deg,var(--cx-navy,#101066),var(--cx-navy-2,#1a1a8c));padding:14px 22px;}
+  .loading-card-header img{height:18px;width:auto;}
+  .loading-card video{width:calc(100% - 60px);max-width:280px;height:auto;aspect-ratio:16/9;object-fit:contain;border-radius:14px;background:#eef1f6;margin-top:6px;}
+  .loading-title{margin:0;padding:0 26px;font-size:15px;font-weight:700;color:var(--navy-dark);line-height:1.4;}
+  .loading-sub{margin:0;padding:0 26px;font-size:11.5px;color:#8a8f99;line-height:1.5;font-style:italic;}
+
+  /* ================= CEMEX Help Center — navegación (rediseño) ================= */
+  #welcomeScreen{display:none!important;}
+
+  :root{
+    --cx-navy:#101066;
+    --cx-navy-2:#1a1a8c;
+    --cx-red:#e4032e;
+    --cx-border:#e2e7f2;
+    --cx-text:#20242b;
+    --cx-muted:#626a78;
+    --cx-radius:18px;
+    --cx-shadow:0 2px 10px rgba(16,16,102,.08);
+    --cx-shadow-hover:0 14px 32px rgba(16,16,102,.16);
+  }
+
+  #chooseManualScreen{min-height:0;display:block;text-align:left;}
+  .cx-navbar{background:#fff;border-bottom:1px solid var(--cx-border);}
+  .cx-navbar-inner{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+  .cx-brand{display:flex;align-items:center;gap:12px;}
+  .cx-brand-logo{height:28px;width:auto;display:block;}
+  .cx-navbar-link{display:inline-flex;align-items:center;gap:6px;color:var(--cx-navy);text-decoration:none;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:20px;transition:background .15s;}
+  .cx-navbar-link:hover{background:#eef1fb;}
+
+  .cx-crumb{max-width:1180px;margin:0 auto;padding:16px 24px 0;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--cx-muted);}
+  .cx-crumb a{color:var(--cx-navy-2);text-decoration:none;font-weight:600;}
+  .cx-crumb a:hover{text-decoration:underline;}
+  .cx-crumb .sep{color:#b7bdcc;}
+  .cx-crumb .current{color:var(--cx-text);font-weight:700;}
+
+  .cx-tool-header{max-width:1180px;margin:18px auto 8px;padding:0 24px;display:flex;align-items:center;gap:16px;}
+  .cx-back{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#fff;border:1px solid var(--cx-border);cursor:pointer;color:var(--cx-navy-2);font-size:16px;flex:none;text-decoration:none;transition:background .15s,color .15s;}
+  .cx-back:hover{background:var(--cx-navy);color:#fff;}
+  .cx-tool-header-icon{width:56px;height:56px;border-radius:14px;overflow:hidden;background:#f4f6fb;flex:none;display:flex;align-items:center;justify-content:center;}
+  .cx-tool-header-icon img{width:100%;height:100%;object-fit:contain;}
+  .cx-tool-header h1{margin:0;font-size:22px;color:var(--cx-navy);}
+  .cx-tool-header p{margin:4px 0 0;font-size:13.5px;color:var(--cx-muted);}
+
+  .cx-manual-section{max-width:1180px;margin:20px auto 60px;padding:0 24px;}
+  .cx-manual-section h2{font-size:16px;color:var(--cx-text);margin:0 0 16px;}
+  .cx-manual-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;}
+  .cx-manual-card{
+    background:#fff;border:1px solid var(--cx-border);border-radius:var(--cx-radius);padding:22px;
+    text-align:left;cursor:pointer;font-family:inherit;display:flex;gap:14px;align-items:flex-start;
+    box-shadow:var(--cx-shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+  }
+  .cx-manual-card:hover{transform:translateY(-3px);box-shadow:var(--cx-shadow-hover);border-color:#c7cdf5;}
+  .cx-manual-icon{width:42px;height:42px;border-radius:12px;background:var(--cx-navy);color:#fff;flex:none;display:flex;align-items:center;justify-content:center;}
+  .cx-manual-body{display:flex;flex-direction:column;gap:4px;}
+  .cx-manual-title{font-size:15.5px;font-weight:800;color:var(--cx-text);}
+  .cx-manual-desc{font-size:12.5px;color:var(--cx-muted);line-height:1.5;}
+  .cx-manual-cta{margin-top:6px;font-size:12.5px;font-weight:700;color:var(--cx-navy-2);}
+  .cx-manual-card:hover .cx-manual-cta{color:var(--cx-red);}
+
+  /* ---------- page-header (encabezado del tablero) rediseñado ---------- */
+  .page-header{
+    background:#fff;border:1px solid var(--cx-border);border-radius:16px;
+    padding:18px 24px;box-shadow:var(--cx-shadow);
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .page-header .cx-ph-eyebrow{margin:0;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--cx-navy-2);}
+  .page-header h1{font-size:20px;color:var(--cx-navy);margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .page-header h1 .badge{
+    display:inline-block;background:var(--cx-navy);color:#fff;border:none;
+    border-radius:20px;padding:4px 12px;font-size:11.5px;font-weight:700;vertical-align:middle;
+  }
+  .page-header p{font-size:13.5px;color:var(--cx-muted);margin:0;}
+
+  @media (max-width:600px){
+    .cx-navbar-inner{padding:12px 16px;}
+    .cx-crumb,.cx-tool-header,.cx-manual-section{padding-left:16px;padding-right:16px;}
+    .cx-tool-header{flex-wrap:wrap;}
+    .page-header{padding:14px 16px;}
+  }
 
   @media (max-width:600px){
     body{padding:16px 10px 40px;}
@@ -128,18 +205,49 @@
   <button type="button" class="btn-comenzar" id="btnComenzar">Comenzar →</button>
 </div>
 
-<div id="chooseManualScreen" style="display:none;">
-  <div class="choose-card">
-    <h2>¿Qué manual quieres ver?</h2>
-    <p>Elige si quieres recorrer la app Locombo o el tablero Locombo (indicadores de gestión).</p>
-    <div class="choose-row">
-      <button type="button" class="choose-btn" id="btnChooseApp">
-        <span class="choose-btn-title">App Locombo</span>
-        <span class="choose-btn-sub">Recorrido guiado de la aplicación</span>
+<div id="chooseManualScreen">
+  <header class="cx-navbar">
+    <div class="cx-navbar-inner">
+      <div class="cx-brand"><img src="../Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones" class="cx-brand-logo"></div>
+      <a class="cx-navbar-link" href="../index.html">← Volver al inicio</a>
+    </div>
+  </header>
+
+  <div class="cx-crumb">
+    <a href="../index.html">Inicio</a>
+    <span class="sep">›</span>
+    <a href="../index.html">Herramientas</a>
+    <span class="sep">›</span>
+    <span class="current">Locombo</span>
+  </div>
+
+  <div class="cx-tool-header">
+    <a class="cx-back" href="../index.html" aria-label="Volver a herramientas">←</a>
+    <div class="cx-tool-header-icon"><img src="../Recursos/Logo-Locombo.jpeg" alt="Locombo"></div>
+    <div>
+      <h1>Locombo</h1>
+      <p>Información y reportes de negocio.</p>
+    </div>
+  </div>
+
+  <div class="cx-manual-section">
+    <h2>¿Qué quieres consultar?</h2>
+    <div class="cx-manual-grid">
+      <button type="button" class="cx-manual-card" id="btnChooseApp">
+        <span class="cx-manual-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">App Locombo</span>
+          <span class="cx-manual-desc">Recorrido guiado de la aplicación.</span>
+          <span class="cx-manual-cta">Abrir manual →</span>
+        </span>
       </button>
-      <button type="button" class="choose-btn" id="btnChooseTablero">
-        <span class="choose-btn-title">Tablero Locombo</span>
-        <span class="choose-btn-sub">Indicadores de gestión</span>
+      <button type="button" class="cx-manual-card" id="btnChooseTablero">
+        <span class="cx-manual-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">Tablero Locombo</span>
+          <span class="cx-manual-desc">Indicadores de gestión.</span>
+          <span class="cx-manual-cta">Abrir manual →</span>
+        </span>
       </button>
     </div>
   </div>
@@ -147,7 +255,8 @@
 
 <div id="appContent">
   <div class="page-header">
-    <h1>Manual de Usuario Interactivo — Locombo <span class="badge">En construcción</span></h1>
+    <p class="cx-ph-eyebrow">Manual interactivo</p>
+    <h1>Locombo <span class="badge">En construcción</span></h1>
     <p>Estamos construyendo este manual — muy pronto vas a poder recorrerlo paso a paso.</p>
   </div>
 
@@ -163,6 +272,7 @@
 
 <div id="loadingOverlay">
   <div class="loading-card">
+    <div class="loading-card-header"><img src="../Recursos/Desarrollo.png" alt="CEMEX"></div>
     <video id="loadingVideo" src="../Recursos/AnimacionCarga.mp4" autoplay muted loop playsinline></video>
     <p class="loading-title" id="loadingTitle">Cargando…</p>
     <p class="loading-sub" id="loadingSub" style="display:none;"></p>
