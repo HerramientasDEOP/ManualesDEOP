@@ -1729,3 +1729,92 @@ de probar cada pieza aislada antes de combinar.
    hipervínculo, si el filtro de planta del ranking debería también
    cambiar el gráfico de línea/waterfall, y revisar los ~29 nombres de
    categoría del waterfall transcritos a ojo desde `Fila5.png`.
+
+---
+
+## Rol programador — navegación libre (2026-09-24)
+Archivo: `2.Orion/index.html` (la app Orion vive ahí desde la reorganización en
+carpetas `1.Eureka/ 2.Orion/ 3.Locombo/`; las imágenes nuevas se referencian con
+ruta relativa `../Recursos/...`, igual que `Desarrollo.png`/`AnimacionCarga.mp4`).
+Capturas de referencia: `Recursos/OrionProgram/` (pro1–pro7, proenespera,
+proprogram, proentrada1/2, prosalida, procierre, prorechazo).
+
+- **Rol activo:** `setRole('general'|'programador')` (lo llaman `#roleGeneral`/
+  `#roleProgramador`) pone/quita la clase `.role-prog` en `#frameWrap`. Todo lo
+  exclusivo del programador lleva la clase `.prog-only`
+  (`#frameWrap:not(.role-prog) .prog-only{display:none}`): los 2 ítems nuevos del
+  menú lateral (**Programador** = mixers, **Programador bomba** = bombas, con
+  `data-gestor="mixer|bomba"`, agregados a los 5 sidebars) y el botón naranja
+  (calendario) de cada fila de Mis Solicitudes.
+- **Navegación guiada del programador = EN CONSTRUCCIÓN** (pedido del usuario,
+  se hará después): `#btnNavGuiada` ya no tiene `data-go`; va a
+  `#screenGuidedMenu` (usuario general, sin cambios) o a `#screenGuidedProg`
+  (imagen `Construccion.png` + botón "Ir a navegación libre").
+- **Nueva solicitud (ambos roles):** fila "Tipo de placa: MIXER / BOMBA"
+  (`#plateTypeRow`, `plateClase`, `setPlateClase()`). `PLATES` tiene 6 bombas
+  (`clase:'bomba'`, transcritas de pro3/pro7; `noOp:true` = NoOperativo). El
+  TicketID ahora lo calcula `nextTicketId(tipo)` (prefijo MV crítico / MC no
+  crítico / DE despegue, siguiente número libre) y **Enviar ya crea el ticket de
+  verdad** (`buildNewTicket()`, estatus Abierto, al inicio de `TICKETS`) → aparece
+  en Mis Solicitudes y en el Gestor (En espera). Luego se limpia el formulario.
+- **Mis Solicitudes (ambos roles):** radio MIXER/BOMBA (`misSolClase`,
+  `setMisSolClase()`), contadores "Tickets bombas / Tickets Mixer" en la barra
+  superior, columnas Fecha/Solicitante/Novedad con salto de línea (antes la tabla
+  se desbordaba y escondía los botones). El modal "Información" ahora muestra en
+  "Gestor Ticket" lo que diligencia el programador (`t.gestor`: ot, aviso, ing,
+  plan, coment).
+- **Gestor de novedades (`#screenGestor`, una sola pantalla para mixers y
+  bombas, `gestorState.clase`):** 6 etapas (`GESTOR_STAGES`) — cada una lista los
+  tickets en su estatus de entrada (`from`) y Enviar los pasa al siguiente (`to`):
+  En espera (Abierto→En Espera), Programación (En Espera→En Programación),
+  Entrada (En Programación→En Entrada; OT y Safety obligatorios), Salida (En
+  Entrada→En Salida; Planta obligatoria), Cierre técnico (En Salida→Cierre
+  Técnico), Rechazado (Abierto→Rechazado; observaciones obligatorias, Enviar
+  oculto hasta escribirlas, como en la captura). Estatus nuevo `rechazado`.
+  Filtros Planta y Estatus (Estatus permite ver tickets de otro estatus; si el
+  ticket no corresponde a la etapa, Enviar se bloquea con aviso), buscador por
+  ticket/placa, botón Actualizar. Es el mismo array `TICKETS`, así que todo
+  cambio de estatus se ve en Mis Solicitudes/Mis Chats.
+  `openGestor(clase, ticketId)` (lo usa el botón naranja) abre el ticket
+  directamente en la etapa que le corresponde (`STAGE_FOR_STATUS`).
+- **Datos:** ~33 tickets nuevos al inicio de `TICKETS` (24 sep 2026, transcritos
+  de las capturas; 3 de bombas). Campos no visibles en las capturas quedan "—".
+- ⚠️ **Listas pendientes de confirmar con el equipo** (hoy muestran solo
+  "Pendiente de confirmar"): Ing. responsable, Plan. responsable, Taller.
+  Tipo Mantenimiento usa Correctivo/Preventivo y Programación solo "Programado"
+  (lo único visible en la captura) — confirmar.
+- Verificado con Playwright (Chromium headless): flujo completo del programador
+  (las 6 etapas, filtros, bombas, botón naranja, crear solicitud de bomba →
+  aparece en el gestor), usuario general sin elementos de programador, y los 2
+  recorridos guiados existentes siguen terminando OK — sin errores de consola.
+
+## Correcciones Eureka + botón atrás en encabezados (2026-09-24)
+- **Semáforos coherentes (`1.Eureka/index.html`):** los colores de los
+  indicadores ya no se escriben a mano. `SEM_RULES` (mismas reglas que muestra
+  cada popup) + `SEM_MAP` (id del valor → regla) + `applySemaforos()`, que se
+  llama al final de `applyView()`, `applyHDataset()`, `showRT()` y
+  `showHistorico()` → vale para todas las vistas, clusters, plantas y
+  Recursos Teóricos. Reglas: general ≥85 verde / 80–85 amarillo / 70–80
+  naranja / <70 rojo (Histórico: >85 verde); Volumen (Actual/Proyección/vs
+  Prog y Volumen Real del Histórico) >100 amarillo; Dispo. Mixer >95 verde si
+  no rojo; Operatividad >95 / 90–95 / <90; Calidad >97 / 93–97 / <93; AS Rod
+  vs Ingresos =100 verde, >100 amarillo, <100 rojo; Cancel ≤15 verde, >15 rojo
+  (también para %Cancel del Histórico, que ahora muestra ese semáforo en su
+  popup). Se agregó la clase `.val-orange` ("Riesgo", no existía) y el punto
+  naranja del popup ahora es naranja de verdad. Over-Booking no tiene semáforo
+  definido → se dejó como estaba. Verificado automáticamente en 28 vistas RT
+  y 24 del Histórico. Si se agrega un indicador nuevo con semáforo, basta con
+  agregarlo a `SEM_MAP`.
+- **Causa Pérdida Cumplimiento (Histórico):** todas las barras (menos Total)
+  muestran al pasar el cursor la tabla FechaEntrega / categoria / NombreObra /
+  VolPartida / comentario (ref. `Recursos/EurekaRT/perdidacumpl.png`).
+  "Demoras en obra" conserva sus registros reales (`TABLE_DEMORAS_GENERAL`);
+  el resto es ILUSTRATIVO, generado con `wfDetailRows()` (determinístico,
+  `WF_COMMENTS`/`WF_OBRAS`/`WF_FULL_LABEL`). La tabla ahora sale al lado de la
+  barra (no encima) y se queda abierta mientras el mouse está sobre ella para
+  poder desplazarse (`scheduleHideTablePopup`).
+- **Botón atrás (←) en el encabezado de cada tablero** (Eureka RT/Histórico,
+  Orion app/tablero, Locombo): `.ph-back[data-ph-back]` dentro de
+  `.page-header`, vuelve a "¿Qué quieres consultar?". En Orion cierra cualquier
+  recorrido guiado/modal activo y deja la app en la selección de rol (el
+  bloqueo estricto del tour deja pasar ese botón).

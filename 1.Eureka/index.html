@@ -70,6 +70,7 @@
   .val-green{color:var(--green);}
   .val-red{color:var(--red);}
   .val-yellow{color:var(--yellow);}
+  .val-orange{color:#e07b16;}
 
   .icon-building{width:15px;height:15px;object-fit:contain;fill:var(--icon-black);flex:0 0 auto;}
   .corner-icon{position:absolute;top:8px;right:10px;}
@@ -313,7 +314,6 @@
     background:#4a3a12;border:1px solid #7a5f22;border-radius:6px;padding:6px 10px;margin-top:10px;
   }
   #tooltip .tt-note b{color:#ffd98a;}
-  #tooltip .tt-semaforo-img{display:block;width:100%;max-width:260px;height:auto;margin-top:4px;border-radius:4px;background:#fff;padding:4px 6px;}
   #tooltip .tt-semaforo-extra{margin-top:6px;color:#f2f3f7;}
   #tooltip .tt-arrow{
     position:absolute;width:12px;height:12px;background:#1c2333;transform:rotate(45deg);
@@ -438,20 +438,15 @@
   }
 
   /* ================= board ================= */
-  #stage{margin:0 auto;}
+  #stage,#stageH{margin:0 auto;}
   .board-wrap-h{
     width:1700px;background:#ffffff;border-radius:22px;
     padding:22px 26px 4px;box-shadow:0 2px 10px rgba(20,30,60,.08);
     transform-origin:top left;
   }
-  .scroll-area{
-    max-height:720px;overflow-y:auto;overflow-x:hidden;padding-right:14px;
-    scrollbar-width:thin;scrollbar-color:#9fb0d8 #eef1f6;
-  }
-  .scroll-area::-webkit-scrollbar{width:10px;}
-  .scroll-area::-webkit-scrollbar-track{background:#eef1f6;border-radius:6px;}
-  .scroll-area::-webkit-scrollbar-thumb{background:#9fb0d8;border-radius:6px;}
-  .scroll-area::-webkit-scrollbar-thumb:hover{background:#7b90c4;}
+  /* Sin altura fija ni scroll interno: el tablero completo se recorre con el
+     scroll normal de la página. */
+  .scroll-area{overflow:visible;}
 
   .card{background:var(--card-bg);border-radius:16px;box-shadow:var(--shadow);position:relative;}
   .border-blue-h{border:1.5px solid var(--border-blue);}
@@ -517,6 +512,7 @@
   .val-green{color:var(--green);}
   .val-red{color:var(--red);}
   .val-yellow{color:var(--yellow);}
+  .val-orange{color:#e07b16;}
 
   /* ================= PART 2 ================= */
   .partH2{padding:10px 4px 26px;border-top:1px solid #eee;}
@@ -651,8 +647,28 @@
     background:#4a3a12;border:1px solid #7a5f22;border-radius:6px;padding:6px 10px;margin-top:10px;
   }
   #tooltip .tt-note b{color:#ffd98a;}
-  #tooltip .tt-semaforo-img{display:block;width:100%;max-width:260px;height:auto;margin-top:4px;border-radius:4px;background:#fff;padding:4px 6px;}
   #tooltip .tt-semaforo-extra{margin-top:6px;color:#f2f3f7;}
+  /* jerarquía del popup: título + valor a la derecha, secciones más pequeñas y separadas */
+  #tooltip h3{justify-content:space-between;align-items:flex-start;padding-bottom:8px;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.1);}
+  #tooltip h3 .tt-title{flex:1 1 auto;}
+  #tooltip h3 .tt-value{flex:0 0 auto;white-space:nowrap;}
+  #tooltip .tt-section{margin-top:10px;}
+  #tooltip .tt-section b{font-size:10.5px;}
+  #tooltip .tt-section b.tt-inline{display:inline;font-size:inherit;text-transform:none;letter-spacing:0;color:#fff;margin:0;}
+  /* semáforo con bolitas CSS (colores de la leyenda del tablero) */
+  #tooltip .tt-sem,#tooltip .tt-arrowlist{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px 14px;}
+  #tooltip .tt-arrowlist{flex-direction:column;gap:3px;}
+  #tooltip .tt-sem li,#tooltip .tt-arrowlist li{display:flex;align-items:center;gap:6px;}
+  #tooltip .tt-arrowlist li{align-items:flex-start;}
+  #tooltip .tt-arrowlist li .tt-dot{margin-top:5px;}
+  #tooltip .tt-sem-label{font-weight:600;color:#fff;}
+  #tooltip .tt-sem-range{color:#c9cfdc;}
+  #tooltip .tt-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto;}
+  #tooltip .tt-dot-green{background:#2f9e44;}
+  #tooltip .tt-dot-yellow{background:#f0c000;}
+  #tooltip .tt-dot-orange{background:#e07b16;}
+  #tooltip .tt-dot-red{background:var(--red);}
+  #tooltip .tt-simple p{margin:8px 0 0;}
 
   /* ---------- native-style chart tooltip (Power BI look) ---------- */
   #chartTooltip{
@@ -792,6 +808,22 @@
     .page-header{padding:14px 16px;}
   }
 </style>
+<style>
+  /* ---------- Botón "atrás" en el encabezado de cada tablero ---------- */
+  .page-header{position:relative;padding-left:78px !important;}
+  .ph-back{
+    position:absolute;left:22px;top:50%;transform:translateY(-50%);
+    width:40px;height:40px;border-radius:50%;border:1px solid #e2e7f2;background:#fff;
+    color:#1a1a8c;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(16,16,102,.10);transition:background .15s,color .15s;
+  }
+  .ph-back:hover{background:#101066;color:#fff;}
+  @media (max-width:600px){
+    .page-header{padding-left:62px !important;}
+    .ph-back{left:12px;width:36px;height:36px;font-size:16px;}
+  }
+</style>
 </head>
 <body>
 
@@ -853,6 +885,7 @@
 <div id="appContent">
 
 <div class="page-header">
+  <button type="button" class="ph-back" data-ph-back aria-label="Volver" title="Volver a ¿Qué quieres consultar?">←</button>
   <p class="cx-ph-eyebrow">Manual interactivo</p>
   <h1 id="pageHeaderTitle">Eureka <span class="badge" id="pageHeaderBadge">Tiempo real</span></h1>
   <p id="pageHeaderSub">Pasa el cursor sobre cualquier tarjeta, botón o ícono del tablero (o tócalo en móvil) para ver qué significa, cómo se calcula y de dónde sale el dato.</p>
@@ -1201,18 +1234,16 @@
 
     <div id="lcLegend"></div>
 
-    <div class="metric-tabs hotspot" id="metricTabs" data-key="lineChart"
-      data-tip-title="Gráfico Cumplimiento en el tiempo"
-      data-tip-text="Haz clic en un indicador para verlo en la gráfica. Mantén Ctrl (o ⌘ en Mac) y haz clic en un segundo indicador para compararlos juntos en la misma gráfica.">
-      <div class="metric-tab active" data-metric="cumplimiento">Cumplimiento Servicio</div>
-      <div class="metric-tab" data-metric="capacidad">Capacidad Servicio</div>
-      <div class="metric-tab" data-metric="dispoMixer">Disponibilidad Mixer</div>
-      <div class="metric-tab" data-metric="dispoAS">Disponibilidad AS</div>
-      <div class="metric-tab" data-metric="cumplimientoME">Cumplimiento ME</div>
-      <div class="metric-tab" data-metric="oeePlanta">OEE Planta</div>
-      <div class="metric-tab" data-metric="overbooking">Overbooking</div>
-      <div class="metric-tab" data-metric="cancelacion">Cancelación</div>
-      <div class="metric-tab" data-metric="dispoBombeo">Disponibilidad Bombeo</div>
+    <div class="metric-tabs" id="metricTabs">
+      <div class="metric-tab active hotspot" data-metric="cumplimiento" data-key="tabCumplimiento" tabindex="0" role="button">Cumplimiento Servicio</div>
+      <div class="metric-tab hotspot" data-metric="capacidad" data-key="tabCapacidad" tabindex="0" role="button">Capacidad Servicio</div>
+      <div class="metric-tab hotspot" data-metric="dispoMixer" data-key="tabDispoMixer" tabindex="0" role="button">Disponibilidad Mixer</div>
+      <div class="metric-tab hotspot" data-metric="dispoAS" data-key="tabDispoAS" tabindex="0" role="button">Disponibilidad AS</div>
+      <div class="metric-tab hotspot" data-metric="cumplimientoME" data-key="tabCumplimientoME" tabindex="0" role="button">Cumplimiento ME</div>
+      <div class="metric-tab hotspot" data-metric="oeePlanta" data-key="tabOeePlanta" tabindex="0" role="button">OEE Planta</div>
+      <div class="metric-tab hotspot" data-metric="overbooking" data-key="tabOverbooking" tabindex="0" role="button">Overbooking</div>
+      <div class="metric-tab hotspot" data-metric="cancelacion" data-key="tabCancelacion" tabindex="0" role="button">Cancelación</div>
+      <div class="metric-tab hotspot" data-metric="dispoBombeo" data-key="tabDispoBombeo" tabindex="0" role="button">Disponibilidad Bombeo</div>
     </div>
 
 
@@ -1385,14 +1416,14 @@
    ========================================================================= */
 const INDICATORS = {
 
-  // ---- Indicadores CONFIRMADOS (explicados en reunión con el equipo) ----
+  // ---- Indicadores principales (Eureka RT) ----
   cumpServicio: {
     title: "Cumplimiento de Servicio",
     value: "89%",
     pending: false,
-    mide: "Si le estamos llegando a tiempo al cliente o no.",
-    calculo: "Viajes cumplidos ÷ Viajes totales. Se considera \"cumplido\" un viaje que llega en la hora pactada con el cliente, con un margen de tolerancia de ± 30 minutos.",
-    semaforoImg: true
+    mide: "Porcentaje de viajes que llegan al cliente dentro del horario acordado.",
+    calculo: "Viajes cumplidos ÷ viajes totales × 100.<br>Un viaje es cumplido si llega dentro de la hora pactada, con tolerancia de ±30 min.",
+    semaforo: "general"
   },
   cumpServicioIcon: {
     title: "Cumplimiento de Servicio",
@@ -1430,64 +1461,115 @@ const INDICATORS = {
     pending: false,
     hasIconLink: true
   },
+
+  // ---- Indicadores de tiempo: usan su estándar, no el semáforo general ----
   cargue: {
-    title: "Cargue (min/m3)",
+    title: "Cargue (min/m³)",
     value: "",
     pending: false,
-    mide: "Qué tan rápido se carga la mezcla: minutos que toma cargar un metro cúbico."
+    mide: "Qué tan rápido se carga la mezcla.",
+    calculo: "Minutos que toma cargar un metro cúbico.",
+    flecha: "Se compara contra la tasa ideal de cargue definida por Mantenimiento Industrial.",
+    flechaItems: [
+      ["green", "Por debajo de la tasa ideal = mejor / más rápido."],
+      ["red",   "Por encima de la tasa ideal = mayor tiempo / más lento."]
+    ]
   },
   cargueValor: {
-    title: "Cargue (min/m3)",
-    value: "1,49 min/m3 (-0.14)",
+    title: "Cargue (min/m³)",
+    value: "1,49 min/m³ (-0.14)",
     pending: false,
-    fuente: "Dato tomado directamente del sistema HTC (minutos de cargue por m3 cargado).",
-    flecha: "Se compara contra la tasa ideal de cargue definida por el equipo de Mantenimiento Industrial (promedio país). Flecha verde = por debajo de esa tasa ideal (mejor, se cargó más rápido de lo esperado). Flecha roja = por encima (peor, más lento de lo esperado)."
+    mide: "Qué tan rápido se carga la mezcla.",
+    calculo: "Minutos que toma cargar un metro cúbico.",
+    flecha: "Se compara contra la tasa ideal de cargue definida por Mantenimiento Industrial.",
+    flechaItems: [
+      ["green", "Por debajo de la tasa ideal = mejor / más rápido."],
+      ["red",   "Por encima de la tasa ideal = mayor tiempo / más lento."]
+    ]
   },
   alistamiento: {
     title: "Alistamiento (min)",
     value: "",
     pending: false,
-    mide: "Tiempo que tarda el mixer en quedar listo para salir después de cargar."
+    mide: "Tiempo que tarda el mixer en quedar listo para salir después del cargue.",
+    calculo: "Hora de salida de planta − hora de fin de cargue.",
+    estandar: "18 minutos.",
+    flechaItems: [
+      ["green", "Por debajo de 18 min = mejor / más rápido."],
+      ["red",   "Por encima de 18 min = mayor tiempo / más lento."]
+    ]
   },
   alistamientoValor: {
     title: "Alistamiento (min)",
     value: "21 min (+3)",
     pending: false,
-    calculo: "Hora de salida de planta − Hora de fin de cargue, promediado sobre todos los viajes.",
-    flecha: "Se compara contra el estándar de 18 minutos. Flecha verde = por debajo de 18 min (mejor, más rápido). Flecha roja = por encima de 18 min (peor, más lento)."
+    mide: "Tiempo que tarda el mixer en quedar listo para salir después del cargue.",
+    calculo: "Hora de salida de planta − hora de fin de cargue.",
+    estandar: "18 minutos.",
+    flechaItems: [
+      ["green", "Por debajo de 18 min = mejor / más rápido."],
+      ["red",   "Por encima de 18 min = mayor tiempo / más lento."]
+    ]
   },
   enObra: {
     title: "En Obra (min)",
     value: "",
     pending: false,
-    mide: "Tiempo que el mixer permanece en la obra del cliente."
+    mide: "Tiempo que el mixer permanece en la obra del cliente.",
+    calculo: "Hora de salida de la obra − hora de llegada a la obra.",
+    estandar: "60 minutos.",
+    flechaItems: [
+      ["green", "Por debajo de 60 min = mejor / más rápido."],
+      ["red",   "Por encima de 60 min = mayor tiempo / más lento."]
+    ]
   },
   enObraValor: {
     title: "En Obra (min)",
     value: "60 min (0)",
     pending: false,
-    calculo: "Hora de salida de la obra − Hora de llegada a la obra, promediado.",
-    flecha: "Se compara contra el estándar de 60 minutos. Flecha verde = por debajo de 60 min (mejor, más rápido). Flecha roja = por encima de 60 min (peor, más lento)."
+    mide: "Tiempo que el mixer permanece en la obra del cliente.",
+    calculo: "Hora de salida de la obra − hora de llegada a la obra.",
+    estandar: "60 minutos.",
+    flechaItems: [
+      ["green", "Por debajo de 60 min = mejor / más rápido."],
+      ["red",   "Por encima de 60 min = mayor tiempo / más lento."]
+    ]
   },
   tiempoCiclo: {
     title: "Tiempo de Ciclo (min)",
     value: "",
     pending: false,
-    mide: "Duración total del ciclo completo de un viaje, de principio a fin."
+    mide: "Duración total del ciclo completo de un viaje, de principio a fin.",
+    calculo: "Suma de los cinco tramos:<br>Cargue + Alistamiento + Hacia obra + En obra + Hacia planta.",
+    estandar: "180 minutos.",
+    flechaItems: [
+      ["green", "Por debajo de 180 min = mejor."],
+      ["red",   "Por encima de 180 min = mayor tiempo."]
+    ]
   },
   tiempoCicloValor: {
     title: "Tiempo de Ciclo (min)",
     value: "161,65 min (-18)",
     pending: false,
-    calculo: "Es la suma de 5 promedios: Cargue + Alistamiento + Hacia obra (tránsito) + En obra + Hacia planta (retorno). Cada tramo se promedia por separado y luego se suman todos.",
-    flecha: "Se considera bueno un Tiempo de Ciclo menor a 18 minutos. Flecha verde = por debajo de 18 min (mejor). Flecha roja = por encima de 18 min (peor)."
+    mide: "Duración total del ciclo completo de un viaje, de principio a fin.",
+    calculo: "Suma de los cinco tramos:<br>Cargue + Alistamiento + Hacia obra + En obra + Hacia planta.",
+    estandar: "180 minutos.",
+    flechaItems: [
+      ["green", "Por debajo de 180 min = mejor."],
+      ["red",   "Por encima de 180 min = mayor tiempo."]
+    ]
   },
+
   cancelPct: {
     title: "Cancel%",
     value: "27%",
     pending: false,
-    mide: "Porcentaje de viajes cancelados hoy, de lo programado para hoy mismo (\"hoy para hoy\").",
-    calculo: "Viajes cancelados hoy ÷ Total de viajes programados hoy."
+    mide: "Porcentaje de viajes cancelados frente al total de viajes programados para hoy.",
+    calculo: "Viajes cancelados ÷ viajes programados × 100.",
+    semaforo: [
+      ["green", "Bueno",   "≤15%"],
+      ["red",   "Crítico", ">15%"]
+    ]
   },
   cancelPctIcon: {
     title: "Cancel%",
@@ -1496,14 +1578,13 @@ const INDICATORS = {
     hasIconLink: true
   },
 
-  // ---- Indicadores ahora confirmados (resumen enviado por el equipo) -----
   capacidadServicio: {
     title: "Capacidad de Servicio",
     value: "90%",
     pending: false,
-    mide: "pendiente",
-    calculo: "Promedio ponderado de 3 disponibilidades: Disp. Planta (OEE) × 50% + Dispo. Mixer × 25% + Disponibilidad As × 25%.",
-    semaforoImg: true
+    mide: "Qué tan preparada está la operación para prestar el servicio, considerando la disponibilidad de planta, mixers y agentes de servicio.",
+    calculo: "Disp. Planta (OEE) × 50% + Dispo. Mixer × 25% + Disponibilidad AS × 25%.",
+    semaforo: "general"
   },
   capacidadServicioIcon: {
     title: "Capacidad de Servicio",
@@ -1515,10 +1596,13 @@ const INDICATORS = {
     title: "Dispo. Mixer",
     value: "100%",
     pending: false,
-    mide: "Qué porcentaje de los mixers que la planta necesita para operar hoy están realmente disponibles.",
-    calculo: "Placas disponibles (operativas) ÷ Placas asignadas a rodar. Las mixers en reserva (operativas, pero no asignadas a rodar — se usan solo si se le vara un vehículo a la planta) NO cuentan como \"asignadas a rodar\". Ejemplo: si una planta tiene 30 mixers asignadas y 3 de ellas están en reserva, esas 3 no entran en este cálculo.",
-    fuente: "Viene de la aplicación Orion.",
-    semaforoText: "Por encima de 95% se ve en verde; 95% o por debajo se ve en rojo (no tiene nivel amarillo)."
+    mide: "Porcentaje de mixers que la operación necesita para operar hoy y que realmente están disponibles.",
+    calculo: "Placas disponibles y operativas ÷ placas asignadas a rodar.<br>Las mixers en reserva no cuentan como asignadas a rodar.",
+    fuente: "Orion.",
+    semaforo: [
+      ["green", "Bueno",   ">95%"],
+      ["red",   "Crítico", "≤95%"]
+    ]
   },
   dispoMixerIcon: {
     title: "Dispo. Mixer",
@@ -1530,9 +1614,9 @@ const INDICATORS = {
     title: "Disp. Planta (OEE)",
     value: "98%",
     pending: false,
-    mide: "Qué tan eficiente fue la planta en su conjunto (disponibilidad, ritmo y calidad de cargue) — un indicador tipo OEE industrial.",
-    calculo: "Promedio entre Operatividad, Rendimiento y Calidad (ver esas 3 tarjetas para el detalle de cada una).",
-    semaforoImg: true
+    mide: "Qué tan eficiente fue la planta en su conjunto, considerando Operatividad, Rendimiento y Calidad.",
+    calculo: "Promedio de Operatividad, Rendimiento y Calidad.",
+    semaforo: "general"
   },
   dispPlantaOEEIcon: {
     title: "Disp. Planta (OEE)",
@@ -1541,15 +1625,15 @@ const INDICATORS = {
     hasIconLink: true
   },
   disponibilidadAs: {
-    title: "Disponibilidad As",
+    title: "Disponibilidad AS",
     value: "65%",
     pending: false,
-    mide: "Qué porcentaje de los agentes de servicio que debería tener la operación (según el lineamiento operativo) realmente ingresaron a trabajar.",
-    calculo: "Agentes de servicio que ingresaron a través de Locombo ÷ Agentes de servicio dados por lineamiento operativo.",
-    semaforoImg: true
+    mide: "Porcentaje de agentes de servicio que ingresaron a trabajar frente a los agentes requeridos según el lineamiento operativo.",
+    calculo: "Agentes de servicio que ingresaron por Locombo ÷ agentes de servicio requeridos según lineamiento operativo.",
+    semaforo: "general"
   },
   disponibilidadAsIcon: {
-    title: "Disponibilidad As",
+    title: "Disponibilidad AS",
     value: "",
     pending: false,
     hasIconLink: true
@@ -1558,43 +1642,56 @@ const INDICATORS = {
     title: "Operatividad",
     value: "99%",
     pending: false,
-    mide: "Qué tan disponible estuvo la planta para cargar durante toda la jornada (le resta el tiempo que estuvo varada/parada).",
-    calculo: "Horas que la planta estuvo disponible ÷ Horas totales de la jornada. La jornada se mide desde la hora del primer cargue hasta la hora del último cargue del día; las horas varadas vienen de la app Novedades ReMix, tomando la categoría \"Paro total\".",
-    flecha: "Compara contra el promedio histórico.",
-    semaforoText: "Por encima de 95% verde; entre 90% y 95% amarillo; por debajo de 90% rojo."
+    mide: "Qué porcentaje de la jornada la planta estuvo disponible para operar.",
+    calculo: "Horas disponibles ÷ horas totales de la jornada.<br>La jornada va del primer al último cargue. Las horas de parada vienen de Novedades ReadyMix, categoría \"Paro total\".",
+      semaforo: [
+      ["green",  "Bueno",    ">95%"],
+      ["yellow", "Atención", "90% a 95%"],
+      ["red",    "Crítico",  "<90%"]
+    ]
   },
   rendimiento: {
     title: "Rendimiento",
     value: "100%",
     pending: false,
-    mide: "Qué tan rápido se cargó comparado con el ritmo ideal de cargue.",
-    calculo: "Cargue real (m3/min) ÷ Tasa ideal de cargue definida por el equipo de Mantenimiento Industrial.",
-    flecha: "Compara contra el promedio histórico.",
-    semaforoImg: true
+    mide: "Qué tan rápido se cargó comparado con la tasa ideal de cargue.",
+    calculo: "Cargue real (m³/min) ÷ tasa ideal de cargue definida por Mantenimiento Industrial.",
+      semaforo: "general"
   },
   calidad: {
     title: "Calidad",
     value: "95%",
     pending: false,
     mide: "Qué porcentaje de los viajes tuvo que corregirse (retrabajo), sobre el total de viajes.",
-    calculo: "Viajes con retrabajo ÷ Viajes totales. El dato de viajes con retrabajo se obtiene del Consulticket en SAP.",
-    semaforoText: "Por encima de 97% verde; entre 93% y 97% amarillo; por debajo de 93% rojo."
+    calculo: "Viajes con retrabajo ÷ viajes totales.",
+    fuente: "Consuticket en SAP.",
+    semaforo: [
+      ["green",  "Bueno",    ">97%"],
+      ["yellow", "Atención", "93% a 97%"],
+      ["red",    "Crítico",  "<93%"]
+    ]
   },
   asRodIngresos: {
     title: "AS Rod vs Ingresos",
     value: "135%",
     pending: false,
-    mide: "Compara los agentes de servicio que efectivamente están \"rodando\" (que hicieron al menos un viaje) contra los que ingresaron según Locombo.",
-    calculo: "Agentes de servicio rodando (con al menos 1 viaje) ÷ Agentes de servicio que ingresaron por Locombo.",
-    accion: "Si el valor es mayor a 100%: hay agentes de servicio rodando que no se registraron en Locombo. Si es menor a 100%: hay más personas que timbraron entrada en Locombo, pero que en realidad no están rodando.",
-    semaforoText: "En 100% verde; por encima de 100% amarillo; por debajo de 100% rojo."
+    mide: "Compara los agentes de servicio que realizaron al menos un viaje frente a los que registraron ingreso en Locombo.",
+    calculo: "Agentes de servicio rodando ÷ agentes de servicio que ingresaron por Locombo × 100.",
+    interpretar: "<b class=\"tt-inline\">&gt;100%:</b> hay agentes rodando que no aparecen registrados en Locombo.<br><b class=\"tt-inline\">&lt;100%:</b> hay personas registradas en Locombo que no están rodando.",
+    semaforo: [
+      ["green",  "Bueno",    "100%"],
+      ["yellow", "Atención", ">100%"],
+      ["red",    "Crítico",  "<100%"]
+    ]
   },
+
+  // ---- Volumen Real vs ME: 3 conceptos independientes ----
   volumenRealME: {
     title: "Volumen Real vs ME",
     value: "",
     pending: false,
-    mide: "Compara el volumen real que llevamos entregado hoy contra el Mejor Estimado (ME) que dio el equipo comercial, de tres formas distintas.",
-    accion: "Pasa el cursor sobre \"Actual\", \"Proyección\" o \"vs Prog.\" para ver el detalle de cada una por separado."
+    mide: "Compara el volumen real entregado contra el Mejor Estimado (ME) del equipo comercial, de tres formas.",
+    accion: "Pasa el cursor sobre \"Actual\", \"Proyección\" o \"vs Prog.\" para ver cada una por separado."
   },
   volumenRealMEIcon: {
     title: "Volumen Real vs ME",
@@ -1606,35 +1703,36 @@ const INDICATORS = {
     title: "Actual",
     value: "84%",
     pending: false,
-    mide: "Volumen real entregado hoy contra el Mejor Estimado (ME) del equipo comercial.",
-    calculo: "Acumulado real entregado hoy (al corte de la hora) ÷ Media diaria del ME dado por el equipo comercial.",
-    semaforoImg: true,
-    semaforoText: "Si el valor supera el 100%, se muestra en amarillo (sin importar en qué nivel caería según la escala normal)."
+    mide: "Volumen real entregado hasta la hora de corte frente al Mejor Estimado (ME) del equipo comercial.",
+    calculo: "Volumen real acumulado ÷ media diaria del ME.",
+    semaforo: "general",
+    semaforoText: "Si supera el 100%, se muestra en amarillo."
   },
   volumenProyeccion: {
     title: "Proyección",
     value: "112%",
     pending: false,
-    mide: "Hacia dónde vamos a terminar el día si se cumple lo que ya está confirmado, contra el Mejor Estimado (ME).",
-    calculo: "(Acumulado real de hoy + lo que falta por entregar que ya está confirmado) ÷ Media diaria del ME.",
-    semaforoImg: true,
-    semaforoText: "Si el valor supera el 100%, se muestra en amarillo (sin importar en qué nivel caería según la escala normal)."
+    mide: "Dónde terminaríamos el día si se entrega todo el volumen que ya está confirmado.",
+    calculo: "(Volumen real acumulado + volumen confirmado pendiente de entregar) ÷ media diaria del ME.",
+    semaforo: "general",
+    semaforoText: "Si supera el 100%, se muestra en amarillo."
   },
   volumenVsProg: {
     title: "vs Prog.",
     value: "64%",
     pending: false,
-    mide: "Volumen real entregado contra lo que estaba programado (confirmado + por confirmar de pilotaje).",
-    calculo: "Volumen real acumulado hasta la hora ÷ (Volumen confirmado + volumen por confirmar de pilotaje, a corte del día anterior).",
-    semaforoImg: true,
-    semaforoText: "Si el valor supera el 100%, se muestra en amarillo (sin importar en qué nivel caería según la escala normal)."
+    mide: "Compara el volumen real entregado hasta la hora de corte con el volumen programado al cierre del día anterior.",
+    calculo: "Volumen real acumulado hasta la hora de corte ÷ volumen programado al cierre del día anterior.",
+    semaforo: "general",
+    semaforoText: "Si supera el 100%, se muestra en amarillo."
   },
+
+  // ---- Over-Booking ----
   overBooking: {
     title: "Over-Booking",
     value: "",
     pending: false,
-    mide: "Qué tanto nos sobre-programamos: más viajes confirmados de los que realmente tenemos capacidad de atender con la flota y el tiempo de ciclo actuales.",
-    accion: "Pasa el cursor sobre cada número de la tarjeta para ver su detalle por separado, o sobre la barrita azul para ver el detalle expandido con 2 gráficas: ambas comparan, franja horaria por franja horaria, los carros disponibles vs. la programación de viajes — así se ve en qué horas del día se concentra la sobre-programación."
+    mide: "Qué tanto la programación de viajes supera la capacidad disponible de la operación."
   },
   overBookingIcon: {
     title: "Over-Booking",
@@ -1646,25 +1744,26 @@ const INDICATORS = {
     title: "Viajes confirmados / Capacidad",
     value: "165 / 120 viajes",
     pending: false,
-    mide: "Viajes confirmados vs. capacidad real que tenemos para atenderlos con la flota y el tiempo de ciclo actuales.",
-    calculo: "Tenemos capacidad para hacer 120 viajes (según la cantidad de carros por lineamiento operativo y el tiempo de ciclo promedio), pero por el over-booking estamos programando 165."
+    muestra: "Los viajes confirmados frente a la cantidad de viajes que la operación puede atender según la flota disponible y el tiempo de ciclo.",
+    ejemplo: "165 / 120 viajes = 165 viajes confirmados frente a una capacidad de 120 viajes."
   },
   overBookingAlertas: {
     title: "Alertas",
     value: "2 alertas",
     pending: false,
-    mide: "Cantidad de horas de toda la franja horaria del día en las que hubo sobre-programación.",
-    calculo: "En este ejemplo, 2 horas del día tuvieron sobre-programación."
+    muestra: "Cantidad de horas del día en las que se presenta sobre-programación.",
+    ejemplo: "2 alertas = 2 horas del día presentaron sobre-programación."
   },
   overBookingPct: {
     title: "% de sobre-programación",
     value: "38%",
     pending: false,
-    mide: "Qué tan por encima de la capacidad real estamos programando.",
-    calculo: "165 ÷ 120 = 137,5% — le restamos el 100% base y queda 37,5%, que se redondea a 38% de sobre-programación."
+    mide: "Cuánto supera la programación a la capacidad disponible.",
+    calculo: "(Viajes confirmados ÷ capacidad) − 100%.",
+    ejemplo: "(165 ÷ 120) − 100% = 37,5% ≈ 38%."
   },
 
-  // ---- Elementos de interfaz (no son indicadores, pero también llevan popup) ----
+  // ---- Elementos de interfaz ----
   logoEureka: {
     title: "Logo Eureka",
     value: "",
@@ -1674,123 +1773,127 @@ const INDICATORS = {
     title: "Eureka",
     value: "",
     pending: false,
-    mide: "Nombre del tablero que estás viendo: Eureka, la versión en tiempo real de los indicadores de servicio."
+    mide: "Nombre del tablero: Eureka, la versión en tiempo real de los indicadores de servicio."
   },
   eurekaHistorico: {
     title: "Botón: Eureka Histórico",
     value: "",
     pending: false,
-    accion: "Haz clic para ir al tablero Eureka Histórico (los mismos indicadores, pero mostrando su evolución en el tiempo, el ranking de plantas y las causas de pérdida de cumplimiento)."
+    hace: "Permite navegar al tablero correspondiente."
   },
   eurekaDelfos: {
     title: "Botón: Eureka DELFOS",
     value: "",
     pending: false,
-    accion: "Haz clic para ir al tablero Eureka DELFOS."
+    hace: "Permite navegar al tablero correspondiente."
   },
   recursosTeor: {
-    title: "Recursos Teóricos (switch)",
+    title: "Recursos Teóricos",
     value: "",
     pending: false,
-    accion: "Actívalo para cambiar el enfoque de 2 tarjetas del tablero: en vez de disponibilidad, van a mostrar una comparación contra el recurso teórico que se necesitaba ese día — \"Dispo. Mixer\" pasa a \"Mx Roda / Mx Teórico\" (mixers rodando ÷ mixers teóricos necesarios hoy) y \"Disponibilidad As\" pasa a \"AS Roda / AS Teórico\" (agentes de servicio rodando ÷ agentes teóricos necesarios hoy) — los recursos teóricos se calculan con base en el volumen que estaba programado para el día. Haz clic de nuevo para desactivarlo."
+    hace: "Activa una vista que compara los recursos que están rodando con los recursos teóricos necesarios para atender el volumen programado del día.",
+    activo: "Dispo. Mixer → Mx Roda / Mx Teórico<br>Disponibilidad AS → AS Roda / AS Teórico"
   },
   ultimaActualizacion: {
     title: "Última actualización",
     value: "",
     pending: false,
-    mide: "Fecha y hora de la última actualización de los datos: el momento en que se tomó la \"foto\" de la programación que ves en el tablero."
+    muestra: "Fecha y hora de la última actualización de los datos del tablero."
   },
 
-  // ---- Parte 2: filtros de región y gráfico "Cumplimiento Servicio" ----
+  // ---- Filtros de cluster y gráfico "Cumplimiento Servicio" ----
   filtroAntioquia: {
     title: "Antioquia",
     value: "",
     pending: false,
-    accion: "💡 Haz clic aquí para filtrar todo el tablero por el cluster Antioquia (muestra ilustrativa)."
+    hace: "Permite filtrar el tablero por el cluster seleccionado."
   },
   filtroCentro: {
     title: "Centro",
     value: "",
     pending: false,
-    accion: "💡 Haz clic aquí para filtrar todo el tablero por el cluster Centro (muestra ilustrativa)."
+    hace: "Permite filtrar el tablero por el cluster seleccionado."
   },
   filtroSurOriente: {
     title: "Sur Oriente",
     value: "",
     pending: false,
-    accion: "💡 Haz clic aquí para filtrar todo el tablero por el cluster Sur Oriente (muestra ilustrativa)."
+    hace: "Permite filtrar el tablero por el cluster seleccionado."
   },
   filtroOccidente: {
     title: "Occidente",
     value: "",
     pending: false,
-    accion: "💡 Haz clic aquí para filtrar todo el tablero por el cluster Occidente (muestra ilustrativa)."
+    hace: "Permite filtrar el tablero por el cluster seleccionado."
   },
   filtroSantander: {
     title: "Santander",
     value: "",
     pending: false,
-    accion: "💡 Haz clic aquí para filtrar todo el tablero por el cluster Santander (muestra ilustrativa)."
+    hace: "Permite filtrar el tablero por el cluster seleccionado."
   },
   antioquiaActivo: {
-    title: "Antioquia (cluster seleccionado)",
+    title: "Antioquia (seleccionado)",
     value: "",
     pending: false,
-    accion: "Estás viendo el tablero filtrado por el cluster Antioquia, a modo de muestra ilustrativa. 🔄 Vuelve a hacer clic aquí para volver a la vista general (todos los clusters)."
+    hace: "El tablero está filtrado por este cluster. Haz clic de nuevo para volver a la vista general."
   },
   centroActivo: {
-    title: "Centro (cluster seleccionado)",
+    title: "Centro (seleccionado)",
     value: "",
     pending: false,
-    accion: "Estás viendo el tablero filtrado por el cluster Centro, a modo de muestra ilustrativa. 🔄 Vuelve a hacer clic aquí para volver a la vista general (todos los clusters)."
+    hace: "El tablero está filtrado por este cluster. Haz clic de nuevo para volver a la vista general."
   },
   surorienteActivo: {
-    title: "Sur Oriente (cluster seleccionado)",
+    title: "Sur Oriente (seleccionado)",
     value: "",
     pending: false,
-    accion: "Estás viendo el tablero filtrado por el cluster Sur Oriente, a modo de muestra ilustrativa. 🔄 Vuelve a hacer clic aquí para volver a la vista general (todos los clusters)."
+    hace: "El tablero está filtrado por este cluster. Haz clic de nuevo para volver a la vista general."
   },
   occidenteActivo: {
-    title: "Occidente (cluster seleccionado)",
+    title: "Occidente (seleccionado)",
     value: "",
     pending: false,
-    accion: "Estás viendo el tablero filtrado por el cluster Occidente, a modo de muestra ilustrativa. 🔄 Vuelve a hacer clic aquí para volver a la vista general (todos los clusters)."
+    hace: "El tablero está filtrado por este cluster. Haz clic de nuevo para volver a la vista general."
   },
   santanderActivo: {
-    title: "Santander (cluster seleccionado)",
+    title: "Santander (seleccionado)",
     value: "",
     pending: false,
-    accion: "Estás viendo el tablero filtrado por el cluster Santander, a modo de muestra ilustrativa. 🔄 Vuelve a hacer clic aquí para volver a la vista general (todos los clusters)."
+    hace: "El tablero está filtrado por este cluster. Haz clic de nuevo para volver a la vista general."
   },
   plantCrossFilter: {
     title: "Cluster de la planta",
     value: "",
     pending: false,
-    accion: "Al seleccionar una planta específica en el gráfico, el tablero resalta aquí solo el cluster al que pertenece esa planta."
+    accion: "Al seleccionar una planta en el gráfico, aquí se resalta solo el cluster al que pertenece."
   },
   cumplimientoServicioChart: {
-    title: "Cumplimiento Servicio (por planta)",
+    title: "Cumplimiento Servicio por planta",
     value: "",
     pending: false,
-    mide: "Muestra el % de Cumplimiento de Servicio de cada planta, para comparar el desempeño entre plantas.",
-    accion: "Pasa el cursor sobre cada barra para ver el detalle de su cumplimiento. 💡 Haz clic sobre la barra de una planta para filtrar todo el tablero por esa planta (funciona igual que hacer clic en un cluster arriba, pero a nivel de planta específica). Pruébalo con la barra \"Florida\"."
+    muestra: "El porcentaje de Cumplimiento de Servicio de cada planta.",
+    leer: "Cada barra representa el porcentaje de cumplimiento de una planta. Pasa el cursor sobre una barra para ver su detalle.",
+    accion: "Haz clic en la barra de una planta para filtrar el tablero por esa planta (pruébalo con \"Florida\")."
   },
   colorScale: {
     title: "Escala de colores",
     value: "",
     pending: false,
-    mide: "Los colores de la mayoría de indicadores del tablero (verde/amarillo/naranja/rojo) siguen esta misma escala de %. Cancel%, Over-Booking y los tiempos de ciclo (Cargue, Alistamiento, En Obra, Tiempo Ciclo) tienen su propia regla de color en vez de esta escala — ver la explicación dentro de cada una de esas tarjetas."
+    mide: "Semáforo general que usa la mayoría de indicadores del tablero.",
+    semaforo: "general",
+    semaforoText: "Dispo. Mixer, Operatividad, Calidad, AS Rod vs Ingresos y Cancel% tienen su propio semáforo. Los indicadores de tiempo se comparan contra su estándar."
   },
 
   /* ---- Indicadores propios de Eureka Histórico ---- */
-cumplimientoTop: {
+  cumplimientoTop: {
     title: "Cumplimiento",
     value: "",
     pending: false,
-    mide: "Si le estamos llegando a tiempo al cliente o no (mismo indicador que en Eureka en tiempo real).",
-    calculo: "Viajes cumplidos ÷ Viajes totales. Se considera \"cumplido\" un viaje que llega en la hora pactada con el cliente, con un margen de tolerancia de ± 30 minutos.",
-    flecha: "La flechita con un número (ej. +2,68 pp) indica la variación en puntos porcentuales frente al periodo anterior. Por ejemplo, si estás viendo agosto 2026, te dice cuánto subió o bajó el cumplimiento versus julio.",
-    semaforoImg: true
+    mide: "Si estamos llegando a tiempo al cliente.",
+    calculo: "Viajes cumplidos ÷ viajes totales.<br>Un viaje es cumplido si llega dentro de la hora pactada con el cliente, con tolerancia de ±30 min.",
+    semaforo: "generalH",
+    variacion: "La flecha y el número muestran la variación en puntos porcentuales (pp) frente al periodo anterior. Ej.: +2,68 pp = subió 2,68 puntos."
   },
   cumpTopIconH: {
     title: "Cumplimiento",
@@ -1802,84 +1905,129 @@ cumplimientoTop: {
     title: "Eureka Histórico",
     value: "",
     pending: false,
-    mide: "Nombre del tablero que estás viendo: la versión de los indicadores de Eureka mostrando su evolución en el tiempo (en vez de solo el dato de hoy)."
+    muestra: "Los indicadores de Eureka y su evolución en el tiempo."
   },
   filtroPlanta: {
     title: "Filtro: Planta",
     value: "",
     pending: false,
-    mide: "Filtra todo el tablero por una planta específica.",
-    accion: "Este filtro es decorativo en el manual (no cambia los datos al usarlo) — en el tablero real, selecciona la planta que quieres analizar."
+    hace: "Filtra el tablero por una planta específica.",
+    nota: "En el manual este filtro es decorativo; en el tablero real sí cambia los datos."
   },
   filtroFecha: {
     title: "Filtro: Fecha",
     value: "",
     pending: false,
-    mide: "Filtra todo el tablero por un rango de fechas (año y mes).",
-    accion: "Este filtro es decorativo en el manual (no cambia los datos al usarlo) — en el tablero real, selecciona el periodo que quieres analizar."
+    hace: "Filtra el tablero por un rango de fechas (año y mes).",
+    nota: "En el manual este filtro es decorativo; en el tablero real sí cambia los datos."
   },
   eurekaRT: {
     title: "Botón: Eureka RT",
     value: "",
     pending: false,
-    mide: "Botón de navegación a otro tablero.",
-    accion: "Haz clic para ir al tablero Eureka en tiempo real."
+    hace: "Permite navegar al tablero Eureka en tiempo real."
   },
   eurekaDelfosH: {
     title: "Botón: Eureka DELFOS",
     value: "",
     pending: false,
-    mide: "Botón de navegación a otro tablero.",
-    accion: "Haz clic para ir al tablero Eureka DELFOS."
+    hace: "Permite navegar al tablero Eureka DELFOS."
   },
   manualUsoH: {
     title: "Botón: Manual de Uso",
     value: "",
     pending: false,
-    mide: "Botón de navegación.",
-    accion: "En el tablero real, abre el manual de usuario de este tablero."
+    hace: "En el tablero real, abre el manual de usuario."
   },
   logoHistorico: {
     title: "Logo Eureka",
     value: "",
     pending: false,
-    mide: "Logo del tablero Eureka. Es solo el logo — no tiene ninguna funcionalidad ni hipervínculo (los íconos que sí llevan a más detalle son los de cada tarjeta: Cumplimiento, Capacidad de servicio, Dispo. Mixer, Dispo. AS, Disp. Planta (OEE), Volumen Real vs ME, OverBooking y %Cancel)."
+    muestra: "Solo el logo; no tiene hipervínculo. Los íconos de cada tarjeta son los que llevan a más detalle."
   },
   lineChart: {
-    title: "Gráfico Cumplimiento en el tiempo",
+    title: "Gráfico de indicadores en el tiempo",
     value: "",
     pending: false,
-    mide: "Grafica la evolución de uno o varios indicadores de Eureka a lo largo del tiempo (desde el 2 de enero de 2026 hasta el día anterior a hoy), para buscar correlaciones entre ellos.",
-    calculo: "Los botones debajo de la gráfica son los indicadores del tablero.",
-    accion: "Haz clic en un indicador para verlo en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en un segundo indicador para compararlos juntos en la misma gráfica — por ejemplo, Cumplimiento Servicio vs Disponibilidad Mixer, para ver si se mueven juntos. Pasa el cursor sobre la gráfica para ver el detalle día por día.",
-    nota: "Los datos de esta gráfica son ilustrativos (generados con una fórmula, no cifras reales) — no fue posible transcribir el valor exacto de cada uno de los cerca de 250 días del gráfico real a partir de una captura de pantalla."
+    muestra: "La evolución diaria de uno o varios indicadores de Eureka (desde el 2 de enero de 2026 hasta ayer), para buscar relaciones entre ellos.",
+    interaccion: "Elige los indicadores con los botones de abajo. Pasa el cursor sobre la gráfica para ver el detalle de cada fecha.",
+    nota: "Los datos de esta gráfica en el manual son ilustrativos."
   },
+
+  // ---- Botones de la primera gráfica: tooltip corto e individual ----
+  tabCumplimiento: {
+    title: "Cumplimiento Servicio", value: "", pending: false,
+    simple: ["Representa la evolución histórica del Cumplimiento de Servicio.",
+             "Haz clic para mostrarlo en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+  tabCapacidad: {
+    title: "Capacidad Servicio", value: "", pending: false,
+    simple: ["Representa la evolución histórica de la Capacidad de Servicio.",
+             "Haz clic para mostrarla en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+  tabDispoMixer: {
+    title: "Disponibilidad Mixer", value: "", pending: false,
+    simple: ["Representa la evolución histórica de la Disponibilidad de Mixers.",
+             "Haz clic para mostrarla en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+  tabDispoAS: {
+    title: "Disponibilidad AS", value: "", pending: false,
+    simple: ["Representa la evolución histórica de la Disponibilidad de Agentes de Servicio.",
+             "Haz clic para mostrarla en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+  tabCumplimientoME: {
+    title: "Cumplimiento ME", value: "", pending: false,
+    simple: ["Representa la evolución histórica del Cumplimiento ME.",
+             "Haz clic para mostrarlo en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+  tabOeePlanta: {
+    title: "OEE Planta", value: "", pending: false,
+    simple: ["Representa la evolución histórica del OEE de Planta.",
+             "Haz clic para mostrarlo en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+  tabOverbooking: {
+    title: "Overbooking", value: "", pending: false,
+    simple: ["Representa la evolución histórica del nivel de OverBooking.",
+             "Haz clic para mostrarlo en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+  tabCancelacion: {
+    title: "Cancelación", value: "", pending: false,
+    simple: ["Representa la evolución histórica del porcentaje de Cancelación.",
+             "Haz clic para mostrarlo en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+  tabDispoBombeo: {
+    title: "Disponibilidad Bombeo", value: "", pending: false,
+    simple: ["Representa la evolución histórica de la Disponibilidad de Bombeo.",
+             "Haz clic para mostrarla en la gráfica. Mantén Ctrl (⌘ en Mac) y haz clic en otro indicador para compararlos."]
+  },
+
+  // ---- Tarjetas ----
   capacidadServicioH: {
-    title: "Capacidad de servicio",
+    title: "Capacidad de Servicio",
     value: "",
     pending: false,
-    mide: "Qué tan lista está la operación completa (mixers, plantas y agentes de servicio) para prestar el servicio.",
-    calculo: "Promedio ponderado de 3 disponibilidades: Disp. Planta (OEE) × 50% + Dispo. Mixer × 25% + Disponibilidad As × 25%.",
-    flecha: "La flechita con un número (ej. +2,68 pp) indica la variación en puntos porcentuales frente al periodo anterior.",
-    semaforoImg: true
+    mide: "Qué tan preparada está la operación para prestar el servicio.",
+    calculo: "Promedio ponderado de:<br>• Dispo. Planta (OEE): 50%<br>• Dispo. Mixer: 25%<br>• Disponibilidad AS: 25%",
+    semaforo: "generalH",
+    variacion: "La flecha muestra la variación en puntos porcentuales frente al periodo anterior."
   },
   capacidadServicioHIcon: {
-    title: "Capacidad de servicio",
+    title: "Capacidad de Servicio",
     value: "",
     pending: false,
     hasIconLink: true
   },
   volumenRealH: {
-    title: "Volumen Real Vs ME",
+    title: "Volumen Real vs ME",
     value: "",
     pending: false,
-    mide: "Compara el volumen real entregado contra el Mejor Estimado (ME) que dio el equipo comercial, de tres formas distintas.",
-    calculo: "<b>Actual:</b> Acumulado real entregado (al corte de la hora) ÷ Media diaria del ME dado por el equipo comercial.<br><b>Proyección:</b> (Acumulado real + lo que falta por entregar que ya está confirmado) ÷ Media diaria del ME.<br><b>vs Programación:</b> Volumen real acumulado hasta la hora ÷ (Volumen confirmado + volumen por confirmar de pilotaje, a corte del día anterior).",
-    semaforoImg: true,
-    semaforoText: "Si el valor supera el 100%, se muestra en amarillo (sin importar en qué nivel caería según la escala normal)."
+    mide: "Compara el volumen real entregado contra el Mejor Estimado (ME) definido por el equipo comercial.",
+    calculo: "<b class=\"tt-inline\">Actual:</b> volumen real acumulado al corte ÷ media diaria del ME.<br><b class=\"tt-inline\">Proyección:</b> (volumen real acumulado + volumen pendiente confirmado) ÷ media diaria del ME.<br><b class=\"tt-inline\">vs Programación:</b> volumen real acumulado hasta la hora ÷ volumen de la programación al cierre del día anterior.",
+    semaforo: "generalH",
+    semaforoText: "Si el valor supera 100%, se muestra en amarillo."
   },
   volumenRealHIcon: {
-    title: "Volumen Real Vs ME",
+    title: "Volumen Real vs ME",
     value: "",
     pending: false,
     hasIconLink: true
@@ -1888,10 +2036,10 @@ cumplimientoTop: {
     title: "Dispo. Planta (OEE)",
     value: "",
     pending: false,
-    mide: "Qué tan eficiente fue la planta en su conjunto (disponibilidad, ritmo y calidad de cargue) — un indicador tipo OEE industrial.",
-    calculo: "Promedio entre Operatividad, Rendimiento y Calidad (el detalle de estos 3 componentes está en la tarjeta \"Dispo. Planta (OEE) — detalle\", más abajo).",
-    flecha: "La flechita con un número (ej. +2,68 pp) indica la variación en puntos porcentuales frente al periodo anterior.",
-    semaforoImg: true
+    mide: "Qué tan eficiente fue la planta en su conjunto.",
+    calculo: "Promedio de:<br>• Operatividad<br>• Rendimiento<br>• Calidad",
+    semaforo: "generalH",
+    variacion: "La flecha muestra la variación en puntos porcentuales frente al periodo anterior."
   },
   dispPlantaHIcon: {
     title: "Dispo. Planta (OEE)",
@@ -1903,9 +2051,13 @@ cumplimientoTop: {
     title: "%Cancel",
     value: "",
     pending: false,
-    mide: "Porcentaje de viajes cancelados, de lo programado para ese mismo periodo (\"hoy para hoy\").",
-    calculo: "Viajes cancelados ÷ Total de viajes programados en el periodo.",
-    flecha: "El color no sigue la escala general del gráfico: se muestra en rojo cuando el valor está por debajo de 100%."
+    mide: "Porcentaje de viajes cancelados respecto a los viajes programados para el periodo.",
+    calculo: "Viajes cancelados ÷ total de viajes programados.",
+    interpretar: "Interpretación inversa: un porcentaje más bajo es mejor; uno más alto indica mayor cancelación. No usa el semáforo general.",
+    semaforo: [
+      ["green", "Bueno",   "≤15%"],
+      ["red",   "Crítico", ">15%"]
+    ]
   },
   cancelHIcon: {
     title: "%Cancel",
@@ -1917,9 +2069,9 @@ cumplimientoTop: {
     title: "OverBooking",
     value: "",
     pending: false,
-    mide: "Qué tanto nos sobre-programamos: más viajes confirmados de los que realmente tenemos capacidad de atender con la flota y el tiempo de ciclo del periodo.",
-    calculo: "Viajes confirmados ÷ Capacidad de viajes (según la cantidad de carros por lineamiento operativo y el tiempo de ciclo promedio). Ej.: si tenemos capacidad para 120 viajes pero programamos 165, eso es 165÷120 = 137,5% → 37,5% (≈38%) de sobre-programación.",
-    flecha: "El color no sigue la escala general del gráfico: se muestra en rojo cuando el valor está por debajo de 100%."
+    mide: "Qué tanto se sobre-programó la operación frente a la capacidad disponible.",
+    calculo: "Viajes confirmados ÷ capacidad de viajes.<br>La capacidad depende de los vehículos disponibles según el lineamiento operativo y del Tiempo de Ciclo.",
+    ejemplo: "Capacidad 120 viajes, programados 165:<br>165 ÷ 120 = 137,5% → 137,5% − 100% = 37,5% ≈ 38% de sobre-programación."
   },
   overBookingHIcon: {
     title: "OverBooking",
@@ -1931,17 +2083,20 @@ cumplimientoTop: {
     title: "Indicadores clave (Drivers)",
     value: "",
     pending: false,
-    mide: "Agrupa los 2 principales indicadores (\"drivers\") que alimentan la Capacidad de Servicio.",
-    accion: "Pasa el cursor sobre \"Dispo. Mixer\" o \"Dispo. AS\" para ver el detalle de cada uno por separado."
+    muestra: "Agrupa los principales indicadores que alimentan la Capacidad de Servicio: Dispo. Mixer y Dispo. AS.",
+    interaccion: "Pasa el cursor sobre cada uno para ver su detalle."
   },
   dispoMixerH: {
     title: "Dispo. Mixer",
     value: "76 %",
     pending: false,
-    mide: "Qué porcentaje de los mixers que la operación necesita están realmente disponibles.",
-    calculo: "Placas disponibles (operativas) ÷ Placas asignadas a rodar (las mixers en reserva — operativas pero no asignadas a rodar — no cuentan en este cálculo).",
-    fuente: "Viene de la aplicación Orion.",
-    semaforoText: "Por encima de 95% se ve en verde; 95% o por debajo se ve en rojo (no tiene nivel amarillo)."
+    mide: "Porcentaje de los mixers que la operación necesita y que están realmente disponibles.",
+    calculo: "Placas disponibles y operativas ÷ placas asignadas a rodar.<br>Las mixers en reserva, aunque estén operativas, no cuentan como asignadas a rodar.",
+    fuente: "Aplicación Orion.",
+    semaforo: [
+      ["green", "Bueno",   "> 95%"],
+      ["red",   "Crítico", "≤ 95%"]
+    ]
   },
   dispoMixerHIcon: {
     title: "Dispo. Mixer",
@@ -1953,9 +2108,9 @@ cumplimientoTop: {
     title: "Dispo. AS",
     value: "69%",
     pending: false,
-    mide: "Qué porcentaje de los agentes de servicio que debería tener la operación (según el lineamiento operativo) realmente ingresaron a trabajar.",
-    calculo: "Agentes de servicio que ingresaron por Locombo ÷ Agentes de servicio dados por lineamiento operativo.",
-    semaforoImg: true
+    mide: "Porcentaje de los agentes de servicio requeridos según el lineamiento operativo que realmente ingresaron a trabajar.",
+    calculo: "Agentes de servicio que ingresaron por Locombo ÷ agentes de servicio definidos por el lineamiento operativo.",
+    semaforo: "generalH"
   },
   dispoAsHIcon: {
     title: "Dispo. AS",
@@ -1967,107 +2122,149 @@ cumplimientoTop: {
     title: "Dispo. Planta (OEE) — detalle",
     value: "",
     pending: false,
-    mide: "Desglosa la Disp. Planta (OEE) en sus 4 componentes.",
-    accion: "Pasa el cursor sobre Operatividad, Rendimiento, Calidad o Utilización para ver el detalle de cada uno por separado."
+    muestra: "Desglose de la Dispo. Planta (OEE) en sus componentes: Operatividad, Rendimiento, Calidad y Utilización.",
+    interaccion: "Pasa el cursor sobre cada componente para ver su explicación."
   },
   operatividadH: {
     title: "Operatividad",
     value: "100%",
     pending: false,
     mide: "Qué porcentaje de la jornada la planta estuvo disponible para operar.",
-    calculo: "Horas que la planta estuvo disponible ÷ Horas totales de la jornada (la jornada se mide desde el primer cargue hasta el último; las horas varadas vienen de la app Novedades ReMix, categoría \"Paro total\").",
-    semaforoText: "Por encima de 95% verde; entre 90% y 95% amarillo; por debajo de 90% rojo."
+    calculo: "Horas disponibles para operar ÷ horas totales de la jornada.<br>La jornada va del primer al último cargue.",
+    semaforo: [
+      ["green",  "Bueno",    "> 95%"],
+      ["yellow", "Atención", "90% – 95%"],
+      ["red",    "Crítico",  "< 90%"]
+    ]
   },
   rendimientoH: {
     title: "Rendimiento",
     value: "100%",
     pending: false,
-    mide: "Qué tan rápido se cargó, comparado contra la tasa ideal.",
-    calculo: "Cargue real (m3/min) ÷ Tasa ideal de cargue de Mantenimiento Industrial.",
-    semaforoImg: true
+    mide: "Qué tan rápido se realizó el cargue frente a la tasa ideal.",
+    calculo: "Cargue real (m³/min) ÷ tasa ideal de cargue definida por Mantenimiento Industrial.",
+    semaforo: "generalH"
   },
   calidadH: {
     title: "Calidad",
     value: "97%",
     pending: false,
-    mide: "Viajes que no tuvieron que reprocesarse, de todos los viajes hechos.",
-    calculo: "Viajes con retrabajo ÷ Viajes totales.",
-    fuente: "Dato del Consulticket en SAP.",
-    semaforoText: "Por encima de 97% verde; entre 93% y 97% amarillo; por debajo de 93% rojo."
+    mide: "Porcentaje de viajes sin necesidad de retrabajo.",
+    calculo: "Viajes con retrabajo ÷ viajes totales.",
+    fuente: "Consulticket en SAP.",
+    semaforo: [
+      ["green",  "Bueno",    "> 97%"],
+      ["yellow", "Atención", "93% – 97%"],
+      ["red",    "Crítico",  "< 93%"]
+    ]
   },
   utilizacionH: {
     title: "Utilización",
     value: "55%",
     pending: false,
-    mide: "Qué tanto se aprovechó la disponibilidad operativa que tenía la planta.",
-    calculo: "Horas que la planta estuvo realmente cargando ÷ Jornada completa de la planta (la jornada se calcula igual que en Operatividad).",
-    semaforoImg: true
+    mide: "Qué tanto se aprovechó la disponibilidad operativa de la planta.",
+    calculo: "Horas que la planta estuvo realmente cargando ÷ jornada completa de la planta.",
+    semaforo: "generalH"
   },
+
+  // ---- Tiempos: se comparan contra su estándar, no contra el semáforo general ----
   tiemposH: {
     title: "Tiempos promedio del proceso",
     value: "",
     pending: false,
-    mide: "Desglosa el Tiempo de Ciclo en sus 5 tramos, para ver en cuál se está perdiendo más tiempo.",
-    flecha: "Cada tramo compara contra su propio estándar — pasa el cursor sobre cada uno para ver contra qué se compara.",
-    accion: "Pasa el cursor sobre cada tramo (o sobre \"TC\") para ver su detalle por separado."
+    mide: "Desglosa el Tiempo de Ciclo en sus cinco tramos para identificar dónde se usa más tiempo: Cargue, Alistamiento, Hacia obra, En obra y Hacia planta.",
+    interpretar: "Cada tramo se compara contra su propio estándar.",
+    interaccion: "Pasa el cursor sobre cada tramo (o sobre \"TC\") para ver su detalle."
   },
   cargueH: {
     title: "Cargue",
     value: "1,46 min",
     pending: false,
-    calculo: "Minutos por m3 cargado.",
-    flecha: "Se compara contra la tasa ideal de cargue definida por el equipo de Mantenimiento Industrial (promedio país). Flecha verde = por debajo de esa tasa ideal (mejor, más rápido). Flecha roja = por encima (peor, más lento)."
+    mide: "Tiempo promedio requerido para realizar el cargue.",
+    calculo: "Minutos por m³ cargado.",
+    flecha: "Se compara contra la tasa ideal de cargue definida por Mantenimiento Industrial.",
+    flechaItems: [
+      ["green", "Por debajo de la tasa ideal → menor tiempo / mejor desempeño."],
+      ["red",   "Por encima de la tasa ideal → mayor tiempo / menor desempeño."]
+    ]
   },
   alistamientoH: {
     title: "Alistamiento",
     value: "22 min",
     pending: false,
-    calculo: "Hora de salida de planta − Hora de fin de cargue.",
-    flecha: "Se compara contra el estándar de 18 minutos. Flecha verde = por debajo de 18 min (mejor, más rápido). Flecha roja = por encima de 18 min (peor, más lento)."
+    mide: "Tiempo desde el final del cargue hasta la salida de planta.",
+    calculo: "Hora de salida de planta − hora de fin de cargue.",
+    estandar: "18 minutos.",
+    flechaItems: [
+      ["green", "Menor a 18 min."],
+      ["red",   "Mayor a 18 min."]
+    ]
   },
   haciaObraH: {
     title: "Hacia obra",
     value: "29 min",
     pending: false,
-    calculo: "Tiempo de tránsito: desde que sale de planta hasta que llega a la obra.",
-    flecha: "Se compara contra el estándar de 30 minutos. Flecha verde = por debajo de 30 min (mejor, más rápido). Flecha roja = por encima de 30 min (peor, más lento)."
+    mide: "Tiempo de tránsito desde la salida de planta hasta la llegada a obra.",
+    calculo: "Hora de llegada a obra − hora de salida de planta.",
+    estandar: "30 minutos.",
+    flechaItems: [
+      ["green", "Menor a 30 min."],
+      ["red",   "Mayor a 30 min."]
+    ]
   },
   enObraH: {
     title: "En obra",
     value: "64 min",
     pending: false,
-    calculo: "Hora de salida de la obra − Hora de llegada a la obra.",
-    flecha: "Se compara contra el estándar de 60 minutos. Flecha verde = por debajo de 60 min (mejor, más rápido). Flecha roja = por encima de 60 min (peor, más lento)."
+    mide: "Tiempo que el vehículo permanece en obra.",
+    calculo: "Hora de salida de obra − hora de llegada a obra.",
+    estandar: "60 minutos.",
+    flechaItems: [
+      ["green", "Menor a 60 min."],
+      ["red",   "Mayor a 60 min."]
+    ]
   },
   haciaPlantaH: {
     title: "Hacia planta",
     value: "42 min",
     pending: false,
-    calculo: "Desde que sale de la obra hasta que llega de vuelta a planta.",
-    flecha: "Se compara contra el estándar de 30 minutos. Flecha verde = por debajo de 30 min (mejor, más rápido). Flecha roja = por encima de 30 min (peor, más lento)."
+    mide: "Tiempo de regreso desde la obra hasta la planta.",
+    calculo: "Hora de llegada a planta − hora de salida de obra.",
+    estandar: "30 minutos.",
+    flechaItems: [
+      ["green", "Menor a 30 min."],
+      ["red",   "Mayor a 30 min."]
+    ]
   },
   tcTotalH: {
     title: "TC (Tiempo de Ciclo)",
     value: "169 min",
     pending: false,
-    mide: "Duración total del ciclo completo de un viaje, de principio a fin.",
-    calculo: "Es la suma de los 5 tramos: Cargue + Alistamiento + Hacia obra + En obra + Hacia planta.",
-    flecha: "Se considera bueno un Tiempo de Ciclo menor a 180 minutos. La flechita de abajo indica la variación en minutos frente al objetivo (verde = por debajo del objetivo, mejor; rojo = por encima, peor)."
+    mide: "Duración total del ciclo completo de un viaje.",
+    calculo: "Suma de los cinco tramos:<br>Cargue + Alistamiento + Hacia obra + En obra + Hacia planta.",
+    objetivo: "180 minutos.",
+    flecha: "La flecha muestra la variación en minutos frente al objetivo.",
+    flechaItems: [
+      ["green", "Bueno: menor a 180 min."],
+      ["red",   "Por encima del objetivo: mayor a 180 min."]
+    ]
   },
+
+  // ---- Gráficas de la parte inferior ----
   rankingChart: {
     title: "Ranking de plantas por cumplimiento de servicio",
     value: "",
     pending: false,
-    mide: "Compara el % de Cumplimiento de Servicio entre todas las plantas, ordenadas de mayor a menor.",
-    accion: "💡 Igual que en el tablero de tiempo real, puedes hacer clic sobre la barra de una planta para filtrar por esa planta las tarjetas de indicadores de arriba (Cumplimiento, Capacidad de servicio, Volumen Real vs ME, Dispo. Planta, %Cancel, OverBooking, Drivers, Dispo. Planta detalle y Tiempos promedio). Vuelve a hacer clic sobre la misma barra para volver a la vista general."
+    muestra: "Compara el % de Cumplimiento de Servicio entre plantas, ordenadas de mayor a menor.",
+    interaccion: "Haz clic sobre una planta para filtrar las tarjetas e indicadores del tablero por esa planta. Haz clic de nuevo sobre la misma planta para volver a la vista general."
   },
   mediaDiariaChart: {
     title: "Evolución de la media diaria",
     value: "",
     pending: false,
-    mide: "Compara, semana a semana, el volumen promedio despachado por día (Media_Diaria) contra el % de Cumplimiento de Servicio de esa misma semana — para ver si los picos o caídas de volumen coinciden con cambios en el cumplimiento.",
-    accion: "Pasa el cursor sobre la gráfica para ver el detalle semana por semana.",
-    nota: "Los datos de esta gráfica son ilustrativos (generados con una fórmula, no cifras reales)."
+    muestra: "Compara la evolución del volumen promedio despachado por día con el % de Cumplimiento de Servicio. Permite ver si los cambios de volumen coinciden con cambios en el cumplimiento.",
+    interaccion: "Pasa el cursor sobre la gráfica para ver el detalle.",
+    nota: "Los datos de esta gráfica en el manual son ilustrativos."
   },
   causaPerdidaChart: {
     title: "Causa Perdida Cumplimiento",
@@ -2079,29 +2276,112 @@ cumplimientoTop: {
   }
 };
 
-const SEMAFORO_IMG = 'data:image/png;base64,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';
-
 /* ---------------- Tooltip engine ---------------- */
 const tooltip = document.getElementById('tooltip');
 
+/* Semáforo general del tablero (HTML/CSS, sin imagen). Para cambiar rangos o
+   etiquetas, edita solo este arreglo: [color, etiqueta, rango]. */
+const SEMAFORO_GENERAL = [
+  ["green",  "Bueno",    "≥85%"],
+  ["yellow", "Atención", "80% a <85%"],
+  ["orange", "Riesgo",   "70% a <80%"],
+  ["red",    "Crítico",  "<70%"]
+];
+
+/* Semáforo general tal como se presenta en Eureka Histórico. */
+const SEMAFORO_GENERAL_H = [
+  ["green",  "Bueno",    "> 85%"],
+  ["yellow", "Atención", "80% – 85%"],
+  ["orange", "Riesgo",   "70% – 80%"],
+  ["red",    "Crítico",  "< 70%"]
+];
+
+/* Semáforo aplicado a los valores: el color de cada indicador se calcula a
+   partir de su valor con las MISMAS reglas que muestra su popup (antes se
+   escribía a mano en cada vista y quedaban incoherencias, ej. AS Rod 135% en
+   rojo o Cancel 27% en verde). Se aplica después de cada applyView() /
+   applyHDataset(), así que vale para todas las vistas, clusters y plantas. */
+const SEM_RULES = {
+  general:      v => v >= 85 ? 'green' : v >= 80 ? 'yellow' : v >= 70 ? 'orange' : 'red',
+  generalH:     v => v > 85 ? 'green' : v >= 80 ? 'yellow' : v >= 70 ? 'orange' : 'red',
+  volumen:      v => v > 100 ? 'yellow' : SEM_RULES.general(v),
+  volumenH:     v => v > 100 ? 'yellow' : SEM_RULES.generalH(v),
+  dispoMixer:   v => v > 95 ? 'green' : 'red',
+  operatividad: v => v > 95 ? 'green' : v >= 90 ? 'yellow' : 'red',
+  calidad:      v => v > 97 ? 'green' : v >= 93 ? 'yellow' : 'red',
+  asRod:        v => v === 100 ? 'green' : v > 100 ? 'yellow' : 'red',
+  cancel:       v => v <= 15 ? 'green' : 'red'
+};
+const SEM_MAP = {
+  // Eureka tiempo real
+  'v-cumpServicio':'general', 'v-capacidadServicio':'general', 'v-dispPlantaOEE':'general',
+  'v-disponibilidadAs':'general', 'v-rendimiento':'general', 'v-dispoMixer':'dispoMixer',
+  'v-operatividad':'operatividad', 'v-calidad':'calidad', 'v-asRodIngresos':'asRod',
+  'v-volActualPct':'volumen', 'v-volProyPct':'volumen', 'v-volProgPct':'volumen', 'v-cancelPct':'cancel',
+  // Eureka Histórico
+  'hv-cumpTop':'generalH', 'hv-capacidad':'generalH', 'hv-volumen':'volumenH', 'hv-dispPlantaTop':'generalH',
+  'hv-cancel':'cancel', 'hv-dispoMixerPct':'dispoMixer', 'hv-dispoAsPct':'generalH',
+  'hv-operatividadPct':'operatividad', 'hv-rendimientoPct':'generalH', 'hv-calidadPct':'calidad',
+  'hv-utilizacionPct':'generalH'
+};
+function applySemaforos(){
+  Object.keys(SEM_MAP).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const m = el.textContent.match(/-?\d+(?:[.,]\d+)?/);
+    if (!m) return;
+    const color = SEM_RULES[SEM_MAP[id]](parseFloat(m[0].replace(',', '.')));
+    el.classList.remove('val-green', 'val-yellow', 'val-orange', 'val-red');
+    el.classList.add('val-' + color);
+  });
+}
+
+function semaforoHTML(items){
+  return `<ul class="tt-sem">${items.map(([c, label, rango]) =>
+    `<li><span class="tt-dot tt-dot-${c}"></span><span class="tt-sem-label">${label}</span><span class="tt-sem-range">${rango}</span></li>`
+  ).join('')}</ul>`;
+}
+
+function flechaItemsHTML(items){
+  return `<ul class="tt-arrowlist">${items.map(([c, txt]) =>
+    `<li><span class="tt-dot tt-dot-${c}"></span><span>${txt}</span></li>`
+  ).join('')}</ul>`;
+}
+
 function buildTooltipHTML(data){
+  const head = `<h3><span class="tt-title">${data.title}</span>${data.value ? `<span class="tt-value">${data.value}</span>` : ""}</h3>`;
   if (data.pending){
-    return `<h3>${data.title}${data.value ? `<span class="tt-value">${data.value}</span>` : ""}</h3>
-            <div class="tt-pending">⚠ Definición pendiente de confirmar</div>`;
+    return head + `<div class="tt-pending">⚠ Definición pendiente de confirmar</div>`;
   }
-  let html = `<h3>${data.title}${data.value ? `<span class="tt-value">${data.value}</span>` : ""}</h3>`;
-  if (data.mide)    html += `<div class="tt-section"><b>Qué mide</b>${data.mide}</div>`;
-  if (data.calculo) html += `<div class="tt-section"><b>Cómo se calcula</b>${data.calculo}</div>`;
-  if (data.fuente)  html += `<div class="tt-section"><b>Fuente del dato</b>${data.fuente}</div>`;
-  if (data.flecha)  html += `<div class="tt-section"><b>Cómo leer la flecha</b>${data.flecha}</div>`;
-  if (data.semaforoImg){
-    html += `<div class="tt-section"><b>Semáforo</b><img class="tt-semaforo-img" src="${SEMAFORO_IMG}" alt="Convenciones de color">${data.semaforoText ? `<div class="tt-semaforo-extra">${data.semaforoText}</div>` : ''}</div>`;
+  const sec = (label, body, extra) => `<div class="tt-section${extra ? ' ' + extra : ''}"><b>${label}</b>${body}</div>`;
+  let html = head;
+  if (data.simple)      html += `<div class="tt-simple">${data.simple.map(t => `<p>${t}</p>`).join('')}</div>`;
+  if (data.mide)        html += sec('Qué mide', data.mide);
+  if (data.muestra)     html += sec('Qué muestra', data.muestra);
+  if (data.hace)        html += sec('Qué hace', data.hace);
+  if (data.activo)      html += sec('Cuando está activo', data.activo);
+  if (data.calculo)     html += sec('Cómo se calcula', data.calculo);
+  if (data.ejemplo)     html += sec('Ejemplo', data.ejemplo);
+  if (data.interpretar) html += sec('Cómo interpretar', data.interpretar);
+  if (data.leer)        html += sec('Cómo leerlo', data.leer);
+  if (data.fuente)      html += sec('Fuente del dato', data.fuente);
+  if (data.estandar)    html += sec('Estándar', data.estandar);
+  if (data.objetivo)    html += sec('Objetivo', data.objetivo);
+  if (data.flecha || data.flechaItems){
+    html += sec('Cómo leer la flecha', (data.flecha || '') + (data.flechaItems ? flechaItemsHTML(data.flechaItems) : ''));
+  }
+  if (data.semaforo){
+    const items = data.semaforo === 'general' ? SEMAFORO_GENERAL
+                : data.semaforo === 'generalH' ? SEMAFORO_GENERAL_H : data.semaforo;
+    html += sec('Semáforo', semaforoHTML(items) + (data.semaforoText ? `<div class="tt-semaforo-extra">${data.semaforoText}</div>` : ''));
   } else if (data.semaforoText){
-    html += `<div class="tt-section"><b>Semáforo</b>${data.semaforoText}</div>`;
+    html += sec('Semáforo', data.semaforoText);
   }
-  if (data.accion)  html += `<div class="tt-section"><b>Qué puedes hacer</b>${data.accion}</div>`;
-  if (data.nota)    html += `<div class="tt-section tt-note"><b>⚠ Falta confirmar</b>${data.nota}</div>`;
-  if (data.hasIconLink) html += `<div class="tt-section"><b>Ícono</b>Te lleva al tablero con más información sobre este indicador.</div>`;
+  if (data.variacion)   html += sec('Variación', data.variacion);
+  if (data.interaccion) html += sec('Interacción', data.interaccion);
+  if (data.accion)      html += sec('Qué puedes hacer', data.accion);
+  if (data.nota)        html += sec('Nota', data.nota, 'tt-note');
+  if (data.hasIconLink) html += sec('Ícono', 'Te lleva al tablero con más información sobre este indicador.');
   return html;
 }
 
@@ -2335,6 +2615,7 @@ function applyView(view){
     if (data[id].cls) el.className = data[id].cls;
     if (data[id].styleFontSize) el.style.fontSize = data[id].styleFontSize;
   });
+  applySemaforos();
 }
 
 /* =========================================================================
@@ -2898,6 +3179,7 @@ function buildTableHTML(rows){
   return html;
 }
 function showTablePopup(el, rows){
+  clearTimeout(tablePopupHideTimer);
   hideTooltip(); hideChartTooltipH();
   tablePopupEl = el;
   tablePopup.innerHTML = buildTableHTML(rows);
@@ -2905,10 +3187,18 @@ function showTablePopup(el, rows){
   positionTablePopup(el);
 }
 function hideTablePopup(){ tablePopupEl = null; tablePopup.classList.remove('visible'); }
+/* La tabla sale AL LADO de la barra (no encima) y se mantiene abierta mientras
+   el mouse esté sobre ella, para poder desplazarse por los registros. */
+let tablePopupHideTimer = null;
+function scheduleHideTablePopup(){ clearTimeout(tablePopupHideTimer); tablePopupHideTimer = setTimeout(hideTablePopup, 220); }
+tablePopup.addEventListener('mouseenter', () => clearTimeout(tablePopupHideTimer));
+tablePopup.addEventListener('mouseleave', () => { if (hasHover) scheduleHideTablePopup(); });
+tablePopup.addEventListener('click', (e) => e.stopPropagation());
 function positionTablePopup(el){
   const r = el.getBoundingClientRect();
   const tw = tablePopup.offsetWidth, th = tablePopup.offsetHeight, margin = 10;
-  let left = r.left;
+  let left = r.right + 8;
+  if (left + tw > window.innerWidth - margin) left = r.left - tw - 8;
   let top = r.top;
   left = Math.max(margin, Math.min(left, window.innerWidth - tw - margin));
   top = Math.max(margin, Math.min(top, window.innerHeight - th - margin));
@@ -3071,6 +3361,7 @@ function applyHDataset(data){
     el.textContent = data[id].text;
     if (data[id].cls) el.className = data[id].cls;
   });
+  applySemaforos();
 }
 
 /* =========================================================================
@@ -3523,6 +3814,56 @@ const TABLE_DEMORAS_GENERAL = [
   ['27/08/2026 0:00:00','Demoras en obra','FLORES T16','5,00','Obra UNIQUE , demoras de 110 min']
 ];
 
+/* Detalle por barra (pedido del usuario, ref. Recursos/EurekaRT/perdidacumpl.png):
+   en el tablero real, al pasar sobre cualquier barra sale la tabla
+   FechaEntrega / categoria / NombreObra / VolPartida / comentario. Solo
+   "Demoras en obra" tiene registros reales (TABLE_DEMORAS_GENERAL); el resto
+   se genera de forma ILUSTRATIVA y determinística (siempre los mismos
+   registros), con más filas en las categorías que más pesan. */
+const WF_FULL_LABEL = {
+  'Disponibilidad de Fl...':'Disponibilidad de Flota', 'Programacion de r...':'Programacion de rutas',
+  'Cliente Corre Progr...':'Cliente Corre Programacion', 'Demora en Arranqu...':'Demora en Arranque',
+  'Despegue de Mezc...':'Despegue de Mezcla'
+};
+const WF_COMMENTS = {
+  'Cumplimiento': ['', '', 'Entrega dentro de la ventana pactada', ''],
+  'Otros': ['Novedad reportada sin categoría específica', 'Ajuste operativo del día', '', 'Se reprograma por solicitud interna de la planta'],
+  'Disponibilidad de Fl...': ['Mixers en mantenimiento, no se alcanza a cubrir la programación', 'Flota insuficiente en la franja de la mañana', 'Se apoya con flota de Puente Aranda, llega tarde a obra', ''],
+  'Demoras en obra': ['Demoras en obra ocasionan afectación en retorno de flota', 'Obra no estaba lista para recibir el concreto', ''],
+  'Trafico': ['Congestión en la Av. Boyacá, retraso en llegada a obra', 'Cierre vial por manifestación', 'Trancón a la salida de la planta', ''],
+  'Sobreprogramacion': ['Se confirmaron más viajes que la capacidad de flota', 'Pedidos adicionales confirmados sobre la capacidad', ''],
+  'Varada de planta': ['Planta fuera de servicio por falla eléctrica', 'Falla en la banda transportadora, se suspende el cargue', ''],
+  'Cargue Lento': ['Cargue por encima de la tasa ideal', 'Demora en la dosificación de aditivos', ''],
+  'Falla GPS': ['Mixer sin señal GPS, no registra llegada a obra'],
+  'Bombeo': ['Bomba varada en obra', 'Demora en el armado de la bomba'],
+  'Cambio de material': ['Cliente solicita cambio de diseño de mezcla'],
+  'Disponibilidad de AS': ['No hay agentes de servicio suficientes en el turno'],
+  'Accidente en la vía': ['Accidente en la vía, desvío obligatorio'],
+  'Stockout': ['Sin inventario de cemento en planta'],
+  'Pedido Bloqueado': ['Pedido bloqueado por cartera'],
+  'Pedido Bloquedado': ['Pedido bloqueado por cartera'],
+  'Calidad': ['Concreto rechazado en obra por asentamiento']
+};
+const WF_OBRAS = ['ALICANTE','BOSQUE NATIVO ETAPA 2','LONDRES T1','LOS NOGALES','NAVARRA FAN ET1','ORION DIRECTOS','SERENE HABITARE',
+  'URBANISMO EL HATO','ALAMO VERAMONTE','BOTANICO','CASABLANCA GARDENS','LORCA','NATIVA FRENTE 3','EMBAJADA CHINA','TERRAZUL',
+  'QUEBRADA LA HONDA','ML1 ESTACION 16 PHC ASCENDENTE','ML1 BS 2 INACAR ESTACION 9 DESCENDE','PRIMAVERA NORTE','VALLE LINDO ETAPA 5',
+  'UF20 RIO CAUCA','AGATHA LIVING','LYLA','FLORES T16','BAYAN','ALTUM','AIRE'];
+function wfDetailRows(item, idx){
+  const rng = seededRandom('wf:' + idx + ':' + item.label);
+  const n = item.pct >= 50 ? 30 : item.pct >= 2 ? 22 : item.pct >= 1 ? 12 : 3 + Math.floor(rng() * 3);
+  const categoria = WF_FULL_LABEL[item.label] || item.label;
+  const comments = WF_COMMENTS[item.label] || ['Afectación por ' + categoria.toLowerCase(), ''];
+  const rows = [];
+  for (let i = 0; i < n; i++){
+    const day = 19 - Math.floor(i * 24 / n);               // del 19/09 hacia atrás (~24 días)
+    const d = new Date(2026, 8, day);
+    const fecha = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/2026 0:00:00';
+    const vol = (Math.round((2 + rng() * 10) * 4) / 4).toFixed(2).replace('.', ',');
+    rows.push([fecha, categoria, WF_OBRAS[Math.floor(rng() * WF_OBRAS.length)], vol, comments[Math.floor(rng() * comments.length)]]);
+  }
+  return rows;
+}
+
 function waterfallTooltipHTML(item){
   return `<div class="ct-row"><span class="ct-label">categoria</span><span class="ct-value">${item.label}</span></div>
     <div class="ct-row"><span class="ct-label">%TG Suma de conteo</span><span class="ct-value">${item.pct < 1 ? '0' : Math.round(item.pct)}%</span></div>`;
@@ -3553,7 +3894,7 @@ function buildWaterfall(items){
 
   let cum = 0;
   let demorasTableUsed = false;
-  items.forEach(item => {
+  items.forEach((item, idx) => {
     const col = document.createElement('div');
     col.className = 'wf-col';
     col.setAttribute('data-label', item.label);
@@ -3598,15 +3939,16 @@ function buildWaterfall(items){
        detalle real; la segunda se trata como cualquier otra categoría de
        la cola larga (popup simple). */
     const isFirstDemorasEnObra = item.label === 'Demoras en obra' && !demorasTableUsed;
-    if (isFirstDemorasEnObra){
-      demorasTableUsed = true;
-      col.addEventListener('mouseenter', () => { if (hasHover) showTablePopup(col, TABLE_DEMORAS_GENERAL); });
-      col.addEventListener('mouseleave', () => { if (hasHover && tablePopupEl === col) hideTablePopup(); });
+    if (isFirstDemorasEnObra) demorasTableUsed = true;
+    const detailRows = item.type === 'navy' ? null : (isFirstDemorasEnObra ? TABLE_DEMORAS_GENERAL : wfDetailRows(item, idx));
+    if (detailRows){
+      col.addEventListener('mouseenter', () => { if (hasHover) showTablePopup(col, detailRows); });
+      col.addEventListener('mouseleave', () => { if (hasHover && tablePopupEl === col) scheduleHideTablePopup(); });
       col.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleWfSelection(item.label);
         if (!hasHover){
-          if (tablePopupEl === col){ hideTablePopup(); } else { showTablePopup(col, TABLE_DEMORAS_GENERAL); }
+          if (tablePopupEl === col){ hideTablePopup(); } else { showTablePopup(col, detailRows); }
         }
       });
     } else {
@@ -3675,6 +4017,11 @@ window.addEventListener('resize', () => {
 });
 window.addEventListener('orientationchange', fitBoardH);
 fitBoardH();
+/* Si el alto del tablero cambia (p. ej. al terminar de dibujar gráficas),
+   se recalcula el espacio reservado para que el scroll de página lo cubra entero. */
+if (typeof ResizeObserver !== 'undefined'){
+  new ResizeObserver(() => { if (stageH.style.display !== 'none') fitBoardH(); }).observe(boardWrapH);
+}
 initHistorico();
 
 
@@ -3682,6 +4029,7 @@ initHistorico();
    Manual conjunto: elegir manual + navegación cruzada entre RT <-> Histórico
    ========================================================================= */
 function showRT(){
+  applySemaforos();
   document.getElementById('stageH').style.display = 'none';
   document.getElementById('stage').style.display = '';
   document.getElementById('pageHeaderTitle').firstChild.textContent = 'Eureka ';
@@ -3691,11 +4039,12 @@ function showRT(){
   fitBoard();
 }
 function showHistorico(){
+  applySemaforos();
   document.getElementById('stage').style.display = 'none';
   document.getElementById('stageH').style.display = '';
   document.getElementById('pageHeaderTitle').firstChild.textContent = 'Eureka ';
   document.getElementById('pageHeaderBadge').textContent = 'Histórico';
-  document.getElementById('pageHeaderSub').textContent = 'Usa la barra deslizante de la derecha para recorrer las 3 secciones del tablero. Pasa el cursor sobre cualquier tarjeta, barra o punto (o tócalo en móvil) para ver qué significa.';
+  document.getElementById('pageHeaderSub').textContent = 'Desplázate hacia abajo para recorrer las 3 secciones del tablero. Pasa el cursor sobre cualquier tarjeta, barra o punto (o tócalo en móvil) para ver qué significa.';
   hideTooltip(); hideChartTooltipH(); hideTablePopup();
   fitBoardH();
 }
@@ -3737,6 +4086,13 @@ document.getElementById('btnChooseH').addEventListener('click', () => {
     showHistorico();
   });
 });
+document.querySelectorAll('[data-ph-back]').forEach(btn => btn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  hideTooltip(); hideChartTooltipH(); hideTablePopup();
+  document.getElementById('appContent').style.display = 'none';
+  document.getElementById('chooseManualScreen').style.display = '';
+  window.scrollTo(0, 0);
+}));
 document.getElementById('btnEurekaHistoricoNav').addEventListener('click', (e) => {
   e.stopPropagation();
   showHistorico();

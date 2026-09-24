@@ -197,6 +197,22 @@
     .uc-card{padding:30px 24px;}
   }
 </style>
+<style>
+  /* ---------- Botón "atrás" en el encabezado de cada tablero ---------- */
+  .page-header{position:relative;padding-left:78px !important;}
+  .ph-back{
+    position:absolute;left:22px;top:50%;transform:translateY(-50%);
+    width:40px;height:40px;border-radius:50%;border:1px solid #e2e7f2;background:#fff;
+    color:#1a1a8c;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(16,16,102,.10);transition:background .15s,color .15s;
+  }
+  .ph-back:hover{background:#101066;color:#fff;}
+  @media (max-width:600px){
+    .page-header{padding-left:62px !important;}
+    .ph-back{left:12px;width:36px;height:36px;font-size:16px;}
+  }
+</style>
 </head>
 <body>
 
@@ -255,6 +271,7 @@
 
 <div id="appContent">
   <div class="page-header">
+    <button type="button" class="ph-back" data-ph-back aria-label="Volver" title="Volver a ¿Qué quieres consultar?">←</button>
     <p class="cx-ph-eyebrow">Manual interactivo</p>
     <h1>Locombo <span class="badge">En construcción</span></h1>
     <p>Estamos construyendo este manual — muy pronto vas a poder recorrerlo paso a paso.</p>
@@ -323,10 +340,11 @@ document.getElementById('btnChooseTablero').addEventListener('click', () => {
     duration: 5000
   }, () => openUnderConstruction('Tablero Locombo'));
 });
-document.getElementById('btnUcBack').addEventListener('click', () => {
+document.querySelectorAll('#btnUcBack, [data-ph-back]').forEach(btn => btn.addEventListener('click', () => {
   document.getElementById('appContent').style.display = 'none';
-  document.getElementById('chooseManualScreen').style.display = 'flex';
-});
+  document.getElementById('chooseManualScreen').style.display = '';
+  window.scrollTo(0, 0);
+}));
 </script>
 </body>
 </html>

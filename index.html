@@ -161,10 +161,6 @@
   <header class="cx-topbar">
     <div class="cx-topbar-inner">
       <div class="cx-brand"><img src="Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones" class="cx-brand-logo"></div>
-      <div class="cx-topbar-search">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" id="cxSearchTop" placeholder="Buscar una herramienta o manual...">
-      </div>
     </div>
   </header>
 
@@ -300,17 +296,14 @@ document.querySelectorAll('.cx-tool-card').forEach(btn => {
   });
 });
 
-/* ---------------- Buscador de herramientas (barra del hero + barra superior) ---------------- */
+/* ---------------- Buscador de herramientas (barra del hero) ---------------- */
 const cxSearchInput = document.getElementById('cxSearch');
-const cxSearchTop = document.getElementById('cxSearchTop');
 const cxToolWraps = Array.from(document.querySelectorAll('.cx-tool-card-wrap'));
 const cxEmptyState = document.getElementById('cxEmptyState');
 let showingFavsOnly = false;
 
 function applyFilters(source){
-  const q = (source === cxSearchTop ? cxSearchTop.value : cxSearchInput.value).trim().toLowerCase();
-  if (source === cxSearchTop) cxSearchInput.value = cxSearchTop.value;
-  else cxSearchTop.value = cxSearchInput.value;
+  const q = cxSearchInput.value.trim().toLowerCase();
 
   const favs = getFavs();
   let visibleCount = 0;
@@ -330,7 +323,6 @@ function applyFilters(source){
   cxEmptyState.style.display = visibleCount === 0 ? 'block' : 'none';
 }
 cxSearchInput.addEventListener('input', () => applyFilters(cxSearchInput));
-cxSearchTop.addEventListener('input', () => applyFilters(cxSearchTop));
 
 /* ---------------- Favoritos (localStorage, solo en este navegador) ---------------- */
 const FAV_KEY = 'cxFavorites';
@@ -367,7 +359,7 @@ function setActiveSide(link){
 }
 sideInicio.addEventListener('click', () => {
   showingFavsOnly = false;
-  cxSearchInput.value = ''; cxSearchTop.value = '';
+  cxSearchInput.value = '';
   applyFilters(cxSearchInput);
   setActiveSide(sideInicio);
   window.scrollTo({ top: 0, behavior: 'smooth' });

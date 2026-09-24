@@ -281,7 +281,7 @@
     width:100%;padding:11px 16px;border-radius:24px;border:1px solid #dde1ec;background:#f3f4f8;
     font-size:13.5px;font-family:inherit;margin-bottom:12px;
   }
-  .plate-list{max-height:560px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px;}
+  .plate-list{max-height:520px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px;}
   .plate-list::-webkit-scrollbar{width:7px;}
   .plate-list::-webkit-scrollbar-thumb{background:#c7cbe0;border-radius:4px;}
   .plate-card{
@@ -469,6 +469,111 @@
     .plate-panel{flex:1 1 auto;}
     .section-body{grid-template-columns:1fr;}
   }
+
+  /* ---------- Rol programador: elementos visibles solo con ese rol ---------- */
+  #frameWrap:not(.role-prog) .prog-only{display:none !important;}
+  .construccion-img{height:340px;width:auto;max-width:100%;margin-bottom:6px;}
+
+  /* ---------- Nueva solicitud: tipo de placa (MIXER / BOMBA) ---------- */
+  .plate-type-row{display:flex;align-items:center;justify-content:center;gap:18px;margin:0 0 12px;}
+  .plate-type-row .ptr-label{font-weight:800;color:var(--navy);font-size:14px;}
+  .plate-card .pc-status.noop{color:#b88a00;}
+  .plate-card .pc-status.noop .dot{background:#f2c200;}
+
+  /* ---------- Mis Solicitudes: MIXER / BOMBA + contadores + botón programador ---------- */
+  .msol-clase{display:flex;gap:16px;margin:0 6px;}
+  .msol-counts{color:#3a4260;font-weight:500;font-size:13px;margin-left:12px;}
+  table.tickets-table td:nth-child(6),table.tickets-table td:nth-child(8),table.tickets-table td:nth-child(9){white-space:normal;min-width:110px;max-width:160px;line-height:1.3;}
+  .icon-round-btn.cal-btn{background:#f07a1a;}
+  .icon-round-btn.cal-btn:hover{background:#d9650a;}
+  .status-rechazado{border-color:#b4474e;color:#8a1c22;background:#f7e3e4;}
+
+  /* ---------- Gestor de novedades (rol programador) ---------- */
+  .gestor-top{display:flex;align-items:center;gap:12px;padding:10px 16px 10px 76px;border-bottom:1px solid var(--divider);min-height:78px;}
+  .gestor-icon{width:40px;height:40px;border-radius:50%;background:#4a55d6;color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:help;}
+  .gestor-icon svg{width:20px;height:20px;}
+  .gestor-title{font-weight:800;color:#1010a8;font-size:19px;line-height:1.1;width:118px;flex:0 0 auto;cursor:help;}
+  .gestor-title small{display:block;font-size:11px;color:#6b6f9a;font-weight:700;margin-top:4px;letter-spacing:.3px;}
+  .stage-radios{display:flex;gap:10px;flex:1;min-width:0;}
+  .radio-opt.stage-radio{font-size:12px;font-weight:500;color:#333;gap:5px;white-space:nowrap;}
+  .radio-opt.stage-radio .radio-dot{width:15px;height:15px;}
+  .radio-opt.stage-radio .radio-dot::after{width:7px;height:7px;}
+  .radio-opt.stage-radio .sr-text{max-width:60px;overflow:hidden;text-overflow:ellipsis;}
+  .radio-opt.stage-radio.checked .sr-text{color:#1010a8;font-weight:700;}
+  .gestor-flt{display:flex;flex-direction:column;gap:3px;flex:0 0 auto;}
+  .gestor-flt-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;}
+  .gestor-flt-head b{color:#111;cursor:help;}
+  .gestor-flt-head button{background:none;border:none;color:#8b909c;font-size:12.5px;cursor:pointer;font-family:inherit;padding:0;}
+  .gestor-flt-head button:hover{color:var(--blue);}
+  .gestor-flt select{width:118px;padding:6px 10px;border-radius:16px;border:1.5px solid #555;background:#fff;font-size:12px;font-family:inherit;cursor:pointer;}
+  .gestor-top img.tb-logo{height:18px;width:auto;}
+  .gestor-body{display:flex;gap:14px;padding:12px 14px 12px 74px;height:656px;}
+  .gestor-list-panel{flex:0 0 250px;display:flex;flex-direction:column;gap:10px;min-height:0;}
+  .gestor-search-card{border:1px solid var(--card-border);border-radius:18px;padding:10px 14px 12px;text-align:center;box-shadow:var(--shadow);}
+  .gestor-search-card h4{margin:0 0 6px;color:#1010a8;font-size:16px;cursor:help;}
+  .gestor-search{width:100%;padding:7px 14px;border-radius:16px;border:none;background:#d9dde3;font-size:12.5px;font-family:inherit;text-align:center;}
+  .gestor-list{flex:1;min-height:0;overflow-y:auto;border:1px solid var(--card-border);border-radius:18px;padding:10px;box-shadow:var(--shadow);}
+  .gestor-list::-webkit-scrollbar,.gestor-content::-webkit-scrollbar{width:7px;}
+  .gestor-list::-webkit-scrollbar-thumb,.gestor-content::-webkit-scrollbar-thumb{background:#c7cbe0;border-radius:4px;}
+  .g-card{background:#f6f7fa;border:1px solid #e3e6ee;border-radius:10px;padding:9px 12px;margin-bottom:10px;cursor:pointer;transition:border-color .12s;}
+  .g-card:hover{border-color:#c7d4f5;}
+  .g-card.selected{background:#b3dfe5;border-color:#9fd2d9;}
+  .g-card .gc-top{display:flex;justify-content:space-between;align-items:center;gap:6px;font-weight:700;font-size:15px;color:#111;}
+  .g-card .gc-status{font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+  .g-card .gc-status .dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;}
+  .g-card .gc-meta{font-size:12.5px;color:#7a808c;line-height:1.55;margin-top:2px;}
+  .g-card .gc-user{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:10.5px;color:#555;}
+  .g-card .gc-avatar{width:24px;height:24px;border-radius:50%;background:#5b54e0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex:0 0 auto;}
+  .gestor-main{flex:1;min-width:0;display:flex;flex-direction:column;border:1px solid var(--card-border);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);}
+  .gestor-content{flex:1;min-height:0;overflow-y:auto;padding:12px 14px;}
+  .g-stage-wrap{display:flex;gap:12px;align-items:stretch;}
+  .g-stage-main{flex:1;min-width:0;}
+  .g-side-box{flex:0 0 170px;border:1px solid var(--card-border);border-radius:22px;box-shadow:var(--shadow);min-height:420px;cursor:help;}
+  .g-title-pill{background:#fff;border:1px solid #e3e6ee;border-radius:22px;box-shadow:0 2px 6px rgba(20,30,60,.12);text-align:center;font-weight:800;color:#1010a8;font-size:19px;padding:6px;margin-bottom:10px;cursor:help;}
+  .g-sub-pill{display:table;margin:0 auto 8px;background:#fff;border:1px solid #e3e6ee;border-radius:14px;box-shadow:0 1px 4px rgba(20,30,60,.10);font-weight:800;color:#1010a8;font-size:14px;padding:2px 50px;}
+  .g-block{background:#f3f4f6;border-radius:14px;padding:8px 14px 12px;margin-bottom:10px;}
+  .g-block.grey{background:#e6e8eb;}
+  .g-info{text-align:center;color:#1010a8;font-size:11.5px;line-height:1.7;}
+  .g-info.left{text-align:left;line-height:1.55;}
+  .g-info .gi-head{font-weight:800;font-size:13px;}
+  .g-info .gi-strong{font-weight:700;}
+  .g-info .gi-muted{color:#666;font-size:10.5px;}
+  .g-info .gi-italic{font-style:italic;font-size:10.5px;}
+  .g-attach{background:#fff;border:1px solid #3b3b8f;border-radius:4px;padding:8px 14px;font-size:14px;color:#111;margin-top:4px;text-align:left;}
+  .g-grid{display:grid;gap:8px 12px;}
+  .g-grid.c4{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .g-grid.c3{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .g-grid.c2{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .g-field{min-width:0;}
+  .g-field.span2{grid-column:span 2;}
+  .g-field.spanall{grid-column:1/-1;}
+  .g-field label{display:block;font-weight:700;color:#1010a8;font-size:11px;margin-bottom:3px;}
+  .g-field input,.g-field select,.g-field textarea{width:100%;padding:7px 10px;border-radius:8px;border:1px solid #e6e8ee;background:#fff;font-size:12px;font-family:inherit;color:#333;}
+  .g-field textarea{resize:vertical;min-height:40px;}
+  .g-field select{cursor:pointer;}
+  .g-ro{min-height:30px;padding:7px 10px;border-radius:8px;background:#eceef1;font-size:12px;color:#333;}
+  .g-ro.strong{background:none;padding:2px 0;font-weight:800;color:#1010a8;font-size:13px;min-height:0;}
+  .g-dark .g-field label{color:#222;font-size:12.5px;}
+  .g-dark .g-field input,.g-dark .g-field select,.g-dark .g-field textarea{background:#f4f5f7;border-color:#f4f5f7;padding:9px 12px;}
+  .g-dark .g-field{margin-bottom:4px;}
+  .g-time-row{display:flex;align-items:center;gap:6px;}
+  .g-time-row input{flex:1.6;min-width:0;}
+  .g-time-row select{flex:1;min-width:0;}
+  .g-sec-bar{grid-column:1/-1;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(20,30,60,.12);padding:3px 8px;font-weight:700;color:#1010a8;font-size:12px;}
+  .g-computed{font-weight:700;color:#1010a8;font-size:11px;line-height:1.35;padding-top:4px;}
+  .g-prog-cols{display:grid;grid-template-columns:0.95fr 1.1fr 1.5fr;gap:6px;}
+  .g-prog-cols .g-block{margin-bottom:0;padding:6px 8px 10px;}
+  .g-prog-cols .g-sub-pill{padding:2px 14px;font-size:13.5px;}
+  .g-center-form{text-align:center;}
+  .g-center-form .gcf-label{font-weight:800;color:#1010a8;font-size:16px;margin:14px 0 6px;}
+  .g-center-form .gcf-value{background:#f4f5f7;border-radius:16px;padding:7px;font-size:13px;color:#222;}
+  .g-center-form textarea{width:100%;min-height:60px;border-radius:26px;border:none;background:#f4f5f7;padding:12px 18px;font-family:inherit;font-size:13px;resize:vertical;}
+  .g-empty{text-align:center;color:#8b93a8;font-size:13px;padding:30px 14px;line-height:1.5;}
+  .g-warn{display:none;color:#c0272d;font-size:12px;text-align:center;font-weight:700;padding:6px 14px;}
+  .g-enviar{border:none;width:100%;padding:9px;font-size:17px;font-weight:800;font-family:inherit;background:#0a0aa8;color:#fff;border-radius:22px 22px 0 0;cursor:pointer;flex:0 0 auto;}
+  .g-enviar:hover:not(:disabled){background:#08087f;}
+  .g-enviar:disabled{background:#eceef1;color:#9aa0b0;cursor:not-allowed;}
+  .g-enviar.hidden{display:none;}
 
   /* ---------- tooltip (identical pattern to other manuals) ---------- */
   #tooltip{
@@ -947,6 +1052,22 @@
     .page-header{padding:14px 16px;}
   }
 </style>
+<style>
+  /* ---------- Botón "atrás" en el encabezado de cada tablero ---------- */
+  .page-header{position:relative;padding-left:78px !important;}
+  .ph-back{
+    position:absolute;left:22px;top:50%;transform:translateY(-50%);
+    width:40px;height:40px;border-radius:50%;border:1px solid #e2e7f2;background:#fff;
+    color:#1a1a8c;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(16,16,102,.10);transition:background .15s,color .15s;
+  }
+  .ph-back:hover{background:#101066;color:#fff;}
+  @media (max-width:600px){
+    .page-header{padding-left:62px !important;}
+    .ph-back{left:12px;width:36px;height:36px;font-size:16px;}
+  }
+</style>
 </head>
 <body>
 
@@ -1006,6 +1127,7 @@
 <div id="appContent">
 
 <div class="page-header" id="pageHeaderApp">
+  <button type="button" class="ph-back" data-ph-back aria-label="Volver" title="Volver a ¿Qué quieres consultar?">←</button>
   <p class="cx-ph-eyebrow">Manual interactivo</p>
   <h1>Orion <span class="badge">App de mantenimiento automotriz</span></h1>
   <p>Pasa el cursor sobre cualquier botón, campo o ícono (o tócalo en móvil) para ver su explicación. Navega la app tal como lo harías en la vida real.</p>
@@ -1013,6 +1135,7 @@
 </div>
 
 <div class="page-header" id="pageHeaderTablero" style="display:none;">
+  <button type="button" class="ph-back" data-ph-back aria-label="Volver" title="Volver a ¿Qué quieres consultar?">←</button>
   <p class="cx-ph-eyebrow">Manual interactivo</p>
   <h1>Tablero Orion <span class="badge">Indicadores de gestión</span></h1>
   <p>Pasa el cursor sobre cualquier tarjeta, gráfico, filtro o botón (o tócalo en móvil) para ver su explicación. Navega el tablero tal como lo harías en la vida real.</p>
@@ -1064,7 +1187,7 @@
           <h3>Navegación libre</h3>
           <p>Accede a cualquier módulo y explora la app a tu ritmo, como en la vida real.</p>
         </button>
-        <button type="button" class="role-btn navmode-btn hotspot" id="btnNavGuiada" data-go="screenGuidedMenu"
+        <button type="button" class="role-btn navmode-btn hotspot" id="btnNavGuiada"
           data-tip-title="Navegación guiada"
           data-tip-text="Elige una pregunta frecuente y te vamos guiando, paso a paso, indicándote exactamente dónde hacer clic.">
           <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="#241fb0" stroke-width="1.6"><path d="M9 18l6-6-6-6"/><circle cx="12" cy="12" r="10"/></svg>
@@ -1104,6 +1227,20 @@
           </span>
         </button>
       </div>
+    </div>
+  </section>
+
+  <!-- ================= GUIDED (programadores) — EN CONSTRUCCIÓN ================= -->
+  <section class="app-screen" id="screenGuidedProg">
+    <div class="role-screen" style="position:relative;">
+      <button type="button" class="navmode-back hotspot" data-go="screenNavMode"
+        data-tip-title="Regresar" data-tip-text="Vuelve a elegir el modo de navegación.">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <img class="construccion-img" src="../Recursos/Construccion.png" alt="En construcción">
+      <h2>Navegación guiada para programadores</h2>
+      <p class="sub">Estamos construyendo los recorridos guiados del rol programador. Mientras tanto, puedes explorar todas sus secciones (Gestor de novedades de mixers y de bombas) en la navegación libre.</p>
+      <button type="button" class="btn-comenzar" data-go="screenLogin">Ir a navegación libre →</button>
     </div>
   </section>
 
@@ -1164,6 +1301,18 @@
         <button type="button" class="sb-item" data-go="screenMisChats">
           <svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>
           <span class="sb-label">Mis chats</span>
+        </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="mixer"
+          data-tip-title="Programador"
+          data-tip-text="Solo para el rol programador. Abre el Gestor de novedades con las solicitudes de MIXERS: ahí se gestiona cada ticket por etapas (En espera, Programación, Entrada, Salida, Cierre técnico o Rechazado).">
+          <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M8 14h8M8 17h5"/></svg>
+          <span class="sb-label">Programador</span>
+        </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="bomba"
+          data-tip-title="Programador bomba"
+          data-tip-text="Solo para el rol programador. Es el mismo Gestor de novedades, pero únicamente con las solicitudes de BOMBAS.">
+          <svg viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M9 8v2M9 12v2M9 16v1"/></svg>
+          <span class="sb-label">Programador bomba</span>
         </button>
       </nav>
       <div class="sb-foot">
@@ -1248,6 +1397,18 @@
           <svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>
           <span class="sb-label">Mis chats</span>
         </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="mixer"
+          data-tip-title="Programador"
+          data-tip-text="Solo para el rol programador. Abre el Gestor de novedades con las solicitudes de MIXERS: ahí se gestiona cada ticket por etapas (En espera, Programación, Entrada, Salida, Cierre técnico o Rechazado).">
+          <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M8 14h8M8 17h5"/></svg>
+          <span class="sb-label">Programador</span>
+        </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="bomba"
+          data-tip-title="Programador bomba"
+          data-tip-text="Solo para el rol programador. Es el mismo Gestor de novedades, pero únicamente con las solicitudes de BOMBAS.">
+          <svg viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M9 8v2M9 12v2M9 16v1"/></svg>
+          <span class="sb-label">Programador bomba</span>
+        </button>
       </nav>
       <div class="sb-foot">
         <div class="avatar-circle" style="width:28px;height:28px;font-size:11px;">ER</div>
@@ -1271,6 +1432,13 @@
           data-tip-title="Ingresa la placa del vehículo"
           data-tip-text="Busca y selecciona la mixer o camión al que le vas a crear la solicitud. Puedes escribir la placa para filtrar la lista.">Ingresa la placa del vehículo 🔍</h4>
         <input type="text" class="plate-search" id="plateSearch" placeholder="Ingresa la placa o CR del vehículo 🔍">
+        <div class="plate-type-row" id="plateTypeRow">
+          <span class="ptr-label hotspot" tabindex="0"
+            data-tip-title="Tipo de placa"
+            data-tip-text="Elige si la solicitud es para una MIXER (camión mezclador) o para una BOMBA. La lista de placas de abajo cambia según lo que elijas.">Tipo de placa:</span>
+          <label class="radio-opt checked" data-clase="mixer"><span class="radio-dot"></span> MIXER</label>
+          <label class="radio-opt" data-clase="bomba"><span class="radio-dot"></span> BOMBA</label>
+        </div>
         <div class="plate-list" id="plateList"></div>
       </div>
 
@@ -1375,6 +1543,18 @@
           <svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>
           <span class="sb-label">Mis chats</span>
         </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="mixer"
+          data-tip-title="Programador"
+          data-tip-text="Solo para el rol programador. Abre el Gestor de novedades con las solicitudes de MIXERS: ahí se gestiona cada ticket por etapas (En espera, Programación, Entrada, Salida, Cierre técnico o Rechazado).">
+          <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M8 14h8M8 17h5"/></svg>
+          <span class="sb-label">Programador</span>
+        </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="bomba"
+          data-tip-title="Programador bomba"
+          data-tip-text="Solo para el rol programador. Es el mismo Gestor de novedades, pero únicamente con las solicitudes de BOMBAS.">
+          <svg viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M9 8v2M9 12v2M9 16v1"/></svg>
+          <span class="sb-label">Programador bomba</span>
+        </button>
       </nav>
       <div class="sb-foot">
         <div class="avatar-circle" style="width:28px;height:28px;font-size:11px;">ER</div>
@@ -1383,7 +1563,9 @@
     </div>
 
     <div class="topbar" style="padding-left:88px;">
-      <div class="tb-left">Mis Solicitudes &nbsp;<span style="color:#77809a;font-weight:500;font-size:13px;">Registros cargados: <span id="misSolCount">0</span></span></div>
+      <div class="tb-left">Mis Solicitudes <span class="msol-counts hotspot" tabindex="0"
+        data-tip-title="Contadores"
+        data-tip-text="Registros cargados: solicitudes que se ven en la tabla con los filtros actuales. Tickets bombas / Tickets Mixer: total de solicitudes de cada tipo de placa.">Registros cargados: <span id="misSolCount">0</span> &nbsp;&nbsp; Tickets bombas: <span id="misSolBombas">0</span> &nbsp;&nbsp; Tickets Mixer: <span id="misSolMixers">0</span></span></div>
       <div style="display:flex;align-items:center;gap:14px;">
         <button type="button" class="pill-btn indicadores hotspot" data-tip-title="Indicadores"
           data-tip-text="Lleva al tablero de Power BI con los indicadores de gestión de Orion.">Indicadores ⟳</button>
@@ -1399,6 +1581,12 @@
       <div class="msol-main">
         <div class="msol-head">
           <h2>Detalle de solicitudes</h2>
+          <div class="msol-clase" id="misSolClaseRow">
+            <label class="radio-opt checked hotspot" data-msclase="mixer"
+              data-tip-title="MIXER" data-tip-text="Muestra en la tabla solo las solicitudes de mixers."><span class="radio-dot"></span> MIXER</label>
+            <label class="radio-opt hotspot" data-msclase="bomba"
+              data-tip-title="BOMBA" data-tip-text="Muestra en la tabla solo las solicitudes de bombas."><span class="radio-dot"></span> BOMBA</label>
+          </div>
           <button type="button" class="pill-solid-green hotspot" data-tip-title="Centro"
             data-tip-text="Indica el grupo de plantas que gestiona tu usuario. Un programador de Centro ve las plantas de Bogotá; uno de Externas vería las plantas fuera de Bogotá.">Centro</button>
           <button type="button" class="pill-outline hotspot" id="btnSortRecent"
@@ -1525,13 +1713,13 @@
           <div class="imc-right">
             <div class="imc-bar">Gestor Ticket</div>
             <div class="gestor-grid">
-              <div><div class="gg-label">Orden de trabajo</div><div class="gg-value">—</div></div>
-              <div><div class="gg-label">Orden de aviso</div><div class="gg-value">—</div></div>
-              <div><div class="gg-label">Estatus</div><div class="gg-value">—</div></div>
-              <div><div class="gg-label">Ing. responsable</div><div class="gg-value">—</div></div>
-              <div><div class="gg-label">Plan. responsable</div><div class="gg-value">—</div></div>
+              <div><div class="gg-label">Orden de trabajo</div><div class="gg-value" id="imgOT">—</div></div>
+              <div><div class="gg-label">Orden de aviso</div><div class="gg-value" id="imgAviso">—</div></div>
+              <div><div class="gg-label">Estatus</div><div class="gg-value" id="imgEstatus">—</div></div>
+              <div><div class="gg-label">Ing. responsable</div><div class="gg-value" id="imgIng">—</div></div>
+              <div><div class="gg-label">Plan. responsable</div><div class="gg-value" id="imgPlan">—</div></div>
             </div>
-            <div class="gestor-comment"><div class="gg-label">Comentarios</div><div class="gg-value">Sin comentarios registrados.</div></div>
+            <div class="gestor-comment"><div class="gg-label">Comentarios</div><div class="gg-value" id="imgComent">Sin comentarios registrados.</div></div>
           </div>
         </div>
       </div>
@@ -1565,6 +1753,18 @@
         <button type="button" class="sb-item active" data-go="screenMisChats">
           <svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>
           <span class="sb-label">Mis chats</span>
+        </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="mixer"
+          data-tip-title="Programador"
+          data-tip-text="Solo para el rol programador. Abre el Gestor de novedades con las solicitudes de MIXERS: ahí se gestiona cada ticket por etapas (En espera, Programación, Entrada, Salida, Cierre técnico o Rechazado).">
+          <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M8 14h8M8 17h5"/></svg>
+          <span class="sb-label">Programador</span>
+        </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="bomba"
+          data-tip-title="Programador bomba"
+          data-tip-text="Solo para el rol programador. Es el mismo Gestor de novedades, pero únicamente con las solicitudes de BOMBAS.">
+          <svg viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M9 8v2M9 12v2M9 16v1"/></svg>
+          <span class="sb-label">Programador bomba</span>
         </button>
       </nav>
       <div class="sb-foot">
@@ -1617,6 +1817,96 @@
         <h3>🎉 ¡Listo!</h3>
         <p>Ya sabes cómo revisar tus solicitudes en Orion: filtrar por planta, ver el resumen de una solicitud y chatear con el programador encargado.</p>
         <button type="button" class="btn-comenzar" id="btnTourFinish2" style="padding:12px 30px;font-size:14px;">Finalizar recorrido</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GESTOR DE NOVEDADES (rol programador: mixers / bombas) ================= -->
+  <section class="app-screen" id="screenGestor">
+    <div class="sidebar-backdrop"></div>
+    <div class="sidebar" id="sidebarGestor">
+      <div class="sb-head">
+        <img alt="Orion">
+        <span class="sb-brand">Orion</span>
+        <button type="button" class="sb-toggle hotspot" id="sbToggleGestor"
+          data-tip-title="Menú lateral"
+          data-tip-text="Brinda acceso rápido a los módulos de Orion. Un clic lo despliega, un clic lo vuelve a cerrar.">»</button>
+      </div>
+      <nav class="sb-nav">
+        <button type="button" class="sb-item" data-go="screenFeed">
+          <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h5v-5h2v5h5v-9"/></svg>
+          <span class="sb-label">Home</span>
+        </button>
+        <button type="button" class="sb-item" data-open-modal="1">
+          <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM8.5 12.5l2 2 4-4"/></svg>
+          <span class="sb-label">Nueva solicitud</span>
+        </button>
+        <button type="button" class="sb-item" data-go="screenMisSolicitudes">
+          <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg>
+          <span class="sb-label">Mis solicitudes</span>
+        </button>
+        <button type="button" class="sb-item" data-go="screenMisChats">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>
+          <span class="sb-label">Mis chats</span>
+        </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="mixer"
+          data-tip-title="Programador"
+          data-tip-text="Solo para el rol programador. Abre el Gestor de novedades con las solicitudes de MIXERS: ahí se gestiona cada ticket por etapas (En espera, Programación, Entrada, Salida, Cierre técnico o Rechazado).">
+          <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M8 14h8M8 17h5"/></svg>
+          <span class="sb-label">Programador</span>
+        </button>
+        <button type="button" class="sb-item prog-only hotspot" data-gestor="bomba"
+          data-tip-title="Programador bomba"
+          data-tip-text="Solo para el rol programador. Es el mismo Gestor de novedades, pero únicamente con las solicitudes de BOMBAS.">
+          <svg viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M9 8v2M9 12v2M9 16v1"/></svg>
+          <span class="sb-label">Programador bomba</span>
+        </button>
+      </nav>
+      <div class="sb-foot">
+        <div class="avatar-circle" style="width:28px;height:28px;font-size:11px;">ER</div>
+        <span class="sb-user">Eduardo Rico</span>
+      </div>
+    </div>
+
+    <div class="gestor-top">
+      <div class="gestor-icon hotspot" tabindex="0"
+        data-tip-title="Gestor de novedades"
+        data-tip-text="Módulo exclusivo del rol programador. Aquí se gestiona cada ticket a lo largo de todo el proceso: desde que el usuario general lo crea (Abierto) hasta su cierre técnico.">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 10h8M8 14h5"/></svg>
+      </div>
+      <div class="gestor-title hotspot" tabindex="0" id="gestorTitle"
+        data-tip-title="Gestor de novedades"
+        data-tip-text="Mixers y bombas usan exactamente el mismo gestor; la única diferencia es qué solicitudes aparecen (Programador = mixers, Programador bomba = bombas).">Gestor de novedades<small id="gestorClaseLabel">MIXERS</small></div>
+      <div class="stage-radios" id="stageRadios"></div>
+      <div class="gestor-flt">
+        <div class="gestor-flt-head"><b class="hotspot" tabindex="0" data-tip-title="Planta" data-tip-text="Filtra la lista de tickets de la izquierda por planta.">Planta</b><button type="button" id="gClearPlanta">Limpiar</button></div>
+        <select id="gFltPlanta"></select>
+      </div>
+      <div class="gestor-flt">
+        <div class="gestor-flt-head"><b class="hotspot" tabindex="0" data-tip-title="Estatus" data-tip-text="Por defecto cada etapa muestra los tickets que están listos para ella (por ejemplo, En Programación muestra los tickets En Espera). Con este filtro puedes ver tickets de cualquier otro estatus.">Estatus</b><button type="button" id="gClearEstatus">Limpiar</button></div>
+        <select id="gFltEstatus"></select>
+      </div>
+      <button type="button" class="icon-circle-btn hotspot" id="gRefresh" data-tip-title="Actualizar"
+        data-tip-text="Vuelve a cargar la lista de tickets con la información más reciente.">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 11A8 8 0 1 0 19 15M20 5v6h-6"/></svg>
+      </button>
+      <img class="tb-logo" alt="CEMEX Desarrollo de Operaciones">
+    </div>
+
+    <div class="gestor-body">
+      <div class="gestor-list-panel">
+        <div class="gestor-search-card">
+          <h4 class="hotspot" tabindex="0" data-tip-title="Ingresa el Ticket" data-tip-text="Busca un ticket escribiendo su número o la placa del vehículo.">Ingresa el Ticket</h4>
+          <input type="text" class="gestor-search" id="gSearch" placeholder="Ingresa el ticket 🔍">
+        </div>
+        <div class="gestor-list" id="gList"></div>
+      </div>
+      <div class="gestor-main">
+        <div class="gestor-content" id="gContent"></div>
+        <div class="g-warn" id="gWarn"></div>
+        <button type="button" class="g-enviar hotspot" id="gEnviar"
+          data-tip-title="Enviar"
+          data-tip-text="Guarda la gestión del ticket y lo pasa a la siguiente etapa del proceso. El cambio de estatus también se ve en Mis solicitudes.">Enviar</button>
       </div>
     </div>
   </section>
@@ -2057,11 +2347,22 @@ function goToScreen(id){
   if (id === 'screenMisSolicitudes'){ renderTicketsTable(); tourNotify('misSolShown'); }
   if (id === 'screenMisChats'){ selectChatTicket(currentChatTicket || TICKETS[0].ticket); tourNotify('chatOpened'); }
   if (id === 'screenFeed'){ tourNotify('feedShown'); }
+  if (id === 'screenGestor'){ renderGestor(); }
   if (tourState.active) tourReposition();
 }
 
-document.getElementById('roleGeneral').addEventListener('click', () => goToScreen('screenNavMode'));
-document.getElementById('roleProgramador').addEventListener('click', () => goToScreen('screenNavMode'));
+/* Rol activo: el programador ve la misma app + secciones extra (.prog-only) */
+let currentRole = 'general';
+function setRole(role){
+  currentRole = role;
+  frameWrap.classList.toggle('role-prog', role === 'programador');
+}
+document.getElementById('roleGeneral').addEventListener('click', () => { setRole('general'); goToScreen('screenNavMode'); });
+document.getElementById('roleProgramador').addEventListener('click', () => { setRole('programador'); goToScreen('screenNavMode'); });
+// Navegación guiada: usuario general → preguntas frecuentes; programador → en construcción
+document.getElementById('btnNavGuiada').addEventListener('click', () => {
+  goToScreen(currentRole === 'programador' ? 'screenGuidedProg' : 'screenGuidedMenu');
+});
 document.getElementById('btnIngresar').addEventListener('click', () => {
   goToScreen('screenLoading');
   tourNotify('ingresarClicked');
@@ -2099,6 +2400,7 @@ wireSidebar('sidebarFeed','sbToggleFeed');
 wireSidebar('sidebarCreate','sbToggleCreate');
 wireSidebar('sidebarMisSol','sbToggleMisSol');
 wireSidebar('sidebarMisChats','sbToggleMisChats');
+wireSidebar('sidebarGestor','sbToggleGestor');
 
 /* ---------------- Modal ---------------- */
 const modalOverlay = document.getElementById('modalOverlay');
@@ -2150,20 +2452,28 @@ const PLATES = [
   {plate:'EQO701', cr:'CR-1852', eq:'11010911', plant:'FC13 - CXO PHC',   d1:'08/14/2025', d2:'08/14/2025', ticket:'MV015249'},
   {plate:'EQO702', cr:'CR-1853', eq:'11010920', plant:'FC13 - CXO PHC',   d1:'09/22/2025', d2:'09/22/2025', ticket:'MV015250'},
   {plate:'EQO704', cr:'CR-1856', eq:'11010927', plant:'FC22 - Ibague',    d1:'08/16/2025', d2:'08/16/2025', ticket:'MV015251'},
-  {plate:'EQO706', cr:'CR-1858', eq:'11010921', plant:'FC13 - CXO PHC',   d1:'08/06/2025', d2:'08/06/2025', ticket:'MV015252'}
+  {plate:'EQO706', cr:'CR-1858', eq:'11010921', plant:'FC13 - CXO PHC',   d1:'08/06/2025', d2:'08/06/2025', ticket:'MV015252'},
+  /* Bombas — transcritas de pro3.png / pro7.png (Recursos/OrionProgram) */
+  {clase:'bomba', plate:'BYA973', cr:'CR-2344', eq:'11005631', plant:'FB14 -',               d1:'02/06/2025', d2:'02/06/2025', noOp:true},
+  {clase:'bomba', plate:'BYA980', cr:'CR-2325', eq:'11005638', plant:'F066 - Floridablanca', d1:'09/14/2025', d2:'09/14/2025'},
+  {clase:'bomba', plate:'BYC862', cr:'BYC862',  eq:'11005640', plant:'FB25 - Rionegro',      d1:'03/10/2025', d2:'03/10/2025'},
+  {clase:'bomba', plate:'BYE845', cr:'CR-2340', eq:'11005648', plant:'FB25 - Rionegro',      d1:'03/04/2025', d2:'03/04/2025'},
+  {clase:'bomba', plate:'BYE848', cr:'CR-2323', eq:'11005651', plant:'FC26 -',               d1:'05/30/2025', d2:'05/30/2025', noOp:true},
+  {clase:'bomba', plate:'BYF331', cr:'CR-2348', eq:'11005654', plant:'FB25 - Rionegro',      d1:'03/13/2025', d2:'03/13/2025'}
 ];
 let selectedPlate = null;
+let plateClase = 'mixer';
 
 function renderPlateList(filter){
   const list = document.getElementById('plateList');
   const q = (filter||'').trim().toUpperCase();
-  const filtered = PLATES.filter(p => !q || p.plate.includes(q) || p.cr.toUpperCase().includes(q));
+  const filtered = PLATES.filter(p => (p.clase || 'mixer') === plateClase && (!q || p.plate.includes(q) || p.cr.toUpperCase().includes(q)));
   if (!filtered.length){ list.innerHTML = '<div class="plate-empty">No se encontraron placas.</div>'; return; }
   list.innerHTML = filtered.map(p => `
     <div class="plate-card${selectedPlate===p.plate?' selected':''}" data-plate="${p.plate}">
       <div class="pc-top"><span>${p.plate} - ${p.cr}</span><span class="pc-eq"># Equipo: ${p.eq}</span></div>
       <div class="pc-plant">Planta: ${p.plant}</div>
-      <div class="pc-bottom"><span class="pc-dates">${p.d1}&nbsp;&nbsp;${p.d2}</span><span class="pc-status"><span class="dot"></span>Operativo</span></div>
+      <div class="pc-bottom"><span class="pc-dates">${p.d1}&nbsp;&nbsp;${p.d2}</span><span class="pc-status${p.noOp ? ' noop' : ''}"><span class="dot"></span>${p.noOp ? 'NoOperativo' : 'Operativo'}</span></div>
     </div>
   `).join('');
   list.querySelectorAll('.plate-card').forEach(card => {
@@ -2175,13 +2485,38 @@ function selectPlate(plateCode){
   if (!p) return;
   selectedPlate = plateCode;
   renderPlateList(document.getElementById('plateSearch').value);
-  document.getElementById('fTicketId').textContent = p.ticket;
+  document.getElementById('fTicketId').textContent = nextTicketId(selectedType);
   document.getElementById('fPlanta').textContent = p.plant;
   document.getElementById('fPlaca').textContent = p.plate;
   updateSendState();
   tourNotify('plateSelected');
 }
 document.getElementById('plateSearch').addEventListener('input', (e) => renderPlateList(e.target.value));
+
+/* ---------------- Tipo de placa (MIXER / BOMBA) ---------------- */
+function clearPlateSelection(){
+  selectedPlate = null;
+  ['fTicketId','fPlanta','fPlaca'].forEach(id => document.getElementById(id).textContent = '—');
+  updateSendState();
+}
+function setPlateClase(clase){
+  plateClase = clase;
+  document.querySelectorAll('#plateTypeRow [data-clase]').forEach(o => o.classList.toggle('checked', o.getAttribute('data-clase') === clase));
+  const sel = PLATES.find(x => x.plate === selectedPlate);
+  if (sel && (sel.clase || 'mixer') !== clase) clearPlateSelection();
+  renderPlateList(document.getElementById('plateSearch').value);
+}
+document.querySelectorAll('#plateTypeRow [data-clase]').forEach(opt => {
+  opt.addEventListener('click', (e) => { e.stopPropagation(); setPlateClase(opt.getAttribute('data-clase')); });
+});
+
+/* Número de ticket: prefijo según el tipo (MV crítico, MC no crítico, DE despegue — igual que en la app) */
+const TICKET_PREFIX = {critico:'MV', nocritico:'MC', despegue:'DE'};
+function nextTicketId(type){
+  const prefix = TICKET_PREFIX[type] || 'MV';
+  const nums = TICKETS.filter(t => t.ticket.startsWith(prefix)).map(t => parseInt(t.ticket.slice(2), 10)).filter(n => !isNaN(n));
+  return prefix + String((nums.length ? Math.max(...nums) : 0) + 1).padStart(6, '0');
+}
 
 /* ---------------- Type row (radios) ---------------- */
 document.querySelectorAll('#createTypeRow [data-radio]').forEach(opt => {
@@ -2278,6 +2613,7 @@ function renderCreateForm(){
   wireDetailFieldEvents();
   document.getElementById('fDisponibilidad').textContent = DISPONIBILIDAD[selectedType];
   document.getElementById('fTipoNovedad').textContent = TYPE_LABELS[selectedType];
+  if (selectedPlate) document.getElementById('fTicketId').textContent = nextTicketId(selectedType);
   updateSendState();
 }
 
@@ -2333,18 +2669,98 @@ function showToast(msg){
 document.getElementById('btnEnviar').addEventListener('click', (e) => {
   e.stopPropagation();
   if (!selectedPlate) return;
-  showToast('✅ Solicitud enviada (simulación) — ticket ' + document.getElementById('fTicketId').textContent);
+  const nuevo = buildNewTicket();
+  TICKETS.unshift(nuevo);
+  populateFilterSelects();
+  showToast('✅ Solicitud enviada (simulación) — ticket ' + nuevo.ticket + '. Ya aparece en Mis solicitudes.');
   tourNotify('enviarClicked');
+  resetCreateForm();
 });
+
+function escHtml(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const MESES_CORTO = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function pad2(n){ return String(n).padStart(2, '0'); }
+function fechaLarga(d){ return d.getDate() + ' ' + MESES[d.getMonth()] + ' ' + d.getFullYear() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+function fechaSortDe(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()); }
+function isoDate(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
+
+function buildNewTicket(){
+  const p = PLATES.find(x => x.plate === selectedPlate);
+  const parts = p.plant.split('-');
+  const plantName = (parts.slice(1).join('-').trim()) || '';
+  const now = new Date();
+  const sistema = fieldVal('dfSistema'), sub = fieldVal('dfSubsistema'), cond = fieldVal('dfCondicion');
+  const ok = v => v && v !== 'Pendiente de confirmar' ? v : '';
+  return {
+    ticket: document.getElementById('fTicketId').textContent,
+    clase: p.clase || 'mixer', tipo: selectedType, placa: p.plate, cr: p.cr, id: p.eq,
+    planta: plantName, plantaRep: fieldVal('dfPlantaReporte') || plantName,
+    fecha: fechaLarga(now), fechaSort: fechaSortDe(now), estatus: 'abierto',
+    solicitante: 'Eduardo Rico Duarte',
+    novedad: sistema || TYPE_LABELS[selectedType].toUpperCase(),
+    sistema: sistema, subsistema: ok(sub), condicion: ok(cond),
+    asNombre: fieldVal('dfNombreAS'), asTel: fieldVal('dfTelefonoAS'),
+    sitio: fieldVal('dfSitioVarada'), carga: fieldVal('dfLlevaCarga'),
+    detalle: document.getElementById('obsBox').value.trim()
+  };
+}
+function resetCreateForm(){
+  clearPlateSelection();
+  renderPlateList(document.getElementById('plateSearch').value);
+  document.getElementById('obsBox').value = '';
+  document.getElementById('obsCount').textContent = '0 / 40';
+  renderCreateForm();
+}
 
 /* ---------------- Mis Solicitudes: dataset ---------------- */
 const ESTATUS_LABELS = {
   programacion:'En Programación', espera:'En Espera', cierre:'Cierre Técnico',
-  abierto:'Abierto', salida:'En Salida', entrada:'En Entrada'
+  abierto:'Abierto', salida:'En Salida', entrada:'En Entrada', rechazado:'Rechazado'
 };
-const STATUS_DOT = {programacion:'#4650c9', espera:'#a97900', cierre:'#8b909c', abierto:'#c0272d', salida:'#238a3f', entrada:'#2fa84f'};
+const STATUS_DOT = {programacion:'#4650c9', espera:'#b5560f', cierre:'#8b909c', abierto:'#e8414b', salida:'#0f9d58', entrada:'#0a6e1f', rechazado:'#8a1c22'};
 
 const TICKETS = [
+  /* ---- Tickets del 24 sep 2026 transcritos de las capturas del rol programador (Recursos/OrionProgram).
+     Campos no visibles en las capturas quedan vacíos ("—") en vez de inventarlos. ---- */
+  {ticket:'MV016154', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 15:32', fechaSort:'2026-09-24 15:32:45', estatus:'abierto', solicitante:'Jose Faiber Vargas Paiva', novedad:'CHASIS, CABINA Y ACCESORIOS',
+    sistema:'CHASIS, CABINA Y ACCESORIOS', subsistema:'TANQUES COMBUSTIBLE', condicion:'NO CARGA SISTEMA', asNombre:'PULIDO ARIZA WILMAR ANDRES', rtm:'jul 22, 2025', ultMtto:'jul 22, 2025', proxMtto:'jul 22, 2025'},
+  {ticket:'MV016153', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 15:31', fechaSort:'2026-09-24 15:31', estatus:'abierto', solicitante:'Jose Faiber Vargas Paiva', novedad:'CHASIS, CABINA Y ACCESORIOS', rtm:'jul 22, 2025', ultMtto:'jul 22, 2025', proxMtto:'jul 22, 2025'},
+  {ticket:'MV016152', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 15:29', fechaSort:'2026-09-24 15:29:35', estatus:'abierto', solicitante:'Xiomara Gonzalez Arzuza', novedad:'CHASIS, CABINA Y ACCESORIOS',
+    sistema:'CHASIS, CABINA Y ACCESORIOS', subsistema:'AIRE ACONDICIONADO', condicion:'COMPONENTE EN MAL ESTADO', asNombre:'PULIDO ARIZA WILMAR ANDRES', rtm:'jul 22, 2025', ultMtto:'jul 22, 2025', proxMtto:'jul 22, 2025'},
+  {ticket:'MV016151', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 15:27', fechaSort:'2026-09-24 15:27', estatus:'abierto', solicitante:'Xiomara Gonzalez Arzuza', novedad:'CHASIS, CABINA Y ACCESORIOS'},
+  {ticket:'MV016150', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 15:24', fechaSort:'2026-09-24 15:24', estatus:'abierto', solicitante:'Xiomara Gonzalez Arzuza', novedad:'CHASIS, CABINA Y ACCESORIOS'},
+  {ticket:'MV016149', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 15:20', fechaSort:'2026-09-24 15:20', estatus:'abierto', solicitante:'Xiomara Gonzalez Arzuza', novedad:'CHASIS, CABINA Y ACCESORIOS'},
+  {ticket:'MV016148', tipo:'critico', placa:'WMZ818', planta:'Puente aranda', plantaRep:'Puente aranda', fecha:'24 septiembre 2026 15:01', fechaSort:'2026-09-24 15:01:30', estatus:'abierto', solicitante:'Oscar Nicolas Cuenca Bermudez', novedad:'REFRIGERACION'},
+  {ticket:'MV016147', tipo:'critico', placa:'EQO758', planta:'Cali Sur', plantaRep:'Cali Sur', fecha:'24 septiembre 2026 15:01', fechaSort:'2026-09-24 15:01:10', estatus:'abierto', solicitante:'Alejandro Fidel Torres Arias', novedad:'REVOLVEDOR'},
+  {ticket:'MV016146', tipo:'critico', placa:'EQO758', planta:'Cali Sur', plantaRep:'Cali Sur', fecha:'24 septiembre 2026 14:58', fechaSort:'2026-09-24 14:58', estatus:'abierto', solicitante:'Alejandro Fidel Torres Arias', novedad:'ELECTRICIDAD/ELECTRONICA'},
+  {ticket:'MV016145', tipo:'critico', placa:'WMZ761', planta:'Sumapaz', plantaRep:'Sumapaz', fecha:'24 septiembre 2026 14:53', fechaSort:'2026-09-24 14:53', estatus:'abierto', solicitante:'Juan Manuel Henao Rivera', novedad:'CHASIS, CABINA Y ACCESORIOS'},
+  {ticket:'MV016144', tipo:'critico', placa:'WMZ761', planta:'Sumapaz', plantaRep:'Sumapaz', fecha:'24 septiembre 2026 14:51', fechaSort:'2026-09-24 14:51', estatus:'abierto', solicitante:'Juan Manuel Henao Rivera', novedad:'SUSPENSION'},
+  {ticket:'MV016143', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 14:38', fechaSort:'2026-09-24 14:38', estatus:'programacion', solicitante:'Jose Faiber Vargas Paiva', novedad:'REVOLVEDOR'},
+  {ticket:'MV016142', tipo:'critico', placa:'WMZ815', planta:'Centenario', plantaRep:'Centenario', fecha:'24 septiembre 2026 14:36', fechaSort:'2026-09-24 14:36', estatus:'abierto', solicitante:'Jarison Stiven Hernandez Rincon', novedad:'RODAJE'},
+  {ticket:'MV016141', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 14:28', fechaSort:'2026-09-24 14:28', estatus:'programacion', solicitante:'Jose Faiber Vargas Paiva', novedad:'REVOLVEDOR'},
+  {ticket:'MV016140', tipo:'critico', placa:'WMZ794', planta:'Bosa', plantaRep:'Bosa', fecha:'24 septiembre 2026 14:27', fechaSort:'2026-09-24 14:27', estatus:'abierto', solicitante:'Oscar Cordoba Leguizamon', novedad:'EMBRAGUE/TRANSMISION/DIFERENCIAL'},
+  {ticket:'MV016139', tipo:'critico', placa:'WMZ758', planta:'Puente aranda', plantaRep:'Puente aranda', fecha:'24 septiembre 2026 14:23', fechaSort:'2026-09-24 14:23', estatus:'abierto', solicitante:'Oscar Nicolas Cuenca Bermudez', novedad:'FRENOS'},
+  {ticket:'MV016138', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 14:10', fechaSort:'2026-09-24 14:10', estatus:'programacion', solicitante:'Jose Faiber Vargas Paiva', novedad:'REVOLVEDOR'},
+  {ticket:'MV016137', tipo:'critico', placa:'WMZ808', cr:'CR-1701', id:'11009784', planta:'CXO PHC', plantaRep:'CXO PHC', fecha:'24 septiembre 2026 14:02', fechaSort:'2026-09-24 14:02', estatus:'programacion', solicitante:'Jose Faiber Vargas Paiva', novedad:'REVOLVEDOR'},
+  {ticket:'MV016129', tipo:'critico', placa:'KYR767', cr:'CR-1949', id:'11014438', planta:'Bosa', plantaRep:'Bosa', fecha:'24 septiembre 2026 13:40', fechaSort:'2026-09-24 13:40', estatus:'entrada', solicitante:'Oscar Cordoba Leguizamon', novedad:'MOTOR'},
+  {ticket:'MC008224', tipo:'nocritico', placa:'WMZ769', cr:'CR-1685', id:'11009768', planta:'Puente aranda', plantaRep:'Puente aranda', fecha:'24 septiembre 2026 13:25', fechaSort:'2026-09-24 13:25:52', estatus:'espera', solicitante:'Oscar Nicolas Cuenca Bermudez', novedad:'SENSORES DE REVERSA',
+    detalle:'se aislan sensores alarma y camara reversa', asTel:'3133716976', rtm:'jul 07, 2025', ultMtto:'jul 07, 2025', proxMtto:'jul 07, 2025'},
+  {ticket:'MV016125', tipo:'critico', placa:'WMZ791', planta:'Puente aranda', plantaRep:'Puente aranda', fecha:'24 septiembre 2026 13:18', fechaSort:'2026-09-24 13:18', estatus:'espera', solicitante:'Jonny Alberto Rubio Ovalle', novedad:'FRENOS'},
+  {ticket:'MC008221', tipo:'nocritico', placa:'LRN194', planta:'Puente aranda', plantaRep:'Puente aranda', fecha:'24 septiembre 2026 13:05', fechaSort:'2026-09-24 13:05', estatus:'espera', solicitante:'Oscar Nicolas Cuenca Bermudez', novedad:'CHASIS, CABINA Y ACCESORIOS'},
+  {ticket:'MC008220', tipo:'nocritico', placa:'LRN194', planta:'Puente aranda', plantaRep:'Puente aranda', fecha:'24 septiembre 2026 13:01', fechaSort:'2026-09-24 13:01', estatus:'espera', solicitante:'Oscar Nicolas Cuenca Bermudez', novedad:'ELECTRICIDAD/ELECTRONICA'},
+  {ticket:'MV016119', tipo:'critico', placa:'WMZ776', planta:'Centenario', plantaRep:'Centenario', fecha:'24 septiembre 2026 12:48', fechaSort:'2026-09-24 12:48', estatus:'entrada', solicitante:'Leidy Lorena Olarte Sanchez', novedad:'NEUMATICO'},
+  {ticket:'MV016115', tipo:'critico', placa:'WMZ818', cr:'CR-1724', id:'11009807', planta:'Puente aranda', plantaRep:'Puente aranda', fecha:'24 septiembre 2026 12:40', fechaSort:'2026-09-24 12:40', estatus:'salida', solicitante:'Oscar Nicolas Cuenca Bermudez', novedad:'FRENOS'},
+  {ticket:'MV016114', tipo:'critico', placa:'EQO546', planta:'El Dorado', plantaRep:'El Dorado', fecha:'24 septiembre 2026 12:31', fechaSort:'2026-09-24 12:31', estatus:'entrada', solicitante:'Xiomara Gonzalez Arzuza', novedad:'REVOLVEDOR'},
+  {ticket:'MV016082', tipo:'critico', placa:'WOX962', planta:'Medellín', plantaRep:'Medellín', fecha:'23 septiembre 2026 16:10', fechaSort:'2026-09-23 16:10', estatus:'salida', solicitante:'Jonanna Andrea Amaya Sosa', novedad:'SUSPENSION'},
+  {ticket:'DE000042', tipo:'despegue', placa:'EQO673', planta:'Cali Sur', plantaRep:'Cali Sur', fecha:'23 septiembre 2026 09:30', fechaSort:'2026-09-23 09:30', estatus:'entrada', solicitante:'Armando Arbelaez Doncel', novedad:'DESPEGUE DE OLLA'},
+  {ticket:'MV015990', clase:'bomba', tipo:'critico', placa:'BYA980', cr:'CR-2325', id:'11005638', planta:'Floridablanca', plantaRep:'Floridablanca', fecha:'22 septiembre 2026 10:15', fechaSort:'2026-09-22 10:15', estatus:'abierto', solicitante:'Pedro Antonio Chacon Claro', novedad:'MOTOR'},
+  {ticket:'MV015957', clase:'bomba', tipo:'critico', placa:'BYC862', cr:'BYC862', id:'11005640', planta:'', plantaRep:'', fecha:'21 septiembre 2026 08:23', fechaSort:'2026-09-21 08:23:35', estatus:'espera', solicitante:'Pedro Antonio Chacon Claro', novedad:'CHASIS, CABINA Y ACCESORIOS',
+    sistema:'CHASIS, CABINA Y ACCESORIOS', subsistema:'MILLARE', condicion:'GRIETAS Y/O FISURAS', asNombre:'ARCINIEGAS CANIZALEZ, JULIO CESAR', asTel:'234567'},
+  {ticket:'MV015948', clase:'bomba', tipo:'critico', placa:'35340546', planta:'', plantaRep:'', fecha:'20 septiembre 2026 11:05', fechaSort:'2026-09-20 11:05', estatus:'programacion', solicitante:'Pedro Antonio Chacon Claro', novedad:'CHASIS, CABINA Y ACCESORIOS'},
+  {ticket:'MV015662', tipo:'critico', placa:'TZX951', planta:'Centenario', plantaRep:'Centenario', fecha:'14 septiembre 2026 10:20', fechaSort:'2026-09-14 10:20', estatus:'salida', solicitante:'Jarison Stiven Hernandez Rincon', novedad:'FRENOS'},
+  {ticket:'MV015661', tipo:'critico', placa:'TZX951', planta:'Centenario', plantaRep:'Centenario', fecha:'14 septiembre 2026 10:12', fechaSort:'2026-09-14 10:12', estatus:'salida', solicitante:'Jarison Stiven Hernandez Rincon', novedad:'CHAPAS'},
+  /* ---- Tickets originales (capturas O11MisSlobby*.png, usuario general) ---- */
   {ticket:'MV015315', tipo:'despegue', placa:'EQO722', planta:'Bello', plantaRep:'Bello', fecha:'6 septiembre 2026 09:12', fechaSort:'2026-09-06 09:12', estatus:'espera', solicitante:'Yessica Rua Castano', novedad:'DESPEGUE DE OLLA'},
   {ticket:'MV015314', tipo:'despegue', placa:'WOX477', planta:'Medellín', plantaRep:'Medellín', fecha:'6 septiembre 2026 08:40', fechaSort:'2026-09-06 08:40', estatus:'abierto', solicitante:'Yesmith Andrea Duque Londono', novedad:'DESPEGUE DE OLLA'},
   {ticket:'MV015313', tipo:'critico', placa:'WMZ816', planta:'Puente aranda', plantaRep:'Puente aranda', fecha:'5 septiembre 2026 18:56', fechaSort:'2026-09-05 18:56', estatus:'programacion', solicitante:'Jonatan David Tique Cerrato', novedad:'LUCES PRINCIPALES',
@@ -2370,12 +2786,14 @@ const TICKETS = [
 ];
 
 const sortRecentState = {on:false};
+let misSolClase = 'mixer';
 const filters = {planta:'', estatus:'', placa:'', ticket:'', tipo:'', nombre:''};
 
 function fmtVal(v){ return (v===undefined || v===null || v==='') ? '—' : v; }
 
 function getFilteredTickets(){
   let list = TICKETS.filter(t => {
+    if ((t.clase || 'mixer') !== misSolClase) return false;
     if (filters.planta && t.planta !== filters.planta) return false;
     if (filters.estatus && t.estatus !== filters.estatus) return false;
     if (filters.tipo && t.tipo !== filters.tipo) return false;
@@ -2391,15 +2809,19 @@ function getFilteredTickets(){
 }
 
 function populateFilterSelects(){
-  const plantas = [...new Set(TICKETS.map(t => t.planta))].sort();
+  const keep = ['fltPlanta','fltEstatus','fltTipo'].map(id => document.getElementById(id).value);
+  const plantas = [...new Set(TICKETS.map(t => t.planta).filter(Boolean))].sort();
   document.getElementById('fltPlanta').innerHTML = '<option value="">Todas</option>' + plantas.map(p => `<option value="${p}">${p}</option>`).join('');
   document.getElementById('fltEstatus').innerHTML = '<option value="">Todos</option>' + Object.keys(ESTATUS_LABELS).map(c => `<option value="${c}">${ESTATUS_LABELS[c]}</option>`).join('');
   document.getElementById('fltTipo').innerHTML = '<option value="">Todos</option>' + Object.keys(TYPE_LABELS).map(c => `<option value="${c}">${TYPE_LABELS[c]}</option>`).join('');
+  ['fltPlanta','fltEstatus','fltTipo'].forEach((id, i) => document.getElementById(id).value = keep[i]);
 }
 
 function renderTicketsTable(){
   const list = getFilteredTickets();
   document.getElementById('misSolCount').textContent = list.length;
+  document.getElementById('misSolBombas').textContent = TICKETS.filter(t => t.clase === 'bomba').length;
+  document.getElementById('misSolMixers').textContent = TICKETS.filter(t => (t.clase || 'mixer') === 'mixer').length;
   const tbody = document.getElementById('ticketsTbody');
   if (!list.length){
     tbody.innerHTML = '<tr><td colspan="10"><div class="no-rows">No se encontraron solicitudes con los filtros aplicados.</div></td></tr>';
@@ -2410,14 +2832,19 @@ function renderTicketsTable(){
       <td>${t.ticket}</td>
       <td><span class="tag-pill tag-${t.tipo}">${TYPE_LABELS[t.tipo]}</span></td>
       <td>${t.placa}</td>
-      <td>${t.planta}</td>
-      <td>${t.plantaRep}</td>
+      <td>${fmtVal(t.planta)}</td>
+      <td>${fmtVal(t.plantaRep)}</td>
       <td>${t.fecha}</td>
       <td><span class="status-pill status-${t.estatus}">${ESTATUS_LABELS[t.estatus]}</span></td>
       <td>${t.solicitante}</td>
       <td>${t.novedad}</td>
       <td>
         <div class="row-actions">
+          <button type="button" class="icon-round-btn cal-btn prog-only hotspot" data-gestor-ticket="${t.ticket}"
+            data-tip-title="Gestionar ticket (programador)"
+            data-tip-text="Solo para el rol programador. Abre este ticket en el Gestor de novedades, directamente en la etapa del proceso que le corresponde según su estatus.">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M8 14h8M8 17h5"/></svg>
+          </button>
           <button type="button" class="icon-round-btn chat-btn hotspot" data-chat="${t.ticket}"
             data-tip-title="Chat de la solicitud"
             data-tip-text="Abre el chat de este ticket para hablar con el programador encargado.">
@@ -2437,6 +2864,11 @@ function renderTicketsTable(){
     chatReturnScreen = 'screenMisSolicitudes';
     currentChatTicket = btn.getAttribute('data-chat');
     goToScreen('screenMisChats');
+  }));
+  tbody.querySelectorAll('[data-gestor-ticket]').forEach(btn => btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const t = TICKETS.find(x => x.ticket === btn.getAttribute('data-gestor-ticket'));
+    if (t) openGestor(t.clase || 'mixer', t.ticket);
   }));
   tbody.querySelectorAll('[data-info]').forEach(btn => btn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2487,6 +2919,15 @@ document.getElementById('btnToggleFilter').addEventListener('click', (e) => {
   tourNotify(isOpen ? 'filterOpened' : 'filterClosed');
 });
 
+function setMisSolClase(clase){
+  misSolClase = clase;
+  document.querySelectorAll('#misSolClaseRow [data-msclase]').forEach(o => o.classList.toggle('checked', o.getAttribute('data-msclase') === clase));
+  renderTicketsTable();
+}
+document.querySelectorAll('#misSolClaseRow [data-msclase]').forEach(opt => {
+  opt.addEventListener('click', (e) => { e.stopPropagation(); setMisSolClase(opt.getAttribute('data-msclase')); });
+});
+
 document.getElementById('btnSortRecent').addEventListener('click', (e) => {
   e.stopPropagation();
   sortRecentState.on = !sortRecentState.on;
@@ -2514,6 +2955,13 @@ function openInfoModal(ticketId){
   document.getElementById('imSubsistema').textContent = fmtVal(t.subsistema);
   document.getElementById('imCondicion').textContent = fmtVal(t.condicion);
   document.getElementById('imDetalle').textContent = fmtVal(t.detalle);
+  const g = t.gestor || {};
+  document.getElementById('imgOT').textContent = fmtVal(g.ot);
+  document.getElementById('imgAviso').textContent = fmtVal(g.aviso);
+  document.getElementById('imgEstatus').textContent = t.gestor ? ESTATUS_LABELS[t.estatus] : '—';
+  document.getElementById('imgIng').textContent = fmtVal(g.ing);
+  document.getElementById('imgPlan').textContent = fmtVal(g.plan);
+  document.getElementById('imgComent').textContent = g.coment || 'Sin comentarios registrados.';
   document.getElementById('infoModalOverlay').classList.add('show');
   tourNotify('infoOpened');
 }
@@ -2666,6 +3114,8 @@ const TOUR_DEFS = {
       renderPlateList('');
       document.getElementById('obsBox').value = '';
       document.getElementById('obsCount').textContent = '0 / 40';
+      setPlateClase('mixer');
+      clearPlateSelection();
       modalOverlay.classList.remove('show');
     }
   },
@@ -2681,6 +3131,7 @@ const TOUR_DEFS = {
       document.getElementById('btnToggleFilter').classList.remove('active');
       document.getElementById('infoModalOverlay').classList.remove('show');
       document.getElementById('chatTicketSearch').value = '';
+      setMisSolClase('mixer');
     }
   }
 };
@@ -2813,6 +3264,7 @@ document.addEventListener('click', (e) => {
   if (!tourState.active) return;
   const bubble = document.getElementById('tourBubble');
   if (bubble.contains(e.target)) return;
+  if (e.target.closest('[data-ph-back]')) return;
   const allowed = tourState.currentTargets.some(el => el.contains(e.target));
   if (!allowed){
     e.stopPropagation();
@@ -2837,11 +3289,399 @@ document.getElementById('btnTourFinish2').addEventListener('click', (e) => {
 });
 window.addEventListener('resize', () => { if (tourState.active) tourReposition(); });
 
+/* =========================================================================
+   ROL PROGRAMADOR — Gestor de novedades (mixers / bombas)
+   Referencia: pro6.png, proenespera.png, proprogram.png, proentrada1/2.png,
+   prosalida.png, procierre.png, prorechazo.png, pro7.png (Recursos/OrionProgram).
+   Cada etapa lista los tickets que están listos para ella (from) y al Enviar
+   el ticket pasa al estatus siguiente (to). Mismo array TICKETS que Mis
+   Solicitudes, así que el cambio de estatus se ve en toda la app.
+   ========================================================================= */
+const GESTOR_STAGES = [
+  {key:'espera', label:'En Espera', title:'En espera', from:'abierto', to:'espera', side:false,
+    tip:'Aquí llegan las solicitudes nuevas (estatus Abierto). El programador revisa la novedad, diligencia el Gestor Ticket (orden de trabajo, orden de aviso, responsables, disponibilidad) y al Enviar el ticket pasa a En Espera.'},
+  {key:'programacion', label:'En Programación', title:'Programación', from:'espera', to:'programacion', side:true,
+    tip:'Lista los tickets En Espera. El programador define tipo de mantenimiento, taller, fecha y hora de programación y la fecha de salida. Al Enviar, el ticket pasa a En Programación.'},
+  {key:'entrada', label:'En Entrada', title:'En Entrada', from:'programacion', to:'entrada', side:true,
+    tip:'Lista los tickets En Programación. Se registra la entrada del vehículo al taller: quién lo entrega, fallas adicionales, safety features, fecha y hora de entrada, taller, horas y la OT (obligatoria). Al Enviar, pasa a En Entrada.'},
+  {key:'salida', label:'En Salida', title:'En Salida', from:'entrada', to:'salida', side:true,
+    tip:'Lista los tickets En Entrada. Se registra la salida del vehículo del taller (planta obligatoria, fecha y hora de salida). Al Enviar, pasa a En Salida.'},
+  {key:'cierre', label:'Cierre Técnico', title:'Cierre Técnico', from:'salida', to:'cierre', side:false,
+    tip:'Lista los tickets En Salida. Se confirma el cierre técnico del ticket, con observaciones opcionales. Al Enviar, pasa a Cierre Técnico y el proceso termina.'},
+  {key:'rechazo', label:'Rechazado', title:'Rechazado', from:'abierto', to:'rechazado', side:false,
+    tip:'Lista los tickets Abiertos. Permite rechazar una solicitud (por ejemplo, si está duplicada o mal reportada). Las observaciones son obligatorias: el botón Enviar aparece cuando las escribes. Al Enviar, pasa a Rechazado.'}
+];
+const STAGE_FOR_STATUS = {abierto:'espera', espera:'programacion', programacion:'entrada', entrada:'salida', salida:'cierre', cierre:'cierre', rechazado:'rechazo'};
+const PEND_OPTS = ['Pendiente de confirmar'];
+const HORAS = Array.from({length:24}, (_, i) => pad2(i));
+const MINUTOS = Array.from({length:60}, (_, i) => pad2(i));
+const gestorState = {clase:'mixer', stage:'espera', ticket:null, planta:'', estatus:'', search:''};
+
+function stageDef(){ return GESTOR_STAGES.find(s => s.key === gestorState.stage); }
+function gestorCurrentTicket(){ return TICKETS.find(t => t.ticket === gestorState.ticket) || null; }
+function fechaCortaTicket(t){
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(t.fechaSort || '');
+  return m ? MESES_CORTO[+m[2] - 1] + ' ' + (+m[3]) + ', ' + m[1] : t.fecha;
+}
+function iniciales(nombre){ return nombre.split(' ').filter(Boolean).slice(0, 2).map(w => w.charAt(0)).join('').toUpperCase(); }
+function gv(id){ const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function gFmt(v){ return escHtml(fmtVal(v)); }
+
+function openGestor(clase, ticketId){
+  gestorState.clase = clase;
+  gestorState.planta = '';
+  gestorState.search = '';
+  gestorState.estatus = '';
+  gestorState.ticket = null;
+  document.getElementById('gSearch').value = '';
+  const t = ticketId ? TICKETS.find(x => x.ticket === ticketId) : null;
+  if (t){
+    gestorState.stage = STAGE_FOR_STATUS[t.estatus] || 'espera';
+    if (GESTOR_STAGES.find(s => s.key === gestorState.stage).from !== t.estatus) gestorState.estatus = t.estatus;
+    gestorState.ticket = t.ticket;
+  }
+  goToScreen('screenGestor');
+}
+
+function gestorTickets(){
+  const st = stageDef();
+  const status = gestorState.estatus || st.from;
+  const q = gestorState.search.trim().toUpperCase();
+  return TICKETS.filter(t => (t.clase || 'mixer') === gestorState.clase && t.estatus === status
+    && (!gestorState.planta || t.planta === gestorState.planta)
+    && (!q || t.ticket.toUpperCase().includes(q) || t.placa.toUpperCase().includes(q)));
+}
+
+function renderGestor(){
+  document.getElementById('gestorClaseLabel').textContent = gestorState.clase === 'bomba' ? 'BOMBAS' : 'MIXERS';
+  document.querySelectorAll('#sidebarGestor [data-gestor]').forEach(b => b.classList.toggle('active', b.getAttribute('data-gestor') === gestorState.clase));
+  document.getElementById('stageRadios').innerHTML = GESTOR_STAGES.map(s => `
+    <label class="radio-opt stage-radio hotspot${s.key === gestorState.stage ? ' checked' : ''}" data-stage="${s.key}"
+      data-tip-title="${s.label}" data-tip-text="${s.tip}"><span class="radio-dot"></span><span class="sr-text">${s.label}</span></label>`).join('');
+  document.querySelectorAll('#stageRadios [data-stage]').forEach(r => r.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (gestorState.stage === r.getAttribute('data-stage')) return;
+    gestorState.stage = r.getAttribute('data-stage');
+    gestorState.ticket = null;
+    renderGestor();
+  }));
+  const plantas = [...new Set(TICKETS.filter(t => (t.clase || 'mixer') === gestorState.clase).map(t => t.planta).filter(Boolean))].sort();
+  const fp = document.getElementById('gFltPlanta');
+  fp.innerHTML = '<option value=""></option>' + plantas.map(p => `<option value="${p}">${p}</option>`).join('');
+  fp.value = gestorState.planta;
+  const fe = document.getElementById('gFltEstatus');
+  fe.innerHTML = '<option value=""></option>' + Object.keys(ESTATUS_LABELS).map(k => `<option value="${k}">${ESTATUS_LABELS[k]}</option>`).join('');
+  fe.value = gestorState.estatus;
+  bindAllHotspots(document.getElementById('stageRadios'));
+  renderGestorList();
+  renderGestorContent();
+}
+
+function renderGestorList(){
+  const list = gestorTickets();
+  if (!list.some(t => t.ticket === gestorState.ticket)) gestorState.ticket = list.length ? list[0].ticket : null;
+  const wrap = document.getElementById('gList');
+  if (!list.length){
+    const st = stageDef();
+    wrap.innerHTML = `<div class="g-empty">No hay solicitudes de ${gestorState.clase === 'bomba' ? 'bombas' : 'mixers'} en estatus <b>${ESTATUS_LABELS[gestorState.estatus || st.from]}</b>${gestorState.planta ? ' para ' + escHtml(gestorState.planta) : ''}.</div>`;
+    return;
+  }
+  wrap.innerHTML = list.map(t => `
+    <div class="g-card${t.ticket === gestorState.ticket ? ' selected' : ''}" data-gticket="${t.ticket}">
+      <div class="gc-top"><span>${t.ticket}</span><span class="gc-status" style="color:${STATUS_DOT[t.estatus]};">${ESTATUS_LABELS[t.estatus]}<span class="dot" style="background:${STATUS_DOT[t.estatus]};"></span></span></div>
+      <div class="gc-meta">Creado: ${fechaCortaTicket(t)}<br>Placa: ${escHtml(t.placa)}<br>Novedad: ${TYPE_LABELS[t.tipo]}</div>
+      <div class="gc-user"><span class="gc-avatar">${iniciales(t.solicitante)}</span>${escHtml(t.solicitante)}</div>
+    </div>`).join('');
+  wrap.querySelectorAll('.g-card').forEach(card => card.addEventListener('click', () => {
+    if (gestorState.ticket === card.getAttribute('data-gticket')) return;
+    gestorState.ticket = card.getAttribute('data-gticket');
+    wrap.querySelectorAll('.g-card').forEach(c => c.classList.toggle('selected', c === card));
+    renderGestorContent();
+  }));
+}
+
+/* ---- helpers de formulario ---- */
+function gOpt(opts, placeholder, selected){
+  return (placeholder === null ? '' : `<option value="">${placeholder}</option>`) +
+    opts.map(o => `<option value="${o}"${o === selected ? ' selected' : ''}>${o}</option>`).join('');
+}
+function gTip(title, text){ return `class="hotspot" data-tip-title="${title}" data-tip-text="${text}"`; }
+function gSel(id, opts, tipTitle, tipText, selected, placeholder){
+  return `<select id="${id}" ${gTip(tipTitle, tipText)}>${gOpt(opts, placeholder === undefined ? 'Find items' : placeholder, selected)}</select>`;
+}
+function gInp(id, tipTitle, tipText, attrs, value){
+  return `<input id="${id}" ${attrs || 'type="text"'} value="${escHtml(value || '')}" ${gTip(tipTitle, tipText)}>`;
+}
+function gTxt(id, tipTitle, tipText, value){ return `<textarea id="${id}" rows="2" ${gTip(tipTitle, tipText)}>${escHtml(value || '')}</textarea>`; }
+function gField(label, control, cls){ return `<div class="g-field${cls ? ' ' + cls : ''}"><label>${label}</label>${control}</div>`; }
+function gTimeRow(dateId, hId, mId, dateVal, tipTitle, tipText){
+  return `<div class="g-time-row">${gInp(dateId, tipTitle, tipText, 'type="date"', dateVal)}${gSel(hId, HORAS, 'Hora', 'Hora (HH).', '00', null)}<b>:</b>${gSel(mId, MINUTOS, 'Minutos', 'Minutos (MM).', '00', null)}</div>`;
+}
+
+function gInfoFull(t){
+  return `<div class="g-sub-pill">Información General</div>
+    <div class="g-info hotspot" tabindex="0" data-tip-title="Información General"
+      data-tip-text="Resumen de la solicitud tal como la creó el usuario general (placa, plantas, agente de servicio, sistema y novedad, fechas de mantenimiento). Es solo lectura.">
+      <div class="gi-head">${t.ticket} - ${ESTATUS_LABELS[t.estatus]} - ${TYPE_LABELS[t.tipo]}</div>
+      <div>Placa: ${escHtml(t.placa)} &nbsp; - ${gFmt(t.cr)} - ${gFmt(t.id)}</div>
+      <div>Planta Asignación: ${gFmt(t.planta)}</div>
+      <div>Planta Reporte: ${gFmt(t.plantaRep)}</div>
+      <div>AS: ${gFmt(t.asNombre)} - Numero: ${gFmt(t.asTel)}</div>
+      <div class="gi-strong">Sistema: ${gFmt(t.sistema || t.novedad)} - Subsistema: ${gFmt(t.subsistema)} - Condición: ${gFmt(t.condicion)}</div>
+      <div class="gi-muted">Detalle de Novedad: ${gFmt(t.detalle)}</div>
+      <div class="gi-muted">Fecha de creación: ${escHtml(t.fecha)}</div>
+      <div class="gi-italic">Próxima RTM: ${gFmt(t.rtm)}<br>Próximo Mtto preventivo: ${gFmt(t.proxMtto)} - Último Mtto preventivo: ${gFmt(t.ultMtto)}</div>
+      <div>Datos adjuntos</div>
+      <div class="g-attach">There is nothing attached.</div>
+    </div>`;
+}
+function gInfoCompact(t){
+  return `<div class="g-block">
+    <div class="g-sub-pill">Información General</div>
+    <div class="g-info hotspot" tabindex="0" data-tip-title="Información General" data-tip-text="Datos básicos del ticket que se está gestionando. Es solo lectura.">
+      <div class="gi-head">${t.ticket} - ${ESTATUS_LABELS[t.estatus]} - ${TYPE_LABELS[t.tipo]}</div>
+      <div>Placa: ${escHtml(t.placa)} &nbsp; - ${gFmt(t.cr)} - ${gFmt(t.id)}</div>
+      <div>Planta Reporte: ${gFmt(t.plantaRep)}</div>
+    </div>
+  </div>`;
+}
+function gGestorBasics(g, cols){
+  return `
+    ${gField('Orden de trabajo', gInp('gOT', 'Orden de trabajo', 'Número de la orden de trabajo (OT) del mantenimiento, si ya existe.', 'type="text"', g.ot))}
+    ${gField('Orden de aviso', gInp('gAviso', 'Orden de aviso', 'Número del aviso de mantenimiento, si ya fue creado.', 'type="text" placeholder="Enter text"', g.aviso))}
+    ${cols === 4 ? gField('Estatus', '<div class="g-ro hotspot" tabindex="0" data-tip-title="Estatus" data-tip-text="Se actualiza sola cuando envías la gestión."></div>') : ''}
+    ${cols === 4 ? gField('Disponibilidad', gSel('gDisp', ['Operativo','Inoperativo'], 'Disponibilidad', 'Indica si el vehículo puede seguir operando (Operativo) o no (Inoperativo) mientras se atiende la novedad.', g.disp)) : ''}
+    ${gField('Ing. responsable', gSel('gIng', PEND_OPTS, 'Ing. responsable', 'Ingeniero responsable de atender la novedad. La lista de nombres está pendiente de confirmar con el equipo.', g.ing), cols === 4 ? 'span2' : '')}
+    ${gField('Plan. responsable', gSel('gPlan', PEND_OPTS, 'Plan. responsable', 'Planeador responsable del ticket. La lista de nombres está pendiente de confirmar con el equipo.', g.plan), cols === 4 ? 'span2' : '')}`;
+}
+
+function renderStageBody(st, t){
+  const g = t.gestor || {};
+  const today = isoDate(new Date());
+  if (st.key === 'espera'){
+    return `<div class="g-block">${gInfoFull(t)}</div>
+      <div class="g-block">
+        <div class="g-sub-pill">Gestor Ticket</div>
+        <div class="g-grid c4">
+          ${gGestorBasics(g, 4)}
+          ${gField('Comentarios', gInp('gComent', 'Comentarios', 'Notas del programador sobre la gestión. El usuario general las ve en el resumen de su solicitud.', 'type="text"', g.coment), 'spanall')}
+          ${gField('Sistema', gSel('gSistema', SISTEMA_OPTIONS, 'Sistema', 'Permite confirmar o corregir el sistema reportado. Igual que al crear la solicitud: primero Sistema, luego Subsistema y Condición/falla.'))}
+          ${gField('Subsistema', gSel('gSubsistema', subsistemaOptionsFor(''), 'Subsistema', 'Las opciones dependen del Sistema elegido.'))}
+          ${gField('Condición/falla', gSel('gCondicion', condicionOptionsFor(''), 'Condición/falla', 'Las opciones dependen del Subsistema elegido.'))}
+          ${gField('Complemento', gSel('gComplemento', COMPLEMENTO_OPTIONS, 'Complemento', 'Detalle de dónde está la novedad en el vehículo.'))}
+        </div>
+      </div>`;
+  }
+  if (st.key === 'programacion'){
+    return `<div class="g-prog-cols">
+      <div class="g-block">
+        <div class="g-sub-pill">Información General</div>
+        <div class="g-info left hotspot" tabindex="0" data-tip-title="Información General" data-tip-text="Resumen de la solicitud y de la gestión hecha en la etapa En espera. Es solo lectura.">
+          <div class="gi-head">${t.ticket} - ${ESTATUS_LABELS[t.estatus]}</div>
+          <div>Placa: ${escHtml(t.placa)} - ${gFmt(t.cr)} - ${gFmt(t.id)}</div>
+          <div>Planta Asignación: ${gFmt(t.planta)}</div>
+          <div>AS: ${gFmt(t.asNombre)} - Numero: ${gFmt(t.asTel)}</div>
+          <div>Planta Reporte: ${gFmt(t.plantaRep)}</div>
+          <div class="gi-strong">Novedad: ${escHtml(t.novedad)} - ${TYPE_LABELS[t.tipo]}</div>
+          <div>Detalle de Novedad: ${gFmt(t.detalle)}</div>
+          <div class="gi-muted">Fecha de creación: ${escHtml(t.fecha)}</div>
+          <div class="gi-italic">Próxima RTM: ${gFmt(t.rtm)}</div>
+          <div class="gi-italic">Próximo Mtto preventivo: ${gFmt(t.proxMtto)}</div>
+          <div class="gi-italic">Último Mtto preventivo: ${gFmt(t.ultMtto)}</div>
+        </div>
+      </div>
+      <div class="g-block">
+        <div class="g-sub-pill">Gestor Ticket</div>
+        <div class="g-grid c2">
+          ${gGestorBasics(g, 2)}
+          ${gField('Comentarios', gTxt('gComent', 'Comentarios', 'Notas del programador sobre la gestión. El usuario general las ve en el resumen de su solicitud.', g.coment), 'spanall')}
+          ${gField('Estatus', '<div class="g-ro">' + ESTATUS_LABELS[t.estatus] + '</div>', 'spanall')}
+          ${gField('Disponibilidad', gSel('gDisp', ['Operativo','Inoperativo'], 'Disponibilidad', 'Indica si el vehículo puede seguir operando mientras se programa el mantenimiento.', g.disp), 'spanall')}
+        </div>
+      </div>
+      <div class="g-block">
+        <div class="g-sub-pill">Programador</div>
+        <div class="g-grid c3">
+          ${gField('Ticket', '<div class="g-ro strong">' + t.ticket + '</div>')}
+          ${gField('Tipo Mantenimiento', gSel('gPTipo', ['Correctivo','Preventivo'], 'Tipo Mantenimiento', 'Tipo de mantenimiento que se va a programar.', '', ''))}
+          ${gField('Taller', gSel('gPTaller', PEND_OPTS, 'Taller', 'Taller donde se atenderá el vehículo. La lista de talleres está pendiente de confirmar con el equipo.', '', ''))}
+          <div class="g-sec-bar">Fecha programación</div>
+          ${gField('Fecha', gInp('gPFecha', 'Fecha de programación', 'Día en que se programa la atención del vehículo.', 'type="date"', today))}
+          ${gField('Hora', gSel('gPHora', HORAS.map(h => h + ':00'), 'Hora de programación', 'Hora en que se programa la atención.', '', ''))}
+          ${gField('Fecha Asignación / Estimada', '<div class="g-computed hotspot" tabindex="0" data-tip-title="Fecha Asignación y Fecha Estimada" data-tip-text="Las calcula la app al guardar la programación.">' + fechaLarga(new Date()) + '<br>—</div>')}
+          <div class="g-sec-bar">Fecha Salida</div>
+          ${gField('Fecha', gInp('gPSalFecha', 'Fecha de salida', 'Día en que se espera que el vehículo salga del taller.', 'type="date"', today))}
+          ${gField('Hora', gSel('gPSalHora', HORAS.map(h => h + ':00'), 'Hora de salida', 'Hora en que se espera que el vehículo salga del taller.', '00:00', null))}
+          ${gField('Fecha Salida Prog', '<div class="g-computed hotspot" tabindex="0" id="gPSalProg" data-tip-title="Fecha Salida Prog" data-tip-text="Se arma sola con la fecha y la hora de salida que elijas."></div>')}
+          ${gField('Programación', gSel('gPProg', ['Programado'], 'Programación', 'Estado de la programación del ticket.', 'Programado', null), 'spanall')}
+        </div>
+      </div>
+    </div>`;
+  }
+  if (st.key === 'entrada'){
+    return gInfoCompact(t) + `<div class="g-block grey g-dark">
+      <div class="g-sub-pill">Gestor Ticket</div>
+      <div class="g-grid c2">
+        ${gField('Nombre completo', gInp('gENombre', 'Nombre completo', 'Nombre de la persona que entrega el vehículo en el taller.'))}
+        ${gField('Placa', '<div class="g-ro">' + escHtml(t.placa) + '</div>')}
+        ${gField('Planta', gSel('gEPlanta', PLANTA_REPORTE_OPTIONS, 'Planta', 'Planta de la que viene el vehículo.'))}
+        ${gField('TicketID', '<div class="g-ro">' + t.ticket + '</div>')}
+        ${gField('¿El vehículo presenta fallas adicionales a la reportada?', gSel('gEFallas', ['Sí','No'], 'Fallas adicionales', 'Indica si al recibir el vehículo se encontraron fallas distintas a la reportada en el ticket.'))}
+        ${gField('* Safety Features Operativos', gSel('gESafety', ['Sí','No'], 'Safety Features Operativos (obligatorio)', 'Confirma si los elementos de seguridad del vehículo llegan operativos. Campo obligatorio.'))}
+        ${gField('Fecha Entrada', gTimeRow('gEFecha', 'gEHH', 'gEMM', '', 'Fecha de entrada', 'Día y hora en que el vehículo entra al taller.'), 'spanall')}
+        ${gField('Taller', gSel('gETaller', PEND_OPTS, 'Taller', 'Taller que recibe el vehículo. La lista está pendiente de confirmar con el equipo.', '', ''))}
+        ${gField('HRS', gInp('gEHrs', 'HRS', 'Horas estimadas de trabajo en el taller.', 'type="number" min="0"'))}
+        ${gField('OT *(Campo obligatorio)', gInp('gEOT', 'OT (obligatorio)', 'Número de la orden de trabajo. Sin la OT no se puede enviar la entrada.', 'type="number" min="0"', g.ot))}
+        ${gField('Observaciones', gTxt('gEObs', 'Observaciones', 'Notas sobre la entrada del vehículo al taller.'), 'spanall')}
+      </div>
+    </div>`;
+  }
+  if (st.key === 'salida'){
+    return gInfoCompact(t) + `<div class="g-block grey g-dark">
+      <div class="g-sub-pill">Gestor Ticket</div>
+      <div class="g-grid c2">
+        ${gField('Nombre completo', gInp('gSNombre', 'Nombre completo', 'Nombre de la persona que recibe el vehículo a la salida del taller.'))}
+        ${gField('Placa', '<div class="g-ro">' + escHtml(t.placa) + '</div>')}
+        ${gField('* Planta', gSel('gSPlanta', PLANTA_REPORTE_OPTIONS, 'Planta (obligatorio)', 'Planta a la que regresa el vehículo. Campo obligatorio.'))}
+        ${gField('TICKET_ID', '<div class="g-ro">' + t.ticket + '</div>')}
+        ${gField('Fecha_Salida', gTimeRow('gSFecha', 'gSHH', 'gSMM', '', 'Fecha de salida', 'Día y hora en que el vehículo sale del taller.'), 'spanall')}
+        ${gField('Observaciones', gTxt('gSObs', 'Observaciones', 'Notas sobre la salida del vehículo.'), 'spanall')}
+      </div>
+    </div>`;
+  }
+  const obsLabel = st.key === 'rechazo' ? 'Observaciones * (Campo obligatorio)' : 'Observaciones';
+  const obsTip = st.key === 'rechazo' ? 'Explica por qué se rechaza la solicitud. Es obligatorio: el usuario general verá este motivo en el resumen de su solicitud.' : 'Notas del cierre técnico (opcional).';
+  return gInfoCompact(t) + `<div class="g-block grey g-center-form">
+    <div class="g-sub-pill">Gestor Ticket</div>
+    <div class="gcf-label">Placa</div><div class="gcf-value">${escHtml(t.placa)}</div>
+    <div class="gcf-label">Ticket</div><div class="gcf-value">${t.ticket}</div>
+    <div class="gcf-label">Planta</div><div class="gcf-value">${gFmt(t.planta)}</div>
+    <div class="gcf-label">${obsLabel}</div>
+    ${gTxt(st.key === 'rechazo' ? 'gRObs' : 'gCObs', obsLabel, obsTip)}
+  </div>`;
+}
+
+function renderGestorContent(){
+  const st = stageDef();
+  const t = gestorCurrentTicket();
+  const content = document.getElementById('gContent');
+  const title = `<div class="g-title-pill hotspot" tabindex="0" data-tip-title="${st.title}" data-tip-text="${st.tip}">${st.title}</div>`;
+  if (!t){
+    content.innerHTML = title + '<div class="g-empty">No hay ningún ticket para gestionar en esta etapa.<br>Prueba con otra etapa o filtro, o crea una nueva solicitud desde el menú lateral.</div>';
+  } else {
+    const body = renderStageBody(st, t);
+    content.innerHTML = st.side
+      ? title + `<div class="g-stage-wrap"><div class="g-stage-main">${body}</div><div class="g-side-box hotspot" tabindex="0" data-tip-title="Adjuntos del ticket" data-tip-text="Recuadro donde la app muestra la imagen o el adjunto asociado al ticket, si lo tiene."></div></div>`
+      : title + body;
+  }
+  content.scrollTop = 0;
+  updateSalidaProg();
+  bindAllHotspots(content);
+  updateGestorSend();
+}
+
+function updateSalidaProg(){
+  const out = document.getElementById('gPSalProg');
+  if (!out) return;
+  const v = gv('gPSalFecha');
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+  const hora = gv('gPSalHora') || '00:00';
+  out.textContent = m ? (+m[3]) + ' ' + MESES[+m[2] - 1] + ' ' + m[1] + ' ' + (+hora.split(':')[0]) + ':' + hora.split(':')[1] : '—';
+}
+
+function gestorValidation(t){
+  const st = stageDef();
+  if (!t) return {ok:false, msg:''};
+  if (t.estatus !== st.from){
+    return {ok:false, msg:'Este ticket está en estatus ' + ESTATUS_LABELS[t.estatus] + ' — la etapa ' + st.label + ' solo gestiona tickets en estatus ' + ESTATUS_LABELS[st.from] + '.'};
+  }
+  if (st.key === 'entrada'){
+    const faltan = [];
+    if (!gv('gESafety')) faltan.push('Safety Features Operativos');
+    if (!gv('gEOT')) faltan.push('OT');
+    if (faltan.length) return {ok:false, msg:'Hace falta diligenciar: ' + faltan.join(' y ') + '.'};
+  }
+  if (st.key === 'salida' && !gv('gSPlanta')) return {ok:false, msg:'Hace falta diligenciar el campo Planta.'};
+  if (st.key === 'rechazo' && !gv('gRObs')) return {ok:false, msg:'Escribe las observaciones (campo obligatorio) para poder rechazar la solicitud.', hide:true};
+  return {ok:true, msg:''};
+}
+function updateGestorSend(){
+  const btn = document.getElementById('gEnviar');
+  const warn = document.getElementById('gWarn');
+  const res = gestorValidation(gestorCurrentTicket());
+  btn.disabled = !res.ok;
+  btn.classList.toggle('hidden', !!res.hide);
+  warn.textContent = res.msg;
+  warn.style.display = res.msg ? 'block' : 'none';
+}
+
+function gestorEnviar(){
+  const st = stageDef();
+  const t = gestorCurrentTicket();
+  if (!gestorValidation(t).ok) return;
+  const g = t.gestor = t.gestor || {};
+  [['gOT','ot'],['gEOT','ot'],['gAviso','aviso'],['gDisp','disp'],['gIng','ing'],['gPlan','plan'],['gComent','coment']].forEach(([id, key]) => {
+    const v = gv(id);
+    if (v) g[key] = v;
+  });
+  const valido = v => v && v !== 'Pendiente de confirmar';
+  if (valido(gv('gSistema'))){
+    t.sistema = gv('gSistema');
+    t.novedad = t.sistema;
+    t.subsistema = valido(gv('gSubsistema')) ? gv('gSubsistema') : '';
+    t.condicion = valido(gv('gCondicion')) ? gv('gCondicion') : '';
+  }
+  if (st.key === 'rechazo') g.coment = 'Solicitud rechazada: ' + gv('gRObs');
+  t.estatus = st.to;
+  showToast('✅ ' + t.ticket + ' pasó a ' + ESTATUS_LABELS[t.estatus] + ' (simulación).');
+  renderGestorList();
+  renderGestorContent();
+}
+
+document.getElementById('gEnviar').addEventListener('click', (e) => { e.stopPropagation(); gestorEnviar(); });
+document.getElementById('gContent').addEventListener('change', (e) => {
+  const id = e.target.id;
+  if (id === 'gSistema'){
+    document.getElementById('gSubsistema').innerHTML = gOpt(subsistemaOptionsFor(e.target.value), 'Find items');
+    document.getElementById('gCondicion').innerHTML = gOpt(condicionOptionsFor(''), 'Find items');
+  }
+  if (id === 'gSubsistema') document.getElementById('gCondicion').innerHTML = gOpt(condicionOptionsFor(e.target.value), 'Find items');
+  if (id === 'gPSalFecha' || id === 'gPSalHora') updateSalidaProg();
+  updateGestorSend();
+});
+document.getElementById('gContent').addEventListener('input', updateGestorSend);
+document.getElementById('gSearch').addEventListener('input', (e) => { gestorState.search = e.target.value; renderGestorList(); renderGestorContent(); });
+document.getElementById('gFltPlanta').addEventListener('change', (e) => { gestorState.planta = e.target.value; renderGestorList(); renderGestorContent(); });
+document.getElementById('gFltEstatus').addEventListener('change', (e) => { gestorState.estatus = e.target.value; renderGestorList(); renderGestorContent(); });
+document.getElementById('gClearPlanta').addEventListener('click', (e) => { e.stopPropagation(); gestorState.planta = ''; document.getElementById('gFltPlanta').value = ''; renderGestorList(); renderGestorContent(); });
+document.getElementById('gClearEstatus').addEventListener('click', (e) => { e.stopPropagation(); gestorState.estatus = ''; document.getElementById('gFltEstatus').value = ''; renderGestorList(); renderGestorContent(); });
+document.getElementById('gRefresh').addEventListener('click', (e) => { e.stopPropagation(); renderGestor(); showToast('🔄 Lista de tickets actualizada.'); });
+document.querySelectorAll('[data-gestor]').forEach(btn => btn.addEventListener('click', () => openGestor(btn.getAttribute('data-gestor'))));
+
+/* ---------------- Botón atrás del encabezado → "¿Qué quieres consultar?" ----------------
+   Sale limpio: cierra recorrido guiado/modales y deja la app en la selección de
+   rol para la próxima vez que se entre. */
+document.querySelectorAll('[data-ph-back]').forEach(btn => btn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (tourState.active){
+    tourClearHighlight();
+    document.getElementById('tourBubble').classList.remove('visible');
+    tourState.active = false;
+  }
+  document.querySelectorAll('.tour-complete-overlay').forEach(o => o.classList.remove('show'));
+  modalOverlay.classList.remove('show');
+  hideTooltip();
+  goToScreen('screenRole');
+  document.getElementById('appContent').style.display = 'none';
+  document.getElementById('chooseManualScreen').style.display = '';
+  window.scrollTo(0, 0);
+}));
+
 /* ---------------- Init ---------------- */
 const orionIconSrc = document.querySelector('#sidebarFeed .sb-head img').src;
 document.querySelectorAll('.sb-head img:not([src])').forEach(img => img.src = orionIconSrc);
 const desarrolloLogoSrc = document.querySelector('.topbar img.tb-logo[src]').src;
-document.querySelectorAll('.topbar img.tb-logo:not([src])').forEach(img => img.src = desarrolloLogoSrc);
+document.querySelectorAll('.topbar img.tb-logo:not([src]), .gestor-top img.tb-logo:not([src])').forEach(img => img.src = desarrolloLogoSrc);
 
 renderPlateList('');
 renderCreateForm();
