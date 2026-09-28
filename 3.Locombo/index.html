@@ -213,6 +213,188 @@
     .ph-back{left:12px;width:36px;height:36px;font-size:16px;}
   }
 </style>
+<style>
+  /* ================= TABLERO LOCOMBOO (#stageT) ================= */
+  .page-header .cx-ph-note{
+    display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:#8a6d00;
+    background:#fff8e6;border:1px solid #f1dfa0;border-radius:8px;padding:5px 10px;width:fit-content;
+  }
+  #stageT{
+    --lb-blue:#0303b0;
+    --lb-bar1:#118dff;
+    --lb-bar2:#12239e;
+    --lb-line:#6b007b;
+    --lb-red:#d9434f;
+    --lb-lav:#a992dc;
+    --lb-green:#00632e;
+    --lb-ink:#252423;
+    margin:20px auto 0;
+  }
+  #boardWrap{
+    width:1850px;background:#ffffff;border-radius:10px;overflow:hidden;
+    box-shadow:0 2px 14px rgba(20,30,60,.12);transform-origin:top left;
+    border:1px solid #e6e8ee;display:flex;align-items:stretch;
+  }
+  #boardContent{flex:1;min-width:0;}
+  .tablero-screen{display:none;}
+  .tablero-screen.active{display:block;}
+  .lb-scroll{height:900px;overflow-y:auto;padding:14px 26px 34px 22px;}
+  .lb-scroll::-webkit-scrollbar{width:10px;}
+  .lb-scroll::-webkit-scrollbar-thumb{background:#b9bcc4;border-radius:5px;}
+  .lb-scroll::-webkit-scrollbar-track{background:#f3f3f3;}
+
+  /* ---------- panel lateral "Páginas" (navegación nativa de Power BI) ---------- */
+  .pages-sidebar{
+    flex:0 0 200px;background:#fff;border-right:1px solid #e3e6ee;
+    padding:18px 6px 18px 12px;display:flex;flex-direction:column;
+    transition:flex-basis .18s ease,padding .18s ease;overflow:hidden;
+  }
+  .pages-sidebar.collapsed{flex:0 0 40px;padding:18px 6px;}
+  .pages-sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0 0 22px 6px;}
+  .pages-sidebar.collapsed .pages-sidebar-head{justify-content:center;margin-left:0;}
+  .pages-title{font-weight:700;color:#252423;font-size:17px;white-space:nowrap;}
+  .pages-sidebar.collapsed .pages-title{display:none;}
+  .pages-toggle{
+    background:none;border:none;color:#8a6d3b;font-size:17px;cursor:pointer;font-family:inherit;
+    padding:2px 4px;white-space:nowrap;flex:0 0 auto;
+  }
+  .pages-toggle:hover{color:#0303b0;}
+  .pages-nav{display:flex;flex-direction:column;}
+  .pages-sidebar.collapsed .pages-nav{display:none;}
+  .pages-nav-item{
+    display:block;width:100%;text-align:left;background:none;border:none;border-left:4px solid transparent;
+    padding:13px 10px;font-family:inherit;font-size:15px;color:#252423;cursor:pointer;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:2px;
+  }
+  .pages-nav-item:hover:not(.active){background:#f5f5f5;}
+  .pages-nav-item.active{background:#ebebeb;border-left-color:#0303b0;font-weight:700;}
+
+  /* ---------- hotspots + tooltip (mismo motor que los otros manuales) ---------- */
+  .hotspot{cursor:help;outline:none;}
+  .hotspot:hover,.hotspot:focus-visible{box-shadow:0 0 0 3px rgba(47,111,224,.35);}
+  button.hotspot{font-family:inherit;}
+  #tooltip{
+    position:fixed;max-width:min(340px,88vw);background:#1c2333;color:#f2f3f7;
+    border-radius:10px;padding:13px 15px;font-size:13px;line-height:1.5;
+    box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:3000;display:none;
+  }
+  #tooltip.visible{display:block;}
+  #tooltip h3{margin:0 0 6px;font-size:14px;color:#fff;}
+  #tooltip p{margin:0;color:#dfe2ea;}
+
+  /* popup nativo estilo Power BI (blanco) para barras/segmentos de los gráficos */
+  #lbChartTip{
+    position:fixed;z-index:3100;display:none;background:#fff;border:1px solid #c8c8c8;
+    box-shadow:0 4px 14px rgba(0,0,0,.18);padding:7px 11px;font-size:12px;color:#252423;
+    pointer-events:none;font-family:"Segoe UI",Arial,sans-serif;
+  }
+  #lbChartTip table{border-collapse:collapse;}
+  #lbChartTip td{padding:2px 0;vertical-align:top;}
+  #lbChartTip td:first-child{color:#605e5c;padding-right:18px;white-space:nowrap;}
+  #lbChartTip td:last-child{font-weight:700;}
+  #lbChartTip .tip-note{margin-top:5px;padding-top:5px;border-top:1px solid #eee;color:#0303b0;font-size:11.5px;}
+
+  /* ---------- encabezado de cada página ---------- */
+  .lb-head{display:grid;grid-template-columns:300px 1fr 300px;align-items:center;min-height:96px;}
+  .lb-cemex{width:210px;height:auto;justify-self:start;margin-left:6px;}
+  .lb-logo{width:270px;height:auto;justify-self:end;}
+  .lb-title-box{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .lb-title{margin:0;font-size:42px;line-height:1.1;font-weight:700;color:var(--lb-blue);padding:0 8px;border-radius:8px;}
+  .lb-corte{display:inline-flex;gap:18px;font-size:14px;color:var(--lb-blue);padding:2px 8px;border-radius:6px;}
+  .lb-corte b{font-weight:700;}
+
+  /* ---------- segmentadores (filtros) ---------- */
+  .lb-filters{display:flex;gap:26px;justify-content:center;margin:12px 0 18px;}
+  .lb-slicer{width:232px;position:relative;}
+  .lb-slicer-label{font-size:12.5px;color:var(--lb-ink);margin:0 0 5px 2px;display:inline-block;padding:0 3px;border-radius:4px;}
+  .lb-slicer-box{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #e1e1e1;background:#fff;
+    font-size:11.5px;color:var(--lb-ink);padding:6px 7px;cursor:pointer;user-select:none;
+  }
+  .lb-slicer-box:hover{border-color:#b4b4b4;}
+  .lb-slicer-box svg{width:13px;height:13px;flex:none;color:#605e5c;}
+  .lb-slicer-val{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lb-slicer.filtered .lb-slicer-box{border-color:var(--lb-blue);background:#f2f2ff;font-weight:700;}
+  .lb-slicer-menu{
+    position:absolute;top:calc(100% + 2px);left:0;width:270px;max-height:320px;overflow:auto;background:#fff;
+    border:1px solid #c8c8c8;box-shadow:0 6px 18px rgba(0,0,0,.18);z-index:60;display:none;padding:6px 0;font-size:12px;
+  }
+  .lb-slicer.open .lb-slicer-menu{display:block;}
+  .lb-opt{display:flex;align-items:center;gap:8px;padding:5px 10px;cursor:pointer;white-space:nowrap;color:var(--lb-ink);}
+  .lb-opt:hover{background:#f2f2f2;}
+  .lb-opt .chk{
+    width:13px;height:13px;border:1px solid #605e5c;display:inline-flex;align-items:center;justify-content:center;
+    font-size:10px;line-height:1;flex:none;color:transparent;
+  }
+  .lb-opt.sel .chk{background:var(--lb-blue);border-color:var(--lb-blue);color:#fff;}
+  .lb-opt.radio .chk{border-radius:50%;}
+  .lb-opt.grp{font-weight:700;}
+  .lb-opt.lvl2{padding-left:30px;}
+  .lb-opt-search{display:block;margin:2px 8px 6px;width:calc(100% - 16px);border:1px solid #d0d0d0;padding:5px 7px;font-size:12px;font-family:inherit;}
+  .lb-opt-note{padding:6px 12px 4px;color:#777;font-style:italic;white-space:normal;line-height:1.4;font-size:11.5px;}
+
+  /* ---------- barras de título de cada visual ---------- */
+  .lb-bar{
+    background:var(--lb-blue);color:#fff;font-weight:700;font-size:19px;text-align:center;
+    padding:9px 10px;border-radius:10px 10px 0 0;position:relative;z-index:2;
+  }
+  .lb-bar.red{background:var(--lb-red);}
+  .lb-bar.lav{background:var(--lb-lav);}
+  .lb-bar.green{background:var(--lb-green);}
+  .lb-chartbox{border:2px solid var(--lb-blue);border-radius:44px;margin-top:-10px;padding:14px 10px 6px;background:#fff;position:relative;}
+  .lb-chartbox svg{display:block;width:100%;height:auto;overflow:visible;font-family:"Segoe UI",Arial,sans-serif;}
+  .lb-chartbox .lb-hit{cursor:pointer;}
+  .lb-chartbox .lb-hit:hover{fill:rgba(3,3,176,.05);}
+  .lb-block{margin-bottom:22px;}
+  .lb-row{display:flex;gap:18px;align-items:flex-start;margin-bottom:22px;}
+  .lb-row > .lb-block{margin-bottom:0;}
+
+  /* ---------- tablas (visual de tabla de Power BI) ---------- */
+  .lb-tablebox{overflow:auto;max-height:380px;border-bottom:1px solid #e6e6e6;background:#fff;}
+  .lb-tablebox::-webkit-scrollbar{width:8px;height:8px;}
+  .lb-tablebox::-webkit-scrollbar-thumb{background:#b9bcc4;border-radius:4px;}
+  .lb-table{border-collapse:collapse;font-size:11px;color:var(--lb-ink);width:100%;}
+  .lb-table th{
+    position:sticky;top:0;background:#fff;text-align:left;font-weight:400;font-size:11.5px;color:var(--lb-ink);
+    padding:8px 7px 6px;border-bottom:2px solid #9cc8ee;white-space:nowrap;cursor:pointer;z-index:1;
+  }
+  .lb-table th:hover{background:#f3f6fb;}
+  .lb-table th .sort{font-size:9px;color:#252423;margin-left:3px;}
+  .lb-table td{padding:3px 7px;white-space:nowrap;vertical-align:top;}
+  .lb-table td.wrap{white-space:normal;min-width:120px;}
+  .lb-table tbody tr:nth-child(even){background:#ececec;}
+  .lb-table .num{text-align:right;}
+  .lb-table tfoot td{position:sticky;bottom:0;background:#fff;font-weight:700;border-top:1px solid #d0d0d0;padding:5px 7px;}
+  .lb-table .lb-empty{white-space:normal;color:#8a8f99;font-style:italic;padding:14px 10px;text-align:center;}
+
+  /* ---------- tarjeta "Tiempo real" y botones de página ---------- */
+  .lb-kpi-card{
+    border-radius:34px;box-shadow:0 4px 12px rgba(0,0,0,.28);padding:26px 34px;margin:14px 6px 0;background:#fff;
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .lb-kpi-row{display:flex;justify-content:space-between;align-items:center;padding:7px 8px;border-radius:8px;}
+  .lb-kpi-row .k{font-style:italic;font-weight:700;font-size:19px;color:#0303b0;}
+  .lb-kpi-row .k.alt{color:#1f6fc5;}
+  .lb-kpi-row .k.bad{color:#a4262c;}
+  .lb-kpi-row .v{font-size:20px;font-weight:600;color:#111;min-width:70px;text-align:center;}
+  .lb-kpi-stack{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .lb-kpi-box{
+    border-radius:18px;box-shadow:0 3px 10px rgba(0,0,0,.25);padding:12px 10px 16px;background:#fff;text-align:center;
+  }
+  .lb-kpi-box .k{font-style:italic;font-weight:600;font-size:17px;color:#0303b0;}
+  .lb-kpi-box .k.bad{color:#a4262c;}
+  .lb-kpi-box .v{font-size:34px;font-weight:600;color:#111;margin-top:8px;}
+  .lb-nav{display:flex;gap:8px;justify-content:center;margin-top:22px;}
+  .lb-nav-btn{
+    border:1px solid #252423;border-radius:24px;background:#fff;color:#252423;font-family:inherit;
+    font-size:12px;padding:11px 14px;cursor:pointer;
+  }
+  .lb-nav-btn:hover:not(.active){background:#f3f3f3;}
+  .lb-nav-btn.active{background:#252423;color:#fff;}
+
+  .lb-emptychart{height:340px;position:relative;}
+  .lb-emptychart .axis-title{position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:12px;font-weight:700;color:#252423;}
+</style>
 </head>
 <body>
 
@@ -270,6 +452,8 @@
 </div>
 
 <div id="appContent">
+  <div id="lbAppUC">
+
   <div class="page-header">
     <button type="button" class="ph-back" data-ph-back aria-label="Volver" title="Volver a ¿Qué quieres consultar?">←</button>
     <p class="cx-ph-eyebrow">Manual interactivo</p>
@@ -285,6 +469,202 @@
       <button type="button" class="btn-comenzar" id="btnUcBack">← Volver</button>
     </div>
   </div>
+  </div>
+
+  <div class="page-header" id="pageHeaderTablero" style="display:none;">
+    <button type="button" class="ph-back" data-ph-back aria-label="Volver" title="Volver a ¿Qué quieres consultar?">←</button>
+    <p class="cx-ph-eyebrow">Manual interactivo</p>
+    <h1>Tablero Locombo <span class="badge">Indicadores de gestión</span></h1>
+    <p>Pasa el cursor sobre cualquier título, gráfico, filtro o botón (o tócalo en móvil) para ver su explicación. Usa los filtros, haz clic en las barras y cambia de página tal como lo harías en el tablero real.</p>
+    <p class="cx-ph-note">⚠️ Los datos que ves son ilustrativos — no corresponden a información real de la operación.</p>
+  </div>
+
+  <div id="stageT" style="display:none;">
+  <div id="boardWrap">
+
+    <div class="pages-sidebar" id="pagesSidebar">
+      <div class="pages-sidebar-head">
+        <span class="pages-title">Páginas</span>
+        <button type="button" class="pages-toggle hotspot" id="pagesToggleBtn"
+          data-tip-title="Contraer/Expandir Páginas"
+          data-tip-text="Muestra u oculta el panel de Páginas. Un clic lo contrae, otro clic lo vuelve a abrir.">«</button>
+      </div>
+      <nav class="pages-nav" id="pagesNav"></nav>
+    </div>
+
+    <div id="boardContent">
+
+    <!-- ================= PÁGINA 1: TIEMPO REAL (loc1–loc3) ================= -->
+    <section class="tablero-screen active" id="lbTR">
+      <div class="lb-scroll">
+        <div class="lb-head">
+          <img class="lb-cemex hotspot" src="../Recursos/Locombo/Tablero/LogoCemexDO.png" alt="CEMEX Desarrollo de Operaciones" data-tip-title="CEMEX — Desarrollo de Operaciones">
+          <div class="lb-title-box">
+            <h2 class="lb-title hotspot" data-tip-title="Indicadores tiempo real"
+              data-tip-text="Muestra, en el momento del corte, cuánto personal ya registró su jornada en Locomboo frente al personal asignado para hoy, el detalle de cada jornada y las novedades del día.">Indicadores tiempo real</h2>
+            <div class="lb-corte hotspot" data-tip-title="Fecha de corte"
+              data-tip-text="Fecha y hora de la última actualización de los datos. Todo lo que ves en la página corresponde a ese momento."><b>Fecha de corte:</b><span class="lb-corte-val"></span></div>
+          </div>
+          <img class="lb-logo hotspot" src="../Recursos/Locombo/Tablero/LogoLocomboo.png" alt="Locomboo" data-tip-title="Locomboo">
+        </div>
+
+        <div class="lb-filters" data-filters="planta,nombre,turno,tipodia,area"></div>
+
+        <div class="lb-block">
+          <div class="lb-bar hotspot" data-tip-title="Adopción (hoy)"
+            data-tip-text="Por planta, agrupadas por cluster: azul claro = personal que registró jornada hoy, azul oscuro = personal asignado al día, línea morada = % de adopción (registrado ÷ asignado). Pasa el cursor por una planta para ver sus datos; haz clic para filtrar todo el tablero por ella (clic de nuevo para quitar el filtro).">Adopción</div>
+          <div class="lb-chartbox" id="lbTrAdopcion"></div>
+        </div>
+
+        <div class="lb-row">
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar hotspot" data-tip-title="Detalle de jornadas"
+              data-tip-text="Una fila por persona que registró jornada hoy: planta asignada vs. planta donde registró, cargo, hora y tipo de ingreso, y horas de jornada acumuladas. Mientras la jornada sigue abierta, la Hora Salida es la hora del corte. Clic en un encabezado para ordenar.">Detalle de jornadas</div>
+            <div class="lb-tablebox" id="tblTrJornadas" style="max-height:385px;"></div>
+          </div>
+          <div style="flex:0 0 370px;">
+            <div class="lb-bar hotspot" data-tip-title="Tiempo real"
+              data-tip-text="Resumen del día al momento del corte. Cambia según el filtro de planta/cluster que tengas aplicado.">Tiempo real</div>
+            <div class="lb-kpi-card" id="lbTrKpi"></div>
+            <div class="lb-nav" data-current="lbTR"></div>
+          </div>
+        </div>
+
+        <div class="lb-row">
+          <div class="lb-block" style="flex:1.45;min-width:0;">
+            <div class="lb-bar red hotspot" data-tip-title="Personal sin marcaje activo"
+              data-tip-text="Personas asignadas hoy y con estatus Activo que todavía no han registrado su ingreso en Locomboo. El Total es la cantidad de personas en esa situación.">Personal sin marcaje activo</div>
+            <div class="lb-tablebox" id="tblTrSinMarcaje" style="max-height:330px;"></div>
+          </div>
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar red hotspot" data-tip-title="Error"
+              data-tip-text="Jornadas con inconsistencias en el registro, por ejemplo con hora de salida pero sin hora de ingreso. Sirve para identificar a quién hay que corregirle el marcaje.">Error</div>
+            <div class="lb-tablebox" id="tblTrError" style="max-height:330px;"></div>
+          </div>
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar lav hotspot" data-tip-title="Personal Inoperativo"
+              data-tip-text="Personas que hoy no están disponibles para operar, por área, con el motivo (Ausente, Vacaciones, Incapacidad, Permiso, Ausentismo…).">Personal Inoperativo</div>
+            <div class="lb-tablebox" id="tblTrInoperativo" style="max-height:330px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PÁGINA 2: HISTÓRICO (loc4–loc6) ================= -->
+    <section class="tablero-screen" id="lbHist">
+      <div class="lb-scroll">
+        <div class="lb-head">
+          <img class="lb-cemex hotspot" src="../Recursos/Locombo/Tablero/LogoCemexDO.png" alt="CEMEX Desarrollo de Operaciones" data-tip-title="CEMEX — Desarrollo de Operaciones">
+          <div class="lb-title-box">
+            <h2 class="lb-title hotspot" data-tip-title="Indicadores Historico"
+              data-tip-text="Los mismos indicadores de adopción, pero acumulados para los días que elijas en el filtro Año, Mes, Día, más las alertas por duración de jornada y la adopción por área.">Indicadores Historico</h2>
+            <div class="lb-corte hotspot" data-tip-title="Fecha de corte"
+              data-tip-text="Fecha y hora de la última actualización de los datos del tablero."><b>Fecha de corte:</b><span class="lb-corte-val"></span></div>
+          </div>
+          <img class="lb-logo hotspot" src="../Recursos/Locombo/Tablero/LogoLocomboo.png" alt="Locomboo" data-tip-title="Locomboo">
+        </div>
+
+        <div class="lb-filters" data-filters="planta,fecha,nombre,tipodia,area"></div>
+
+        <div class="lb-row">
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar hotspot" data-tip-title="Adopción (histórico)"
+              data-tip-text="Por planta: azul claro = personal que registró jornada en el periodo, azul oscuro = personal asignado en el periodo, línea morada = % de adopción histórica. Clic en una planta para filtrar el tablero por ella.">Adopción</div>
+            <div class="lb-chartbox" id="lbHistAdopcion"></div>
+          </div>
+          <div style="flex:0 0 300px;">
+            <div class="lb-bar hotspot" data-tip-title="Tiempo real (totales del periodo)"
+              data-tip-text="En el tablero real este recuadro se llama “Tiempo real”, pero en esta página muestra los totales del periodo histórico seleccionado. Cambia con el filtro de planta/cluster o de área.">Tiempo real</div>
+            <div class="lb-kpi-stack" id="lbHistKpi"></div>
+            <div class="lb-nav" data-current="lbHist"></div>
+          </div>
+        </div>
+
+        <div class="lb-row">
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar green hotspot" data-tip-title="Alertas jornadas"
+              data-tip-text="Por planta, cuántas jornadas cayeron en cada rango de duración (menos de 8 h, 8–10 h, 10–12 h … más de 16 h). Ayuda a detectar jornadas muy cortas o demasiado largas. “(En blanco)” = jornadas sin duración calculada. Clic en una columna para filtrar por esa planta.">Alertas jornadas</div>
+            <div class="lb-chartbox" id="lbHistAlertas"></div>
+          </div>
+          <div class="lb-block" style="flex:0 0 440px;">
+            <div class="lb-bar hotspot" data-tip-title="Adopción Area"
+              data-tip-text="La misma comparación registrado vs. asignado y el % de adopción, pero por área (Operación, Calidad, Mtto Industrial, Bombeo, Mtto Automotriz). Clic en un área para filtrar el tablero por ella.">Adopción Area</div>
+            <div class="lb-chartbox" id="lbHistArea"></div>
+          </div>
+        </div>
+
+        <div class="lb-block">
+          <div class="lb-bar hotspot" data-tip-title="Detalle de jornadas (histórico)"
+            data-tip-text="Una fila por jornada registrada en los días seleccionados: plantas, cargo, ingreso y salida, total de horas trabajadas, comentarios y el estatus de la persona ese día. Clic en un encabezado para ordenar.">Detalle de jornadas</div>
+          <div class="lb-tablebox" id="tblHistJornadas" style="max-height:320px;"></div>
+        </div>
+
+        <div class="lb-row">
+          <div class="lb-block" style="flex:1.3;min-width:0;">
+            <div class="lb-bar red hotspot" data-tip-title="Personal sin marcaje activo (histórico)"
+              data-tip-text="Personas activas y asignadas en los días seleccionados que no registraron su jornada. El Total es la cantidad de casos en el periodo.">Personal sin marcaje activo</div>
+            <div class="lb-tablebox" id="tblHistSinMarcaje" style="max-height:290px;"></div>
+          </div>
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar red hotspot" data-tip-title="Error (histórico)"
+              data-tip-text="Jornadas del periodo marcadas como Error (registro incompleto o inconsistente), con la fecha en que ocurrió.">Error</div>
+            <div class="lb-tablebox" id="tblHistError" style="max-height:290px;"></div>
+          </div>
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar lav hotspot" data-tip-title="Personal Inoperativo (histórico)"
+              data-tip-text="Personas no disponibles para operar en los días seleccionados, por área y motivo.">Personal Inoperativo</div>
+            <div class="lb-tablebox" id="tblHistInoperativo" style="max-height:290px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PÁGINA 3: DETALLE HC (loc7–loc8) ================= -->
+    <section class="tablero-screen" id="lbHC">
+      <div class="lb-scroll">
+        <div class="lb-head">
+          <img class="lb-cemex hotspot" src="../Recursos/Locombo/Tablero/LogoCemexDO.png" alt="CEMEX Desarrollo de Operaciones" data-tip-title="CEMEX — Desarrollo de Operaciones">
+          <div class="lb-title-box">
+            <h2 class="lb-title hotspot" data-tip-title="Detalle HC"
+              data-tip-text="HC (headcount) = cantidad de personas. Esta página muestra cuántas personas hay por área cada día y el listado de personas actual e histórico.">Detalle HC</h2>
+            <div class="lb-corte hotspot" data-tip-title="Fecha de corte"
+              data-tip-text="Fecha y hora de la última actualización de los datos del tablero."><b>Fecha de corte:</b><span class="lb-corte-val"></span></div>
+          </div>
+          <img class="lb-logo hotspot" src="../Recursos/Locombo/Tablero/LogoLocomboo.png" alt="Locomboo" data-tip-title="Locomboo">
+        </div>
+
+        <div class="lb-filters" data-filters="planta,fecha,nombre,tipodia,area"></div>
+
+        <div class="lb-block">
+          <div class="lb-bar hotspot" data-tip-title="HC por día"
+            data-tip-text="Cantidad de personas por día, apilada por área (Bombeo, Calidad, Mtto Automotriz, Mtto Industrial, Operación). Clic en un día para ver solo ese día en el resto de la página (clic de nuevo para volver).">HC por día</div>
+          <div class="lb-chartbox" id="lbHcDia"></div>
+        </div>
+
+        <div class="lb-block">
+          <div class="lb-bar hotspot" data-tip-title="HC Actual (gráfico)"
+            data-tip-text="Cantidad de personas actual por planta (Planta_nombre). En la captura de referencia aparece vacío porque al momento del corte no había datos cargados para el día.">HC Actual</div>
+          <div class="lb-chartbox lb-emptychart"><div class="axis-title">Planta_nombre</div></div>
+        </div>
+
+        <div class="lb-row">
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar hotspot" data-tip-title="HC Actual (tabla)"
+              data-tip-text="Listado de las personas que componen el HC del día: unidad de negocio, código, documento, área, posición y estado. En la captura de referencia está vacía (sin datos del día al momento del corte).">HC Actual</div>
+            <div class="lb-tablebox" id="tblHcActual" style="max-height:300px;"></div>
+          </div>
+          <div class="lb-block" style="flex:1;min-width:0;">
+            <div class="lb-bar hotspot" data-tip-title="HC Historico"
+              data-tip-text="Listado de las personas que componían el HC en los días seleccionados: unidad de negocio, código de empleado, documento, nombre, área y posición.">HC Historico</div>
+            <div class="lb-tablebox" id="tblHcHistorico" style="max-height:300px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    </div>
+  </div>
+  </div>
 </div>
 
 <div id="loadingOverlay">
@@ -296,7 +676,74 @@
   </div>
 </div>
 
+<div id="tooltip"></div>
+<div id="lbChartTip"></div>
+
 <script>
+/* ---------------- Tooltip engine (hover on desktop, tap on touch) ---------------- */
+const tooltip = document.getElementById('tooltip');
+let activeEl = null;
+
+function showTooltip(el){
+  const title = el.getAttribute('data-tip-title');
+  const text = el.getAttribute('data-tip-text');
+  if (!title && !text) return;
+  lbTipHide();
+  activeEl = el;
+  tooltip.innerHTML = (title ? `<h3>${title}</h3>` : '') + (text ? `<p>${text}</p>` : '');
+  tooltip.classList.add('visible');
+  positionTooltip(el);
+}
+function hideTooltip(){ activeEl = null; tooltip.classList.remove('visible'); }
+function positionTooltip(el){
+  const r = el.getBoundingClientRect();
+  const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+  const margin = 10;
+  let left = r.left + r.width / 2 - tw / 2;
+  let top = r.bottom + margin;
+  if (top + th > window.innerHeight - margin) top = r.top - th - margin;
+  left = Math.max(margin, Math.min(left, window.innerWidth - tw - margin));
+  top = Math.max(margin, top);
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+}
+const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+function bindHotspot(el){
+  if (el.dataset.bound) return;
+  el.dataset.bound = '1';
+  if (hasHover){
+    el.addEventListener('mouseenter', () => showTooltip(el));
+    el.addEventListener('mouseleave', () => { if (activeEl === el) hideTooltip(); });
+    el.addEventListener('focus', () => showTooltip(el));
+    el.addEventListener('blur', () => { if (activeEl === el) hideTooltip(); });
+  } else {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (activeEl === el) hideTooltip(); else showTooltip(el);
+    });
+  }
+}
+function bindAllHotspots(root){ (root||document).querySelectorAll('.hotspot').forEach(bindHotspot); }
+document.addEventListener('click', () => hideTooltip());
+window.addEventListener('resize', () => { if (activeEl) positionTooltip(activeEl); });
+window.addEventListener('scroll', () => { if (activeEl) positionTooltip(activeEl); lbTipHide(); }, true);
+
+/* ---------------- Popup nativo (blanco) de los gráficos ---------------- */
+const lbChartTip = document.getElementById('lbChartTip');
+function lbTipShow(evt, rows, note){
+  hideTooltip();
+  lbChartTip.innerHTML = `<table>${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`
+    + (note ? `<div class="tip-note">${note}</div>` : '');
+  lbChartTip.style.display = 'block';
+  const tw = lbChartTip.offsetWidth, th = lbChartTip.offsetHeight, m = 10;
+  let left = evt.clientX + 16, top = evt.clientY + 14;
+  if (left + tw > window.innerWidth - m) left = evt.clientX - tw - 16;
+  if (top + th > window.innerHeight - m) top = evt.clientY - th - 14;
+  lbChartTip.style.left = Math.max(m, left) + 'px';
+  lbChartTip.style.top = Math.max(m, top) + 'px';
+}
+function lbTipHide(){ if (lbChartTip) lbChartTip.style.display = 'none'; }
+
 /* ---------------- Animación de carga ---------------- */
 function showLoadingOverlay(opts, cb){
   const overlay = document.getElementById('loadingOverlay');
@@ -322,29 +769,853 @@ document.getElementById('btnComenzar').addEventListener('click', () => {
 /* ---------------- Elegir manual (App Locombo / Tablero Locombo) ---------------- */
 function openUnderConstruction(which){
   document.getElementById('ucWhich').textContent = which;
+  document.getElementById('lbAppUC').style.display = '';
+  document.getElementById('pageHeaderTablero').style.display = 'none';
+  document.getElementById('stageT').style.display = 'none';
   document.getElementById('appContent').style.display = 'block';
 }
+function showTablero(){
+  document.getElementById('lbAppUC').style.display = 'none';
+  document.getElementById('pageHeaderTablero').style.display = '';
+  document.getElementById('stageT').style.display = '';
+  document.getElementById('appContent').style.display = 'block';
+  hideTooltip();
+  lbGoTo('lbTR');
+}
+const LOADING_OPTS = {
+  title: 'Estamos realizando tu pedido…',
+  subtitle: 'Recuerda: esto es una ilustración de la herramienta, no son datos reales.',
+  duration: 5000
+};
 document.getElementById('btnChooseApp').addEventListener('click', () => {
   document.getElementById('chooseManualScreen').style.display = 'none';
-  showLoadingOverlay({
-    title: 'Estamos realizando tu pedido…',
-    subtitle: 'Recuerda: esto es una ilustración de la herramienta, no son datos reales.',
-    duration: 5000
-  }, () => openUnderConstruction('App Locombo'));
+  showLoadingOverlay(LOADING_OPTS, () => openUnderConstruction('App Locombo'));
 });
 document.getElementById('btnChooseTablero').addEventListener('click', () => {
   document.getElementById('chooseManualScreen').style.display = 'none';
-  showLoadingOverlay({
-    title: 'Estamos realizando tu pedido…',
-    subtitle: 'Recuerda: esto es una ilustración de la herramienta, no son datos reales.',
-    duration: 5000
-  }, () => openUnderConstruction('Tablero Locombo'));
+  showLoadingOverlay(LOADING_OPTS, showTablero);
 });
 document.querySelectorAll('#btnUcBack, [data-ph-back]').forEach(btn => btn.addEventListener('click', () => {
+  hideTooltip(); lbTipHide(); lbCloseSlicers();
   document.getElementById('appContent').style.display = 'none';
   document.getElementById('chooseManualScreen').style.display = '';
   window.scrollTo(0, 0);
 }));
+
+/* =========================================================================
+   TABLERO LOCOMBOO — datos (transcritos de Recursos/Locombo/Tablero/loc1–loc8)
+   ========================================================================= */
+const LB_CLUSTERS = [
+  { key:'Antioquia',   plants:['Bello','Medellin','Rionegro'] },
+  { key:'Centro',      plants:['170','240','Bombeo','Bosa','Centenario','CXO PHC','El Dorado','Puente aranda','Soacha','Sur','Tocancipa'] },
+  { key:'Occidente',   plants:['Cali Sur','Pereira','Tulua'] },
+  { key:'Santander',   plants:['Floridablanca'] },
+  { key:'Sur_oriente', plants:['Fusagasuga','Ibague','Sumapaz'] },
+  { key:'Taller',      plants:['Taller Centenario'] }
+];
+const LB_PLANTS = LB_CLUSTERS.flatMap(c => c.plants);
+const LB_PLANT_CLUSTER = {};
+LB_CLUSTERS.forEach(c => c.plants.forEach(p => { LB_PLANT_CLUSTER[p] = c.key; }));
+
+/* Tiempo real — [registrado, asignado] por planta (loc2.png: suma 413 / 624 = 66,2%) */
+const LB_TR = {
+  'Bello':[24,24], 'Medellin':[23,26], 'Rionegro':[23,26], '170':[32,40], '240':[11,13], 'Bombeo':[7,28],
+  'Bosa':[13,19], 'Centenario':[18,43], 'CXO PHC':[4,24], 'El Dorado':[30,36], 'Puente aranda':[26,68],
+  'Soacha':[18,20], 'Sur':[20,29], 'Tocancipa':[21,26], 'Cali Sur':[28,28], 'Pereira':[14,14], 'Tulua':[13,13],
+  'Floridablanca':[31,31], 'Fusagasuga':[15,20], 'Ibague':[23,27], 'Sumapaz':[19,24], 'Taller Centenario':[0,45]
+};
+const LB_TR_TOTAL = { reg:413, activo:409, terminado:9, asig:624 };
+
+/* Histórico — [registrado, asignado, % adopción de la captura] (loc4.png: 2785 / 3750 = 74,27%).
+   El % es exacto (etiqueta de la línea); las cantidades por planta se estimaron por la altura
+   de las barras (en la captura las etiquetas salen cortadas "…") y cuadran con los totales. */
+const LB_HIST = {
+  'Bello':[137,138,99.27], 'Medellin':[118,156,75.64], 'Rionegro':[151,165,91.30], '170':[233,237,98.31],
+  '240':[73,73,100], 'Bombeo':[41,167,24.40], 'Bosa':[47,114,41.23], 'Centenario':[209,262,79.77],
+  'CXO PHC':[77,147,52.70], 'El Dorado':[191,227,84.14], 'Puente aranda':[290,402,72.21], 'Soacha':[113,117,96.72],
+  'Sur':[138,174,79.31], 'Tocancipa':[144,152,94.77], 'Cali Sur':[161,176,91.48], 'Pereira':[84,84,100],
+  'Tulua':[78,79,98.72], 'Floridablanca':[176,187,94.09], 'Fusagasuga':[70,120,58.33], 'Ibague':[154,163,94.48],
+  'Sumapaz':[97,145,66.67], 'Taller Centenario':[3,265,1.14]
+};
+const LB_HIST_TOTAL = { reg:2785, asig:3750 };
+
+/* Adopción por área (loc5.png) — [registrado, asignado, %] */
+const LB_AREAS = ['Operacion','Calidad','Mtto Industrial','Bombeo','Mtto Automotriz'];
+const LB_AREA_HIST = {
+  'Operacion':[2283,2665,85.67], 'Calidad':[174,287,60.63], 'Mtto Industrial':[162,246,65.85],
+  'Bombeo':[88,216,40.74], 'Mtto Automotriz':[78,336,23.21]
+};
+
+/* Alertas jornadas (loc5.png) — por planta: [(En blanco), <8h, 8-10h, 10-12h, 12-14h, 14-16h, >16h].
+   Los números legibles en la captura son exactos; los segmentos pequeños se estimaron por altura. */
+const LB_ALERT_CATS = [
+  { name:'(En blanco)',            color:'#118dff' },
+  { name:'1.Menos de 8 horas',     color:'#12239e' },
+  { name:'2.Entre 8 y 10 horas',   color:'#e66c37' },
+  { name:'3.Entre 10 y 12 horas',  color:'#6b007b' },
+  { name:'4.Entre 12 y 14 horas',  color:'#e044a7' },
+  { name:'5.Entre 14 y 16 horas',  color:'#744ec2' },
+  { name:'6.Mayor a 16 horas',     color:'#d9b300' }
+];
+const LB_ALERTS = {
+  'Bello':[13,9,51,29,15,8,3], 'Medellin':[20,19,38,25,12,0,1], 'Rionegro':[15,29,48,35,20,0,0],
+  '170':[28,58,77,55,13,3,0], '240':[5,3,36,21,3,0,0], 'Bombeo':[22,4,6,3,3,0,0], 'Bosa':[18,6,10,4,6,0,0],
+  'Centenario':[31,62,91,21,4,0,0], 'CXO PHC':[20,20,26,10,2,0,0], 'El Dorado':[9,24,104,50,2,0,1],
+  'Puente aranda':[66,44,137,30,2,0,8], 'Soacha':[3,41,49,21,3,0,0], 'Sur':[26,36,44,28,2,0,1],
+  'Tocancipa':[16,17,60,40,9,0,0], 'Cali Sur':[10,50,69,25,7,0,0], 'Pereira':[2,35,29,18,0,0,0],
+  'Tulua':[4,11,22,20,11,4,0], 'Floridablanca':[1,38,69,54,9,0,6], 'Fusagasuga':[15,3,9,27,11,4,0],
+  'Ibague':[4,37,72,35,6,0,3], 'Sumapaz':[16,16,37,21,6,0,0], 'Taller Centenario':[2,0,0,0,0,0,0]
+};
+
+/* HC por día (loc7.png) — de abajo hacia arriba. Operación y Mtto Automotriz son exactos;
+   Bombeo/Calidad/Mtto Industrial se estimaron por altura (etiquetas ilegibles en la captura). */
+const LB_DAYS = ['21/09/2026','22/09/2026','23/09/2026','24/09/2026','25/09/2026','26/09/2026'];
+const LB_HC_AREAS = [
+  { name:'Bombeo',          color:'#118dff', vals:[36,36,36,36,35,36] },
+  { name:'Calidad',         color:'#12239e', vals:[46,46,46,46,46,47] },
+  { name:'Mtto Automotriz', color:'#e66c37', vals:[55,55,55,57,57,57] },
+  { name:'Mtto Industrial', color:'#6b007b', vals:[40,40,39,40,40,40] },
+  { name:'Operacion',       color:'#f3c4ae', vals:[455,447,443,443,440,437] }
+];
+
+/* ---- Tablas (muestra de las filas visibles en cada captura) ---- */
+const AS = 'AGENTE DE SERVICIO';
+const rowsOf = (keys, arr) => arr.map(a => Object.fromEntries(keys.map((k, i) => [k, a[i] === undefined ? '' : a[i]])));
+
+const TR_JORNADAS = rowsOf(['fecha','dia','cod','pa','pr','pos','nombre','hing','ting','hsal','tsal','horas'], [
+  ['28/09/2026','Normal','','','Puente Aranda','','Jorge Luis Acosta Aguilera','28/09/2026 5:00:00','Manual','28/09/2026 12:41:58','','7,70'],
+  ['28/09/2026','Normal','1.060.004,00','El Dorado','El Dorado',AS,'GUTIERREZ RODRIGUEZ, JHON JAIRO','28/09/2026 9:03:20','Normal','28/09/2026 12:41:58','','3,64'],
+  ['28/09/2026','Normal','1.350.274,00','Puente Aranda','Puente Aranda',AS,'MONROY VARON WILFIN OLIVO','28/09/2026 10:07:40','Normal','28/09/2026 12:41:58','','2,57'],
+  ['28/09/2026','Normal','1.350.281,00','Soacha','Soacha',AS,'BERNAL ARIAS, DANIEL ENRIQUE','28/09/2026 10:30:50','Normal','28/09/2026 12:41:58','','2,19'],
+  ['28/09/2026','Normal','1.350.779,00','Bosa','Bosa',AS,'CHIVATA , HENRY','28/09/2026 7:03:16','Normal','28/09/2026 12:41:58','','5,65'],
+  ['28/09/2026','Normal','1.350.823,00','Puente Aranda','Puente Aranda',AS,'GOYES TAPIA, ANTONIO AERCIO','28/09/2026 6:09:11','Normal','28/09/2026 12:41:58','','6,55'],
+  ['28/09/2026','Normal','1.351.239,00','Tocancipa','Tocancipa',AS,'MEDINA PINEDA, ANDRES MAURICIO','28/09/2026 6:50:46','Normal','28/09/2026 12:41:58','','5,85'],
+  ['28/09/2026','Normal','1.351.242,00','Floridablanca','Floridablanca',AS,'CAPACHO GAMBOA, GONZALO','28/09/2026 6:38:45','Normal','28/09/2026 12:41:58','','6,05'],
+  ['28/09/2026','Normal','1.351.755,00','Sur','Sur',AS,'GOMEZ VENEGAS, ANTONIO JOSE','28/09/2026 8:21:16','Normal','28/09/2026 12:41:58','','4,34'],
+  ['28/09/2026','Normal','1.352.219,00','Medellín','Medellín',AS,'BOHORQUEZ BETANCUR, ORFENIO DE JESUS','28/09/2026 8:13:39','Normal','28/09/2026 12:41:58','','4,47'],
+  ['28/09/2026','Normal','1.352.549,00','Sur','Centenario',AS,'PAEZ BARRERA, NELSON','28/09/2026 12:09:23','Normal','28/09/2026 12:41:58','','0,54'],
+  ['28/09/2026','Normal','1.352.796,00','Tocancipa','Tocancipa',AS,'ORREGO VASQUEZ, MARCOS ANDRES','28/09/2026 8:00:45','Normal','28/09/2026 12:41:58','','4,69'],
+  ['28/09/2026','Normal','1.401.114,00','Sur','Sur',AS,'LEAL FONSECA OSCAR ALONSO','28/09/2026 8:48:59','Normal','28/09/2026 12:41:58','','3,88'],
+  ['28/09/2026','Normal','1.401.116,00','Soacha','Soacha',AS,'CASTILLO BARON, JAVIER','28/09/2026 9:40:47','Normal','28/09/2026 12:41:58','','3,02'],
+  ['28/09/2026','Normal','1.401.118,00','Soacha','Soacha',AS,'PEÑA OSTIOS, WILLIAM NORBERTO','28/09/2026 10:44:14','Normal','28/09/2026 12:41:58','','1,96'],
+  ['28/09/2026','Normal','1.401.124,00','170','170',AS,'CORREDOR CUSBA, FREDY ANTONIO','28/09/2026 7:50:53','Normal','28/09/2026 12:41:58','','4,85'],
+  ['28/09/2026','Normal','1.401.470,00','El Dorado','El Dorado',AS,'ARCINIEGAS CANIZALEZ, JULIO CESAR','28/09/2026 12:18:28','Normal','28/09/2026 12:41:58','','0,39'],
+  ['28/09/2026','Normal','1.401.479,00','170','170',AS,'MARTIN GARCIA, GABRIEL BLADIMIR','28/09/2026 7:50:53','Normal','28/09/2026 12:41:58','','4,85'],
+  ['28/09/2026','Normal','1.401.480,00','Centenario','Puente Aranda',AS,'MORENO ANGULO YULIAN ALEXANDER','28/09/2026 7:26:01','Normal','28/09/2026 12:41:58','','5,27'],
+  ['28/09/2026','Normal','1.402.126,00','Floridablanca','Floridablanca',AS,'VARGAS ZAPATA, FABIO','28/09/2026 7:36:28','Normal','28/09/2026 12:41:58','','5,09'],
+  ['28/09/2026','Normal','1.402.406,00','Soacha','Soacha',AS,'LOPEZ BEJARANO, ARTURO ALFONSO','28/09/2026 6:47:00','Normal','28/09/2026 12:41:58','','5,92'],
+  ['28/09/2026','Normal','1.402.407,00','Soacha','Soacha',AS,'RAMIREZ DIAZ, JUAN CARLOS','28/09/2026 7:05:59','Normal','28/09/2026 12:41:58','','5,60']
+]);
+
+const BC = 'Bombeo/Colocación';
+const TR_SIN_MARCAJE = rowsOf(['fecha','un','pos','nombre','asig','estatus'], [
+  ['28/09/2026','170',AS,'CORTES CAO ANA RUTH',1,'Activo'],
+  ['28/09/2026','170',AS,'FRAILE REDONDO, WILLIAM ALBERTO',1,'Activo'],
+  ['28/09/2026','170',AS,'MONTOYA MOJICA, MARCO JULIO',1,'Activo'],
+  ['28/09/2026','170',AS,'PASTRANA BUITRAGO, BRYAN STEPHEN',1,'Activo'],
+  ['28/09/2026','170',AS,'RODRIGUEZ RINCON, URIEL',1,'Activo'],
+  ['28/09/2026','170','AYUDANTE GENERAL','NAVARRO MORENO, STEVE MANUEL',1,'Activo'],
+  ['28/09/2026','170','COORDINADOR DE PRODUCCION','HERNANDEZ CASTRO, ELKIN',1,'Activo'],
+  ['28/09/2026','170','JEFE DE PLANTA','MOLINA RAMBAL, URBANO ENRIQUE',1,'Activo'],
+  ['28/09/2026','170','OPERADOR DE CARGADOR','ROJAS SISA, JULIO ALBERTO',1,'Activo'],
+  ['28/09/2026','240','COORDINADOR DE PRODUCCION','ARIZA ARIZA, JOHN FABER',1,'Activo'],
+  ['28/09/2026','240','TECNICO INDUSTRIAL','SUA AFRICANO JUAN SEBASTIAN',1,'Activo'],
+  ['28/09/2026',BC,'AUXILIAR DE BOMBEO','GUERRERO CASTRO ROMEL CAMILO',1,'Activo'],
+  ['28/09/2026',BC,'AUXILIAR DE BOMBEO','RODRIGUEZ CHACON YEISON DAVID',1,'Activo'],
+  ['28/09/2026',BC,'AYUDANTE DE BOMA','BUSTOS VERA, JOSE YECID',1,'Activo'],
+  ['28/09/2026',BC,'AYUDANTE DE BOMA','ESQUIVEL BOLAÑOS, KEINER DAVID',1,'Activo'],
+  ['28/09/2026',BC,'AYUDANTE DE BOMA','MARCO ALONSO GONZALEZ SABOGAL',1,'Activo'],
+  ['28/09/2026',BC,'AYUDANTE DE BOMA','QUIAZUA GUIOT, NICOLAS STEVEN',1,'Activo'],
+  ['28/09/2026',BC,'AYUDANTE DE BOMA','RUIZ TORREGROZA, JHON EDINSON',1,'Activo'],
+  ['28/09/2026',BC,'COORDINADOR DE OPERACIÓN','RODRIGUEZ BERNAL CAMILA ALEJANDRA',1,'Activo']
+]);
+
+const TR_ERROR = rowsOf(['nombre','fecha','ing','sal'], [
+  ['FORERO ACOSTA HERNANDO ALFONSO','28/09/2026','','28/09/2026 12:41:58'],
+  ['JHON JAIRO JULIO BARRIOS','28/09/2026','','28/09/2026 12:41:58'],
+  ['PÉREZ MAZO JEAN CARLOS','28/09/2026','','28/09/2026 12:41:58']
+]);
+
+const TR_INOPERATIVO = rowsOf(['fecha','area','nombre','oper','estatus'], [
+  ['28/09/2026','Bombeo','CARREÑO SUAREZ, PABLO JESUS','Ausente','Incapacidad'],
+  ['28/09/2026','Bombeo','JAIMES MENESES, EVELIO','Ausente','Restricción'],
+  ['28/09/2026','Calidad','ALDANA RESTREPO, DANIELA','Ausente','Ausente'],
+  ['28/09/2026','Calidad','MATEO ROMERO HERNANDEZ','Ausente','Incapacidad'],
+  ['28/09/2026','Operacion','GENSY STIVEL TRIANA LADINO','Vacaciones','Vacaciones'],
+  ['28/09/2026','Operacion','ACERO GUTIERREZ, FERNANDO','Ausente','Restricción'],
+  ['28/09/2026','Operacion','ANDERSON ALEXIS CANO CANO','Ausente','Incapacidad'],
+  ['28/09/2026','Operacion','BELTRAN CERVANTES ROBERT DARIO','Ausentismo','Activo'],
+  ['28/09/2026','Operacion','BONILLA HORTA, JHON TITO','Ausente','Vacaciones'],
+  ['28/09/2026','Operacion','CALDERON PEREZ, MARIO ALEXANDER','Incapacidad','Incapacidad'],
+  ['28/09/2026','Operacion','CAMACHO RODRIGUEZ, CARLOS HERNAN','Ausente','Restricción'],
+  ['28/09/2026','Operacion','CARDENAS MESA, JESUS ENRIQUE','Ausente','Restricción'],
+  ['28/09/2026','Operacion','CELIS VARGAS, PASTOR','Ausente','Restricción'],
+  ['28/09/2026','Operacion','DUCUARA GIRON, GERMAN ANDRES','Permiso','Activo'],
+  ['28/09/2026','Operacion','FAIBER HUMBERTO BARRERA','Incapacidad','Incapacidad'],
+  ['28/09/2026','Operacion','FONSECA POVEDA, HENRY ORLANDO','Ausente','Vacaciones'],
+  ['28/09/2026','Operacion','FORERO FORERO, MARCO ANTONIO','Ausente','Jubilado'],
+  ['28/09/2026','Operacion','GOMEZ LONDOÑO, JOHN JAIRO DE JESUS','Ausente','Restricción'],
+  ['28/09/2026','Operacion','GRANADOS SUAREZ, LAURA','Ausente','Vacaciones']
+]);
+
+const H_JORNADAS = rowsOf(['fecha','dia','cod','pa','pr','pos','nombre','hing','ting','hsal','tsal','horas','coment','estatus'], [
+  ['21/09/2026','Normal','1.060.004,00','El Dorado','El Dorado',AS,'GUTIERREZ RODRIGUEZ, JHON JAIRO','21/09/2026 11:46:13','Normal','21/09/2026 20:39:49','Normal','8,89','','Activo'],
+  ['21/09/2026','Normal','1.350.274,00','Puente Aranda','Puente Aranda',AS,'MONROY VARON WILFIN OLIVO','21/09/2026 6:18:41','Normal','21/09/2026 16:23:17','Normal','10,08','','Ausente'],
+  ['21/09/2026','Normal','1.350.317,00','170','170','COORDINADOR TECNICO','PERILLA RUEDA, HUGO ALBERTO','21/09/2026 4:20:03','Normal','21/09/2026 12:32:58','Normal','8,22','','Activo'],
+  ['21/09/2026','Normal','1.350.779,00','Bosa','Bosa',AS,'CHIVATA , HENRY','21/09/2026 8:16:41','Normal','21/09/2026 19:05:59','Normal','10,82','','Activo'],
+  ['21/09/2026','Normal','1.350.823,00','Puente Aranda','Puente Aranda',AS,'GOYES TAPIA, ANTONIO AERCIO','21/09/2026 13:48:27','Normal','21/09/2026 22:03:29','Normal','8,25','','Activo'],
+  ['21/09/2026','Normal','1.351.039,00','Floridablanca','Floridablanca','TECNICO DE PLANTA','MARTINEZ BERNAL, CESAR AUGUSTO','21/09/2026 10:58:50','Normal','21/09/2026 21:02:50','Normal','10,07','','Activo'],
+  ['21/09/2026','Normal','1.351.239,00','Tocancipa','Tocancipa',AS,'MEDINA PINEDA, ANDRES MAURICIO','21/09/2026 8:29:16','Normal','21/09/2026 18:17:12','Normal','9,80','','Activo'],
+  ['21/09/2026','Normal','1.351.242,00','Floridablanca','Floridablanca',AS,'CAPACHO GAMBOA, GONZALO','21/09/2026 7:17:21','Normal','21/09/2026 18:29:46','Normal','11,21','','Activo'],
+  ['21/09/2026','Normal','1.351.299,00','El Dorado','El Dorado','AYUDANTE GENERAL','GALINDO CORDOBA DIEGO LEON','21/09/2026 5:52:50','Normal','21/09/2026 13:57:00','Normal','8,07','','Activo'],
+  ['21/09/2026','Normal','1.351.300,00',BC,'Bosa','OPERADOR DE AUTOBOMBA','BETANCOURT HERNANDEZ HECTOR FREDY','21/09/2026 9:49:37','Normal','21/09/2026 19:00:00','Manual','9,17','','Activo'],
+  ['21/09/2026','Normal','1.351.716,00','El Dorado','El Dorado','TECNICO INDUSTRIAL','REINA GARCIA, CARLOS JULIO','21/09/2026 12:57:07','Normal','21/09/2026 22:50:19','Normal','9,89','','Activo'],
+  ['21/09/2026','Normal','1.351.755,00','Sur','Sur',AS,'GOMEZ VENEGAS, ANTONIO JOSE','21/09/2026 9:19:54','Normal','21/09/2026 18:06:28','Normal','8,78','','Activo'],
+  ['21/09/2026','Normal','1.352.219,00','Medellín','Medellín',AS,'BOHORQUEZ BETANCUR, ORFENIO DE JESUS','21/09/2026 11:10:45','Normal','21/09/2026 18:04:31','Normal','6,90','','Activo'],
+  ['21/09/2026','Normal','1.352.256,00','170','170','COORDINADOR TECNICO','SANCHEZ SALAMANCA, FERNANDO RAUL','21/09/2026 11:41:19','Normal','21/09/2026 19:41:12','Normal','8,00','','Activo'],
+  ['21/09/2026','Normal','1.352.523,00','Tocancipa','Tocancipa','COORDINADOR TECNICO','CUESTAS TORRES, JAIRO ALFONSO','21/09/2026 6:31:55','Normal','21/09/2026 18:40:18','Normal','12,14','','Activo']
+]);
+
+const H_SIN_MARCAJE = rowsOf(['fecha','un','pos','nombre','nomarc'], [
+  ['21/09/2026',BC,'AUXILIAR DE BOMBEO','GUERRERO CASTRO ROMEL CAMILO'],
+  ['21/09/2026',BC,'AUXILIAR DE BOMBEO','RODRIGUEZ CHACON YEISON DAVID'],
+  ['21/09/2026',BC,'AYUDANTE DE BOMA','BUSTOS VERA, JOSE YECID'],
+  ['21/09/2026',BC,'AYUDANTE DE BOMA','ESQUIVEL BOLAÑOS, KEINER DAVID'],
+  ['21/09/2026',BC,'AYUDANTE DE BOMA','MARCO ALONSO GONZALEZ SABOGAL'],
+  ['21/09/2026',BC,'COORDINADOR DE OPERACIÓN','RODRIGUEZ BERNAL CAMILA ALEJANDRA'],
+  ['21/09/2026',BC,'JEFE MTTO BOMBEO','PEREZ CABARCAS ANDRES GUILLERMO'],
+  ['21/09/2026',BC,'OPERADOR DE AUTOBOMBA','ALBA SUAREZ, JOSE'],
+  ['21/09/2026',BC,'OPERADOR DE AUTOBOMBA','ALBARRACIN LEÓN, EDINSON'],
+  ['21/09/2026',BC,'OPERADOR DE AUTOBOMBA','MARCO ANDRES GONZALEZ CAUCALI'],
+  ['21/09/2026',BC,'OPERADOR DE ESTACIONARIA','JULIAN RODRIGUEZ GARZON'],
+  ['21/09/2026',BC,'OPERADOR DE ESTACIONARIA','GOMEZ SAAVEDRA YEISON'],
+  ['21/09/2026',BC,'OPERADOR DE ESTACIONARIA','KEDWIN GUTIERREZ MARTINEZ']
+]);
+
+const H_ERROR = rowsOf(['nombre','fecha','tipo','ing'], [
+  ['DUBER ALBERTO CARRANZA CONTRERAS','25/09/2026','Error'],
+  ['ALVAREZ CAÑAVERAL LUIS FELIPE','22/09/2026','Error'],
+  ['AMADOR DE JESUS MIELES YANET','26/09/2026','Error'],
+  ['AMAYA SOSA JOHANNA ANDREA','25/09/2026','Error'],
+  ['AMAYA SOSA JOHANNA ANDREA','26/09/2026','Error'],
+  ['ANTONY RODRIGUEZ MUÑOZ','21/09/2026','Error'],
+  ['AREVALO ORDOÑEZ, MIGUEL ANGEL','22/09/2026','Error'],
+  ['ARLEY JULIAN GARZON SERNA','22/09/2026','Error'],
+  ['ARTURO DIAZ, JOSE MANUEL','26/09/2026','Error'],
+  ['AVILEZ GULUMA, MARIO FERNANDO','22/09/2026','Error'],
+  ['BAIRO DE JESUS FONTALVO ECHEVERRIA','21/09/2026','Error'],
+  ['BARRIOS CASTAÑEDA, ROSEMBERG','21/09/2026','Error'],
+  ['BARRIOS CASTAÑEDA, ROSEMBERG','26/09/2026','Error'],
+  ['BELTRAN JIMENEZ, JAIRO ALONSO','23/09/2026','Error']
+]);
+
+const H_INOPERATIVO = rowsOf(['fecha','area','nombre','oper'], [
+  ['21/09/2026','Bombeo','CARREÑO SUAREZ, PABLO JESUS','Ausente'],
+  ['21/09/2026','Bombeo','JAIMES MENESES, EVELIO','Ausente'],
+  ['21/09/2026','Calidad','MATEO ROMERO HERNANDEZ','Ausente'],
+  ['21/09/2026','Mtto Industrial','TACUMA RIVERA, JOSE LUIS','Ausente'],
+  ['21/09/2026','Operacion','GENSY STIVEL TRIANA LADINO','Vacaciones'],
+  ['21/09/2026','Operacion','ACERO GUTIERREZ, FERNANDO','Ausente'],
+  ['21/09/2026','Operacion','BELTRAN CERVANTES ROBERT DARIO','Ausentismo'],
+  ['21/09/2026','Operacion','CALDERON PEREZ, MARIO ALEXANDER','Incapacidad'],
+  ['21/09/2026','Operacion','CAMACHO RODRIGUEZ, CARLOS HERNAN','Ausente'],
+  ['21/09/2026','Operacion','CARDENAS MESA, JESUS ENRIQUE','Ausente'],
+  ['21/09/2026','Operacion','CASTILLO BARON, JAVIER','Ausente'],
+  ['21/09/2026','Operacion','CELIS VARGAS, PASTOR','Ausente'],
+  ['21/09/2026','Operacion','CERA GUERRERO HERNANDO','Incapacidad'],
+  ['21/09/2026','Operacion','CHAVEZ GALINDO, BARBARA ESTEFANI','Ausente']
+]);
+
+/* Documento: en el manual se muestra enmascarado (dato personal) */
+const HC_HISTORICO = rowsOf(['fecha','un','cod','doc','nombre','area','pos'], [
+  ['21/09/2026','170','1.350.317,00','794•••00','PERILLA RUEDA, HUGO ALBERTO','Calidad','COORDINADOR TECNICO'],
+  ['21/09/2026','170','1.352.256,00','741•••37','SANCHEZ SALAMANCA, FERNANDO RAUL','Calidad','COORDINADOR TECNICO'],
+  ['21/09/2026','170','1.401.124,00','41•••42','CORREDOR CUSBA, FREDY ANTONIO','Operacion',AS],
+  ['21/09/2026','170','1.401.479,00','798•••83','MARTIN GARCIA, GABRIEL BLADIMIR','Operacion',AS],
+  ['21/09/2026','170','1.402.724,00','802•••49','CALDERON PEREZ, MARIO ALEXANDER','Operacion',AS],
+  ['21/09/2026','170','1.403.208,00','807•••84','CRUZ CESPEDES, EDWAR ALFONSO','Operacion',AS],
+  ['21/09/2026','170','1.403.266,00','933•••59','RODRIGUEZ RINCON, URIEL','Operacion',AS],
+  ['21/09/2026','170','1.404.361,00','1070•••036','CARO MONROY CESAR JULIAN','Operacion','OPERADOR EN PLANTA'],
+  ['21/09/2026','170','1.406.227,00','798•••63','RODRIGUEZ PARRA, RAFAEL HERNAN','Operacion',AS],
+  ['21/09/2026','170','1.406.229,00','807•••16','URREGO RODRIGUEZ, HECTOR JOSE','Operacion',AS],
+  ['21/09/2026','170','1.406.945,00','1048•••103','AMAYA BARRETO, MILTON AREIL','Operacion','COORDINADOR DE PRODUCCION'],
+  ['21/09/2026','170','1.407.421,00','197•••00','MOLINA RAMBAL, URBANO ENRIQUE','Operacion','JEFE DE PLANTA'],
+  ['21/09/2026','170','1.408.598,00','1033•••131','FRAILE REDONDO, WILLIAM ALBERTO','Operacion',AS],
+  ['21/09/2026','170','1.411.094,00','40•••71','BAEZ VARGAS, LUIS HERNANDO','Operacion',AS],
+  ['21/09/2026','170','1.411.543,00','800•••11','ROCHA RAMIREZ, HECTOR ARCANGEL','Mtto Industrial','TECNICO INDUSTRIAL']
+]);
+
+/* ---- Definición de cada tabla: columnas + qué filtros le aplican ---- */
+const LB_TABLES = {
+  trJornadas: { el:'tblTrJornadas', rows:TR_JORNADAS, plantKeys:['pa','pr'], nameKey:'nombre', diaKey:'dia', sort:{k:'pos', dir:1, hint:true},
+    cols:[['fecha','Fecha'],['dia','Día'],['cod','Cod_RRHH',1],['pa','PlantaAsignacion'],['pr','PlantaRegistro'],['pos','Posicion'],['nombre','NombreE'],
+          ['hing','Hora Ingreso'],['ting','TipoIngreso'],['hsal','Hora Salida'],['tsal','TipoSalida'],['horas','Horas Jornada Fila',1]] },
+  trSinMarcaje: { el:'tblTrSinMarcaje', rows:TR_SIN_MARCAJE, plantKeys:['un'], nameKey:'nombre', total:{k:'asig', all:228, sum:true},
+    cols:[['fecha','Date'],['un','Unidad de negocio'],['pos','Posicion'],['nombre','NombreE'],['asig','Asignado',1],['estatus','Estatus_persona_dia']] },
+  trError: { el:'tblTrError', rows:TR_ERROR, nameKey:'nombre', sort:{k:'nombre', dir:1, hint:true},
+    cols:[['nombre','NombreE'],['fecha','FechaSinHora'],['ing','IngresoJornada'],['sal','SalidaJornada']] },
+  trInoperativo: { el:'tblTrInoperativo', rows:TR_INOPERATIVO, nameKey:'nombre', areaKey:'area',
+    cols:[['fecha','Date'],['area','Area'],['nombre','NombreE',0,1],['oper','Operatividad'],['estatus','Estatus_persona_dia']] },
+  hJornadas: { el:'tblHistJornadas', rows:H_JORNADAS, plantKeys:['pa','pr'], nameKey:'nombre', diaKey:'dia', dateKey:'fecha',
+    cols:[['fecha','Fecha'],['dia','Día'],['cod','Cod_RRHH',1],['pa','PlantaAsignacion'],['pr','PlantaRegistro'],['pos','Posicion',0,1],['nombre','NombreE'],
+          ['hing','Hora Ingreso'],['ting','TipoIngreso'],['hsal','Hora Salida'],['tsal','TipoSalida'],['horas','Suma de Horas Jornada Fila',1],['coment','Comentarios'],['estatus','Estatus_persona_dia']] },
+  hSinMarcaje: { el:'tblHistSinMarcaje', rows:H_SIN_MARCAJE, plantKeys:['un'], nameKey:'nombre', dateKey:'fecha', total:{k:'nomarc', all:86},
+    cols:[['fecha','Date'],['un','Unidad de negocio'],['pos','Posicion'],['nombre','NombreE'],['nomarc','No ha marcado Historico',1]] },
+  hError: { el:'tblHistError', rows:H_ERROR, nameKey:'nombre', dateKey:'fecha', sort:{k:'nombre', dir:1, hint:true},
+    cols:[['nombre','NombreE'],['fecha','FechaSinHora'],['tipo','Tipo Jornada'],['ing','IngresoJornada']] },
+  hInoperativo: { el:'tblHistInoperativo', rows:H_INOPERATIVO, nameKey:'nombre', areaKey:'area', dateKey:'fecha',
+    cols:[['fecha','Date'],['area','Area'],['nombre','NombreE',0,1],['oper','Operatividad']] },
+  hcActual: { el:'tblHcActual', rows:[], emptyOk:true, sort:{k:'pos', dir:1, hint:true},
+    cols:[['fecha','Fecha'],['un','Unidad de negocio'],['cod','Codigo empleado'],['doc','Documento'],['nombre','NombreE'],['area','Area'],['pos','Posicion'],['estado','Estado_v2']] },
+  hcHistorico: { el:'tblHcHistorico', rows:HC_HISTORICO, plantKeys:['un'], nameKey:'nombre', areaKey:'area', dateKey:'fecha',
+    cols:[['fecha','Fecha'],['un','Unidad de negocio'],['cod','Codigo empleado',1],['doc','Documento',1],['nombre','NombreE'],['area','Area'],['pos','Posicion']] }
+};
+
+/* =========================================================================
+   Estado de filtros (compartido por las 3 páginas, como slicers sincronizados)
+   ========================================================================= */
+const LF = { planta:null, nombre:null, turno:null, tipodia:null, area:null, fechas:new Set(LB_DAYS) };
+
+const normPlant = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\/.*$/, '').trim();
+function lbSelectedPlants(){
+  if (!LF.planta) return null;
+  if (LF.planta.type === 'cluster') return LB_CLUSTERS.find(c => c.key === LF.planta.value).plants;
+  return [LF.planta.value];
+}
+function lbAllFechas(){ return LF.fechas.size === LB_DAYS.length || LF.fechas.size === 0; }
+
+const SLICERS = {
+  planta:  { label:'Cluster, Nombre_planta', tip:'Filtra todo el tablero por un cluster completo o por una planta. Elige un cluster (en negrita) o una planta dentro de él. Afecta gráficos de adopción, tarjetas y tablas.' },
+  nombre:  { label:'NombreE', tip:'NombreE = nombre del empleado. Úsalo para ver solo la información de una persona en las tablas (jornadas, sin marcaje, errores, inoperativos, HC).' },
+  turno:   { label:'Tipo Turno', tip:'Filtra por el tipo de turno del empleado. Las opciones de este filtro están pendientes de confirmar con el equipo, por eso en el manual no cambia los datos.' },
+  tipodia: { label:'TipoDia', tip:'Filtra por tipo de día (columna “Día” de las tablas). En los datos de ejemplo todos los días son “Normal”.' },
+  area:    { label:'Area', tip:'Filtra por área: Operación, Calidad, Mtto Industrial, Bombeo o Mtto Automotriz. Afecta las tablas con columna Area, la gráfica de Adopción Area y HC por día.' },
+  fecha:   { label:'Año, Mes, Día', tip:'Elige uno o varios días del histórico (Selección múltiple). Afecta las tablas con fecha y la gráfica HC por día. Por defecto están marcados del 21 al 26 de septiembre de 2026.' }
+};
+const CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+function slicerValue(key){
+  if (key === 'planta') return LF.planta ? LF.planta.value : 'Todas';
+  if (key === 'fecha'){
+    if (lbAllFechas()) return 'Selección múltiple';
+    if (LF.fechas.size === 1) return [...LF.fechas][0];
+    return 'Selección múltiple';
+  }
+  return LF[key] || 'Todas';
+}
+function slicerIsFiltered(key){
+  if (key === 'fecha') return !lbAllFechas();
+  return !!LF[key];
+}
+function renderSlicerRows(){
+  document.querySelectorAll('.lb-filters').forEach(box => {
+    box.innerHTML = box.dataset.filters.split(',').map(k => `
+      <div class="lb-slicer hotspot" data-slicer="${k}" data-tip-title="${SLICERS[k].label}" data-tip-text="${SLICERS[k].tip}">
+        <div class="lb-slicer-label">${SLICERS[k].label}</div>
+        <div class="lb-slicer-box"><span class="lb-slicer-val"></span>${CHEVRON}</div>
+        <div class="lb-slicer-menu"></div>
+      </div>`).join('');
+    bindAllHotspots(box);
+  });
+  document.querySelectorAll('.lb-slicer').forEach(sl => {
+    sl.querySelector('.lb-slicer-box').addEventListener('click', (e) => {
+      e.stopPropagation();
+      hideTooltip();
+      const wasOpen = sl.classList.contains('open');
+      lbCloseSlicers();
+      if (!wasOpen){ renderSlicerMenu(sl); sl.classList.add('open'); }
+    });
+    const menu = sl.querySelector('.lb-slicer-menu');
+    menu.addEventListener('click', (e) => { e.stopPropagation(); onSlicerMenuClick(sl, e); });
+    menu.addEventListener('mouseenter', hideTooltip);
+  });
+  updateSlicerLabels();
+}
+function updateSlicerLabels(){
+  document.querySelectorAll('.lb-slicer').forEach(sl => {
+    const k = sl.dataset.slicer;
+    sl.querySelector('.lb-slicer-val').textContent = slicerValue(k);
+    sl.classList.toggle('filtered', slicerIsFiltered(k));
+  });
+}
+function lbCloseSlicers(){ document.querySelectorAll('.lb-slicer.open').forEach(s => s.classList.remove('open')); }
+document.addEventListener('click', lbCloseSlicers);
+
+function lbAllNames(){
+  const set = new Set();
+  Object.values(LB_TABLES).forEach(t => t.rows.forEach(r => { if (r.nombre) set.add(r.nombre); }));
+  return [...set].sort((a, b) => a.localeCompare(b, 'es'));
+}
+const opt = (attrs, label, sel, extra) =>
+  `<div class="lb-opt${sel ? ' sel' : ''}${extra ? ' ' + extra : ''}" ${attrs}><span class="chk">✓</span>${label}</div>`;
+
+function renderSlicerMenu(sl){
+  const k = sl.dataset.slicer, menu = sl.querySelector('.lb-slicer-menu');
+  let html = '';
+  if (k === 'planta'){
+    html += opt('data-v=""', 'Seleccionar todo', !LF.planta, 'radio');
+    LB_CLUSTERS.forEach(c => {
+      html += opt(`data-type="cluster" data-v="${c.key}"`, c.key, LF.planta && LF.planta.type === 'cluster' && LF.planta.value === c.key, 'radio grp');
+      c.plants.forEach(p => { html += opt(`data-type="plant" data-v="${p}"`, p, LF.planta && LF.planta.type === 'plant' && LF.planta.value === p, 'radio lvl2'); });
+    });
+  } else if (k === 'nombre'){
+    html += `<input class="lb-opt-search" type="text" placeholder="Buscar">`;
+    html += opt('data-v=""', 'Seleccionar todo', !LF.nombre, 'radio');
+    html += `<div class="lb-name-list">${lbAllNames().map(n => opt(`data-v="${n}"`, n, LF.nombre === n, 'radio')).join('')}</div>`;
+  } else if (k === 'turno'){
+    html += opt('data-v=""', 'Todas', true, 'radio');
+    html += `<div class="lb-opt-note">Opciones pendientes de confirmar con el equipo.</div>`;
+  } else if (k === 'tipodia'){
+    html += opt('data-v=""', 'Todas', !LF.tipodia, 'radio') + opt('data-v="Normal"', 'Normal', LF.tipodia === 'Normal', 'radio');
+  } else if (k === 'area'){
+    html += opt('data-v=""', 'Todas', !LF.area, 'radio');
+    LB_AREAS.forEach(a => { html += opt(`data-v="${a}"`, a, LF.area === a, 'radio'); });
+  } else if (k === 'fecha'){
+    html += opt('data-all="1"', 'Seleccionar todo', lbAllFechas());
+    html += `<div class="lb-opt-note">2026 › septiembre</div>`;
+    LB_DAYS.forEach(d => { html += opt(`data-day="${d}"`, d, !lbAllFechas() && LF.fechas.has(d), 'lvl2'); });
+  }
+  menu.innerHTML = html;
+  const search = menu.querySelector('.lb-opt-search');
+  if (search){
+    search.addEventListener('input', () => {
+      const q = search.value.toLowerCase();
+      menu.querySelectorAll('.lb-name-list .lb-opt').forEach(o => { o.style.display = o.dataset.v.toLowerCase().includes(q) ? '' : 'none'; });
+    });
+    search.addEventListener('click', e => e.stopPropagation());
+    setTimeout(() => search.focus(), 0);
+  }
+}
+function onSlicerMenuClick(sl, e){
+  const o = e.target.closest('.lb-opt');
+  if (!o) return;
+  const k = sl.dataset.slicer;
+  if (k === 'planta') LF.planta = o.dataset.v ? { type:o.dataset.type, value:o.dataset.v } : null;
+  else if (k === 'fecha'){
+    if (o.dataset.all) LF.fechas = new Set(LB_DAYS);
+    else {
+      if (lbAllFechas()) LF.fechas = new Set([o.dataset.day]);
+      else if (LF.fechas.has(o.dataset.day)) LF.fechas.delete(o.dataset.day);
+      else LF.fechas.add(o.dataset.day);
+      if (LF.fechas.size === 0) LF.fechas = new Set(LB_DAYS);
+    }
+    renderSlicerMenu(sl);      // multi-selección: el menú queda abierto
+    lbRenderAll();
+    return;
+  }
+  else if (k === 'turno') { /* decorativo */ }
+  else LF[k] = o.dataset.v || null;
+  lbCloseSlicers();
+  lbRenderAll();
+}
+
+/* =========================================================================
+   Tablas genéricas (ordenables por columna, con filtros)
+   ========================================================================= */
+function lbRowPass(t, r){
+  const plants = lbSelectedPlants();
+  if (plants && t.plantKeys){
+    const set = new Set(plants.map(normPlant));
+    if (!t.plantKeys.some(k => set.has(normPlant(r[k])))) return false;
+  }
+  if (LF.nombre && t.nameKey && r[t.nameKey] !== LF.nombre) return false;
+  if (LF.area && t.areaKey && r[t.areaKey] !== LF.area) return false;
+  if (LF.tipodia && t.diaKey && r[t.diaKey] !== LF.tipodia) return false;
+  if (!lbAllFechas() && t.dateKey && !LF.fechas.has(String(r[t.dateKey]).slice(0, 10))) return false;
+  return true;
+}
+function lbSortKey(v){
+  const s = String(v);
+  let m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}):(\d{2}))?/);
+  if (m) return m[3] + m[2] + m[1] + (m[4] || '0').padStart(2, '0') + (m[5] || '00') + (m[6] || '00');
+  if (/^-?[\d.]+(,\d+)?$/.test(s)) return parseFloat(s.replace(/\./g, '').replace(',', '.'));
+  return s.toLowerCase();
+}
+function lbRenderTable(id){
+  const t = LB_TABLES[id], el = document.getElementById(t.el);
+  if (!el) return;
+  let rows = t.rows.filter(r => lbRowPass(t, r));
+  const filtered = rows.length !== t.rows.length;
+  if (t.sort && !t.sort.hint){
+    const { k, dir } = t.sort;
+    rows = [...rows].sort((a, b) => {
+      const x = lbSortKey(a[k]), y = lbSortKey(b[k]);
+      return (x > y ? 1 : x < y ? -1 : 0) * dir;
+    });
+  }
+  const head = t.cols.map(([k, l, num]) => {
+    const arrow = t.sort && t.sort.k === k ? `<span class="sort">${t.sort.dir > 0 ? '▲' : '▼'}</span>` : '';
+    return `<th data-k="${k}" class="${num ? 'num' : ''}" title="Clic para ordenar">${l}${arrow}</th>`;
+  }).join('');
+  let body = rows.map(r => `<tr>${t.cols.map(([k, , num, wrap]) =>
+    `<td class="${num ? 'num' : ''}${wrap ? ' wrap' : ''}">${r[k]}</td>`).join('')}</tr>`).join('');
+  if (!rows.length && !t.emptyOk)
+    body = `<tr><td colspan="${t.cols.length}" class="lb-empty">No hay registros para los filtros seleccionados (en el manual la tabla es una muestra de las filas que se ven en la captura del tablero real).</td></tr>`;
+  let foot = '';
+  if (t.total){
+    const val = !filtered ? t.total.all : (t.total.sum ? rows.reduce((s, r) => s + (+r[t.total.k] || 0), 0) : rows.length);
+    foot = `<tfoot><tr>${t.cols.map(([k], i) => `<td class="${k === t.total.k ? 'num' : ''}">${i === 0 ? 'Total' : (k === t.total.k ? val : '')}</td>`).join('')}</tr></tfoot>`;
+  }
+  el.innerHTML = `<table class="lb-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody>${foot}</table>`;
+}
+Object.entries(LB_TABLES).forEach(([id, t]) => {
+  const el = document.getElementById(t.el);
+  if (!el) return;
+  el.addEventListener('click', (e) => {
+    const th = e.target.closest('th[data-k]');
+    if (!th) return;
+    const k = th.dataset.k;
+    t.sort = (t.sort && t.sort.k === k && !t.sort.hint) ? { k, dir:-t.sort.dir } : { k, dir:1 };
+    lbRenderTable(id);
+  });
+});
+
+/* =========================================================================
+   Gráficos (SVG generado por JS)
+   ========================================================================= */
+const fmtPct = (v, dec) => v.toFixed(dec).replace('.', ',') + '%';
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+/* Combo barras (registrado / asignado) + línea (% adopción), agrupado por cluster */
+function lbAdoptionSVG(data, o){
+  const W = o.W, L = 14, R = W - 50, T = 26, B = o.base, n = data.length, slot = (R - L) / n;
+  const bw = Math.min(26, slot * 0.36);
+  const maxV = Math.max(...data.map(d => Math.max(d.reg, d.asig)));
+  const yB = v => B - (v / maxV) * (B - T - 8);
+  const yL = p => B - (p - o.pMin) / (100 - o.pMin) * (B - T);
+  const sel = lbSelectedPlants();
+  const faded = name => sel && !sel.includes(name);
+  let s = '';
+  // eje derecho (%)
+  o.ticks.forEach(p => { s += `<text x="${R + 22}" y="${yL(p) + 3}" font-size="9" fill="#605e5c">${p}%</text>`; });
+  // barras
+  data.forEach((d, i) => {
+    const cx = L + slot * i + slot / 2, op = faded(d.name) ? 0.25 : 1;
+    [[d.reg, '#118dff', cx - bw], [d.asig, '#12239e', cx]].forEach(([v, c, x]) => {
+      if (v <= 0) return;
+      s += `<rect x="${x}" y="${yB(v)}" width="${bw - 1}" height="${B - yB(v)}" fill="${c}" opacity="${op}"/>`;
+      s += `<rect x="${x}" y="${yB(v)}" width="${bw - 1}" height="3" fill="${c === '#118dff' ? '#7fc0ff' : '#3b4bc2'}" opacity="${op}"/>`;
+      if (o.valueLabels){
+        const ly = Math.min(yB(v) + 7, B - 16);
+        s += `<rect x="${x + 1}" y="${ly}" width="${bw - 3}" height="14" rx="3" fill="#c8cbe8" opacity="${0.9 * op}"/>`;
+        s += `<text x="${x + bw / 2 - 0.5}" y="${ly + 11}" font-size="11" font-weight="700" text-anchor="middle" fill="#252423" opacity="${op}">${v}</text>`;
+      }
+    });
+    s += `<text transform="translate(${cx},${B + 8}) rotate(-90)" text-anchor="end" font-size="10" fill="#252423" font-weight="${sel && !faded(d.name) ? 700 : 400}">${esc(d.name)}</text>`;
+  });
+  // línea de adopción
+  const pts = data.map((d, i) => ({ x: L + slot * i + slot / 2, y: yL(d.pct), d })).filter(p => p.d.reg > 0);
+  s += `<polyline points="${pts.map(p => p.x + ',' + p.y).join(' ')}" fill="none" stroke="#6b007b" stroke-width="3" stroke-linejoin="round"/>`;
+  pts.forEach(p => {
+    const up = p.y > T + 16;
+    s += `<text x="${p.x}" y="${up ? p.y - 8 : p.y + 16}" font-size="10.5" font-weight="700" text-anchor="middle" fill="#252423" stroke="#fff" stroke-width="3" paint-order="stroke" opacity="${faded(p.d.name) ? 0.35 : 1}">${fmtPct(p.d.pct, o.pctDec)}</text>`;
+  });
+  // clusters
+  let i0 = 0;
+  LB_CLUSTERS.forEach(c => {
+    const i1 = i0 + c.plants.length;
+    const x0 = L + slot * i0, x1 = L + slot * i1;
+    s += `<line x1="${x0}" y1="${B + 2}" x2="${x0}" y2="${B + 112}" stroke="#c8c8c8" stroke-dasharray="2,3"/>`;
+    s += `<text x="${(x0 + x1) / 2}" y="${B + 104}" font-size="10" font-weight="700" text-anchor="middle" fill="#252423">${c.key}</text>`;
+    i0 = i1;
+  });
+  s += `<line x1="${R}" y1="${B + 2}" x2="${R}" y2="${B + 112}" stroke="#c8c8c8" stroke-dasharray="2,3"/>`;
+  s += `<text x="${(L + R) / 2}" y="${B + 128}" font-size="12" font-weight="700" text-anchor="middle" fill="#252423">Nombre_planta</text>`;
+  s += lbLegendSVG((L + R) / 2, B + 146, o.legend);
+  // zonas de interacción
+  data.forEach((d, i) => { s += `<rect class="lb-hit" data-i="${i}" x="${L + slot * i}" y="${T - 10}" width="${slot}" height="${B - T + 100}" fill="transparent"/>`; });
+  return `<svg viewBox="0 0 ${W} ${B + 156}">${s}</svg>`;
+}
+function lbLegendSVG(cx, y, items){
+  const widths = items.map(([name]) => 26 + name.length * 5.6);
+  const total = widths.reduce((a, b) => a + b, 0);
+  let x = cx - total / 2, s = '';
+  items.forEach(([name, color], i) => {
+    s += `<circle cx="${x + 5}" cy="${y - 4}" r="4.5" fill="${color}"/><text x="${x + 12}" y="${y}" font-size="10.5" fill="#252423">${esc(name)}</text>`;
+    x += widths[i];
+  });
+  return s;
+}
+function lbTogglePlant(name){
+  LF.planta = (LF.planta && LF.planta.type === 'plant' && LF.planta.value === name) ? null : { type:'plant', value:name };
+  lbRenderAll();
+}
+function lbWireChart(el, onMove, onClick){
+  el.onmousemove = (e) => {
+    const h = e.target.closest('.lb-hit');
+    if (!h) { lbTipHide(); return; }
+    onMove(e, h);
+  };
+  el.onmouseleave = lbTipHide;
+  el.onclick = (e) => {
+    const h = e.target.closest('.lb-hit');
+    if (!h) return;
+    e.stopPropagation();
+    lbTipHide();
+    onClick(h);
+    if (!hasHover) onMove(e, h);
+  };
+}
+const plantNote = name => (LF.planta && LF.planta.type === 'plant' && LF.planta.value === name)
+  ? '🔄 Clic para quitar el filtro' : '💡 Clic para filtrar el tablero por esta planta';
+
+function renderTrAdoption(){
+  const data = LB_PLANTS.map(p => ({ name:p, reg:LB_TR[p][0], asig:LB_TR[p][1], pct: LB_TR[p][1] ? LB_TR[p][0] / LB_TR[p][1] * 100 : 0 }));
+  const el = document.getElementById('lbTrAdopcion');
+  el.innerHTML = lbAdoptionSVG(data, { W:1570, base:290, pMin:10, ticks:[20,40,60,80,100], pctDec:1, valueLabels:true,
+    legend:[['Personal registrado Real','#118dff'],['Personal_asignado_dia','#12239e'],['Adopción TR Hoy','#6b007b']] });
+  lbWireChart(el, (e, h) => {
+    const d = data[+h.dataset.i];
+    lbTipShow(e, [['Cluster', LB_PLANT_CLUSTER[d.name]], ['Nombre_planta', d.name], ['Personal registrado Real', d.reg],
+      ['Personal_asignado_dia', d.asig], ['Adopción TR Hoy', d.reg ? fmtPct(d.pct, 1) : '—']], plantNote(d.name));
+  }, h => lbTogglePlant(data[+h.dataset.i].name));
+}
+function renderHistAdoption(){
+  const data = LB_PLANTS.map(p => ({ name:p, reg:LB_HIST[p][0], asig:LB_HIST[p][1], pct:LB_HIST[p][2] }));
+  const el = document.getElementById('lbHistAdopcion');
+  el.innerHTML = lbAdoptionSVG(data, { W:1230, base:280, pMin:0, ticks:[0,20,40,60,80,100], pctDec:2, valueLabels:false,
+    legend:[['Personal registrado Historico','#118dff'],['Personal_asignado_dia_Historoico','#12239e'],['Adopción His','#6b007b']] });
+  lbWireChart(el, (e, h) => {
+    const d = data[+h.dataset.i];
+    lbTipShow(e, [['Cluster', LB_PLANT_CLUSTER[d.name]], ['Nombre_planta', d.name], ['Personal registrado Historico', d.reg.toLocaleString('es-CO')],
+      ['Personal_asignado_dia_Historoico', d.asig.toLocaleString('es-CO')], ['Adopción His', fmtPct(d.pct, 2)]], plantNote(d.name));
+  }, h => lbTogglePlant(data[+h.dataset.i].name));
+}
+
+/* Alertas jornadas: columnas apiladas por rango de horas */
+function renderHistAlertas(){
+  const W = 1230, L = 14, R = W - 14, T = 16, B = 270, n = LB_PLANTS.length, slot = (R - L) / n, bw = slot * 0.62;
+  const totals = LB_PLANTS.map(p => LB_ALERTS[p].reduce((a, b) => a + b, 0));
+  const maxV = Math.max(...totals), k = (B - T) / maxV;
+  const sel = lbSelectedPlants();
+  let s = '';
+  LB_PLANTS.forEach((p, i) => {
+    const x = L + slot * i + (slot - bw) / 2, op = sel && !sel.includes(p) ? 0.25 : 1;
+    let y = B;
+    LB_ALERTS[p].forEach((v, ci) => {
+      if (!v) return;
+      const h = v * k; y -= h;
+      s += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${LB_ALERT_CATS[ci].color}" opacity="${op}"/>`;
+      if (h >= 17) s += `<text x="${x + bw / 2}" y="${y + h / 2 + 4}" font-size="11" font-weight="700" text-anchor="middle" fill="${ci === 1 || ci === 3 ? '#fff' : '#252423'}" opacity="${op}">${v}</text>`;
+      s += `<rect class="lb-hit" data-p="${i}" data-c="${ci}" x="${x}" y="${y}" width="${bw}" height="${h}" fill="transparent"/>`;
+    });
+    s += `<text transform="translate(${L + slot * i + slot / 2},${B + 8}) rotate(-90)" text-anchor="end" font-size="10" fill="#252423">${esc(p)}</text>`;
+  });
+  let i0 = 0;
+  LB_CLUSTERS.forEach(c => {
+    const i1 = i0 + c.plants.length, x0 = L + slot * i0, x1 = L + slot * i1;
+    s += `<line x1="${x0}" y1="${B + 2}" x2="${x0}" y2="${B + 104}" stroke="#c8c8c8" stroke-dasharray="2,3"/>`;
+    s += `<text x="${(x0 + x1) / 2}" y="${B + 96}" font-size="10" font-weight="700" text-anchor="middle" fill="#252423">${c.key === 'Santander' ? 'Santan…' : c.key}</text>`;
+    i0 = i1;
+  });
+  s += `<text x="${(L + R) / 2}" y="${B + 120}" font-size="12" font-weight="700" text-anchor="middle" fill="#252423">Nombre_planta</text>`;
+  s += lbLegendSVG((L + R) / 2, B + 138, LB_ALERT_CATS.map(c => [c.name, c.color]));
+  const el = document.getElementById('lbHistAlertas');
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${B + 148}">${s}</svg>`;
+  lbWireChart(el, (e, h) => {
+    const p = LB_PLANTS[+h.dataset.p], c = LB_ALERT_CATS[+h.dataset.c];
+    lbTipShow(e, [['Nombre_planta', p], ['Rango de horas', c.name], ['Jornadas', LB_ALERTS[p][+h.dataset.c]]], plantNote(p));
+  }, h => lbTogglePlant(LB_PLANTS[+h.dataset.p]));
+}
+
+/* Adopción por área: barras + línea */
+function renderHistArea(){
+  const W = 420, L = 10, R = W - 40, T = 30, B = 250, n = LB_AREAS.length, slot = (R - L) / n, bw = 30;
+  const maxV = Math.max(...LB_AREAS.map(a => LB_AREA_HIST[a][1]));
+  const yB = v => B - (v / maxV) * (B - T - 30);
+  const pMin = 17, pMax = 92, yL = p => B - (p - pMin) / (pMax - pMin) * (B - T);
+  let s = '';
+  [20,30,40,50,60,70,80,90].forEach(p => { s += `<text x="${R + 12}" y="${yL(p) + 3}" font-size="8.5" fill="#605e5c">${p}%</text>`; });
+  const pts = [];
+  LB_AREAS.forEach((a, i) => {
+    const [reg, asig, pct] = LB_AREA_HIST[a], cx = L + slot * i + slot / 2, op = LF.area && LF.area !== a ? 0.25 : 1;
+    [[reg, '#118dff', cx - bw], [asig, '#12239e', cx]].forEach(([v, c, x]) => {
+      s += `<rect x="${x}" y="${yB(v)}" width="${bw - 1}" height="${B - yB(v)}" fill="${c}" opacity="${op}"/>`;
+    });
+    s += `<rect x="${cx + 1}" y="${yB(asig) + 6}" width="${bw - 3}" height="14" rx="3" fill="#c8cbe8" opacity="${0.9 * op}"/>`;
+    s += `<text x="${cx + bw / 2 - 0.5}" y="${yB(asig) + 17}" font-size="10" font-weight="700" text-anchor="middle" fill="#252423" opacity="${op}">${asig.toLocaleString('es-CO')}</text>`;
+    s += `<text x="${cx}" y="${B + 16}" font-size="10.5" text-anchor="middle" fill="#252423" font-weight="${LF.area === a ? 700 : 400}">${a}</text>`;
+    pts.push({ x:cx, y:yL(pct), pct });
+    s += `<rect class="lb-hit" data-i="${i}" x="${L + slot * i}" y="${T - 10}" width="${slot}" height="${B - T + 30}" fill="transparent"/>`;
+  });
+  s += `<polyline points="${pts.map(p => p.x + ',' + p.y).join(' ')}" fill="none" stroke="#6b007b" stroke-width="2.5" pointer-events="none"/>`;
+  pts.forEach(p => { s += `<text x="${p.x}" y="${p.y - 9}" font-size="10.5" font-weight="700" text-anchor="middle" fill="#252423" stroke="#fff" stroke-width="3" paint-order="stroke" pointer-events="none">${fmtPct(p.pct, 2)}</text>`; });
+  s += `<text x="${(L + R) / 2}" y="${B + 36}" font-size="12" font-weight="700" text-anchor="middle" fill="#252423">Area</text>`;
+  s += lbLegendSVG((L + R) / 2 + 14, B + 56, [['Personal registrado Historico','#118dff'],['Personal_asignado_dia_Historoico','#12239e'],['Adopción His','#6b007b']].map(([n2, c]) => [n2.replace('_Historoico', '_His…'), c]));
+  const el = document.getElementById('lbHistArea');
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${B + 66}">${s}</svg>`;
+  lbWireChart(el, (e, h) => {
+    const a = LB_AREAS[+h.dataset.i], [reg, asig, pct] = LB_AREA_HIST[a];
+    lbTipShow(e, [['Area', a], ['Personal registrado Historico', reg.toLocaleString('es-CO')], ['Personal_asignado_dia_Historoico', asig.toLocaleString('es-CO')], ['Adopción His', fmtPct(pct, 2)]],
+      LF.area === a ? '🔄 Clic para quitar el filtro' : '💡 Clic para filtrar el tablero por esta área');
+  }, h => { const a = LB_AREAS[+h.dataset.i]; LF.area = LF.area === a ? null : a; lbRenderAll(); });
+}
+
+/* HC por día: columnas apiladas por área */
+function renderHcDia(){
+  const W = 1570, L = 60, R = W - 60, T = 20, B = 330, n = LB_DAYS.length, slot = (R - L) / n, bw = slot * 0.72;
+  const areas = LB_HC_AREAS.filter(a => !LF.area || a.name === LF.area);
+  const totals = LB_DAYS.map((d, i) => LB_HC_AREAS.reduce((s, a) => s + a.vals[i], 0));
+  const k = (B - T) / Math.max(...totals);
+  let s = '';
+  LB_DAYS.forEach((d, i) => {
+    const x = L + slot * i + (slot - bw) / 2, op = lbAllFechas() || LF.fechas.has(d) ? 1 : 0.25;
+    let y = B;
+    areas.forEach(a => {
+      const v = a.vals[i], h = v * k; y -= h;
+      s += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${a.color}" opacity="${op}"/>`;
+      const big = a.name === 'Operacion';
+      if (h >= 15) s += `<text x="${x + bw / 2}" y="${big ? y + 16 : y + h / 2 + 4}" font-size="11.5" font-weight="700" text-anchor="middle" fill="${a.name === 'Calidad' || a.name === 'Mtto Industrial' ? '#fff' : '#252423'}" opacity="${op}">${v}</text>`;
+      s += `<rect class="lb-hit" data-d="${i}" data-a="${a.name}" x="${x}" y="${y}" width="${bw}" height="${h}" fill="transparent"/>`;
+    });
+    s += `<text x="${L + slot * i + slot / 2}" y="${B + 16}" font-size="10.5" text-anchor="middle" fill="#252423">${d.slice(0, 2)}</text>`;
+  });
+  s += `<line x1="${L}" y1="${B + 26}" x2="${R}" y2="${B + 26}" stroke="#c8c8c8" stroke-dasharray="2,3"/>`;
+  s += `<text x="${(L + R) / 2}" y="${B + 40}" font-size="10" font-weight="700" text-anchor="middle" fill="#252423">septiembre</text>`;
+  s += `<line x1="${L}" y1="${B + 48}" x2="${R}" y2="${B + 48}" stroke="#c8c8c8" stroke-dasharray="2,3"/>`;
+  s += `<text x="${(L + R) / 2}" y="${B + 62}" font-size="10" text-anchor="middle" fill="#252423">2026</text>`;
+  s += `<text x="${(L + R) / 2}" y="${B + 82}" font-size="12" font-weight="700" text-anchor="middle" fill="#252423">Día</text>`;
+  s += lbLegendSVG((L + R) / 2, B + 100, LB_HC_AREAS.map(a => [a.name, a.color]));
+  const el = document.getElementById('lbHcDia');
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${B + 110}">${s}</svg>`;
+  lbWireChart(el, (e, h) => {
+    const i = +h.dataset.d, a = LB_HC_AREAS.find(x => x.name === h.dataset.a), d = LB_DAYS[i];
+    const only = !lbAllFechas() && LF.fechas.size === 1 && LF.fechas.has(d);
+    lbTipShow(e, [['Día', d], ['Area', a.name], ['HC', a.vals[i]], ['HC total del día', totals[i]]],
+      only ? '🔄 Clic para volver a todos los días' : '💡 Clic para ver solo este día');
+  }, h => {
+    const d = LB_DAYS[+h.dataset.d];
+    const only = !lbAllFechas() && LF.fechas.size === 1 && LF.fechas.has(d);
+    LF.fechas = only ? new Set(LB_DAYS) : new Set([d]);
+    lbRenderAll();
+  });
+}
+
+/* =========================================================================
+   Tarjetas KPI
+   ========================================================================= */
+function renderTrKpi(){
+  const plants = lbSelectedPlants();
+  let reg, asig, activo, term;
+  if (!plants){ ({ reg, asig, activo, terminado:term } = LB_TR_TOTAL); }
+  else {
+    reg = plants.reduce((s, p) => s + LB_TR[p][0], 0);
+    asig = plants.reduce((s, p) => s + LB_TR[p][1], 0);
+    term = Math.round(reg * LB_TR_TOTAL.terminado / LB_TR_TOTAL.reg);
+    activo = reg - term;
+  }
+  const pct = asig ? fmtPct(reg / asig * 100, 1) : '—';
+  const row = (k, v, cls, tip) => `<div class="lb-kpi-row hotspot" data-tip-title="${k}" data-tip-text="${tip}"><span class="k ${cls}">${k}:</span><span class="v">${v}</span></div>`;
+  const el = document.getElementById('lbTrKpi');
+  el.innerHTML =
+    row('Personal registrado', reg, '', 'Personas que ya registraron su ingreso hoy en Locomboo.') +
+    row('Personal activo', activo, '', 'Personas registradas que siguen en jornada (aún no marcan salida).') +
+    row('Turno terminado', term, '', 'Personas que ya marcaron la salida de su jornada hoy.') +
+    row('Personal asignado', asig, 'alt', 'Personas que deberían trabajar hoy según la programación.') +
+    row('Adopción', pct, 'bad', 'Personal registrado ÷ personal asignado. Mide qué tanto se está usando Locomboo para registrar la jornada.');
+  bindAllHotspots(el);
+}
+function renderHistKpi(){
+  const plants = lbSelectedPlants();
+  let reg, asig;
+  if (plants){ reg = plants.reduce((s, p) => s + LB_HIST[p][0], 0); asig = plants.reduce((s, p) => s + LB_HIST[p][1], 0); }
+  else if (LF.area){ [reg, asig] = LB_AREA_HIST[LF.area]; }
+  else ({ reg, asig } = LB_HIST_TOTAL);
+  const box = (k, v, cls, tip) => `<div class="lb-kpi-box hotspot" data-tip-title="${k}" data-tip-text="${tip}"><div class="k ${cls}">${k}:</div><div class="v">${v}</div></div>`;
+  const el = document.getElementById('lbHistKpi');
+  el.innerHTML =
+    box('Personal registrado', reg, '', 'Suma de registros de jornada en el periodo seleccionado.') +
+    box('Personal Asigando', asig, '', 'Suma del personal asignado en el periodo seleccionado (el título tiene este error de digitación en el tablero real).') +
+    box('Adopción', asig ? fmtPct(reg / asig * 100, 2) : '—', 'bad', 'Personal registrado ÷ personal asignado en el periodo.');
+  bindAllHotspots(el);
+}
+
+/* =========================================================================
+   Navegación entre páginas (panel "Páginas" + botones de página)
+   ========================================================================= */
+const LB_PAGES = [['lbTR','Tiempo real'], ['lbHist','Historico'], ['lbHC','Detalle HC']];
+let lbCurrent = 'lbTR';
+function renderPagesSidebar(){
+  const nav = document.getElementById('pagesNav');
+  nav.innerHTML = LB_PAGES.map(([id, label]) =>
+    `<button type="button" class="pages-nav-item hotspot${id === lbCurrent ? ' active' : ''}" data-lbgo="${id}"
+      data-tip-title="${label}" data-tip-text="Ir a la página ${label}.">${label}</button>`).join('');
+  bindAllHotspots(nav);
+}
+function renderNavPills(){
+  document.querySelectorAll('.lb-nav').forEach(box => {
+    box.innerHTML = LB_PAGES.map(([id, label]) =>
+      `<button type="button" class="lb-nav-btn hotspot${id === box.dataset.current ? ' active' : ''}" data-lbgo="${id}"
+        data-tip-title="Botón ${label}" data-tip-text="${id === box.dataset.current ? 'Estás en esta página.' : 'Salta a la página ' + label + ' del tablero (igual que el panel Páginas de la izquierda).'}">${label}</button>`).join('');
+    bindAllHotspots(box);
+  });
+}
+function lbGoTo(id){
+  lbCurrent = id;
+  document.querySelectorAll('#boardContent .tablero-screen').forEach(s => s.classList.toggle('active', s.id === id));
+  const sc = document.querySelector('#' + id + ' .lb-scroll');
+  if (sc) sc.scrollTop = 0;
+  renderPagesSidebar();
+  hideTooltip(); lbTipHide(); lbCloseSlicers();
+  fitBoardT();
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-lbgo]');
+  if (!b) return;
+  e.stopPropagation();
+  lbGoTo(b.dataset.lbgo);
+}, true);
+document.getElementById('pagesToggleBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const sb = document.getElementById('pagesSidebar');
+  const collapsed = sb.classList.toggle('collapsed');
+  document.getElementById('pagesToggleBtn').textContent = collapsed ? '»' : '«';
+  setTimeout(fitBoardT, 200);
+});
+
+/* ---------------- Scale-to-fit ---------------- */
+const stageT = document.getElementById('stageT');
+const boardWrap = document.getElementById('boardWrap');
+function fitBoardT(){
+  if (stageT.style.display === 'none') return;
+  boardWrap.style.transform = 'none';
+  const naturalWidth = boardWrap.offsetWidth;
+  const naturalHeight = boardWrap.offsetHeight;
+  const bodyStyle = getComputedStyle(document.body);
+  const available = document.body.clientWidth - parseFloat(bodyStyle.paddingLeft) - parseFloat(bodyStyle.paddingRight);
+  const scale = Math.min(1, available / naturalWidth);
+  boardWrap.style.transform = `scale(${scale})`;
+  stageT.style.width = (naturalWidth * scale) + 'px';
+  stageT.style.height = (naturalHeight * scale) + 'px';
+  if (activeEl) positionTooltip(activeEl);
+}
+let resizeTimerT;
+window.addEventListener('resize', () => { clearTimeout(resizeTimerT); resizeTimerT = setTimeout(fitBoardT, 100); });
+window.addEventListener('orientationchange', fitBoardT);
+
+/* ---------------- Fecha de corte: hoy, hora actual menos 3 min (se recalcula cada 3 min) ---------------- */
+function updateFechaCorte(){
+  const d = new Date(Date.now() - 3 * 60 * 1000), p = n => String(n).padStart(2, '0');
+  const txt = `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  document.querySelectorAll('.lb-corte-val').forEach(el => { el.textContent = txt; });
+}
+updateFechaCorte();
+setInterval(updateFechaCorte, 3 * 60 * 1000);
+
+/* ---------------- Render general ---------------- */
+function lbRenderAll(){
+  updateSlicerLabels();
+  renderTrAdoption(); renderHistAdoption(); renderHistAlertas(); renderHistArea(); renderHcDia();
+  renderTrKpi(); renderHistKpi();
+  Object.keys(LB_TABLES).forEach(lbRenderTable);
+}
+
+/* Init */
+renderSlicerRows();
+renderNavPills();
+renderPagesSidebar();
+lbRenderAll();
+bindAllHotspots();
 </script>
 </body>
 </html>

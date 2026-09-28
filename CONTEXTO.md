@@ -1818,3 +1818,58 @@ proprogram, proentrada1/2, prosalida, procierre, prorechazo).
   `.page-header`, vuelve a "¿Qué quieres consultar?". En Orion cierra cualquier
   recorrido guiado/modal activo y deja la app en la selección de rol (el
   bloqueo estricto del tour deja pasar ese botón).
+
+---
+
+# Manual 5 — `3.Locombo/index.html` → Tablero Locomboo (2026-09-28)
+
+Pantalla "¿Qué quieres consultar?" sin cambios (App Locombo / Tablero Locombo, igual que
+Orion). **App Locombo sigue "en construcción"** (`#lbAppUC`, se hace después). **Tablero
+Locombo** ya está construido: `#pageHeaderTablero` + `#stageT` > `#boardWrap` (1850px =
+panel "Páginas" 200px + `#boardContent` 1650px, escalado con `fitBoardT()` igual que Orion).
+Motor de tooltip (`data-tip-title`/`data-tip-text`, `bindAllHotspots`) copiado de Orion.
+Capturas de referencia: `Recursos/Locombo/Tablero/loc1…loc10.png`. Logos recortados de
+loc1.png: `LogoCemexDO.png` y `LogoLocomboo.png` (misma carpeta, ruta relativa `../Recursos/...`).
+
+## 3 páginas (`.tablero-screen`, cada una con su `.lb-scroll` interno de 900px)
+- **`#lbTR` Tiempo real** (loc1–loc3): encabezado + 5 filtros (Cluster/Nombre_planta,
+  NombreE, Tipo Turno, TipoDia, Area) + combo Adopción (barras registrado/asignado + línea
+  %, agrupado por cluster) + Detalle de jornadas + tarjeta "Tiempo real" (5 KPI) + 3
+  botones de página + Personal sin marcaje activo / Error / Personal Inoperativo.
+- **`#lbHist` Historico** (loc4–loc6): filtros con "Año, Mes, Día" en vez de Tipo Turno +
+  Adopción histórica + 3 tarjetas (el título "Personal Asigando" tiene ese error de
+  digitación en el tablero real, se dejó igual) + Alertas jornadas (apilado por rango de
+  horas) + Adopción Area + Detalle de jornadas + las 3 tablas de novedades.
+- **`#lbHC` Detalle HC** (loc7–loc8): HC por día (apilado por área), HC Actual (gráfico y
+  tabla VACÍOS a propósito, así están en la captura) y HC Historico.
+- Navegación: panel "Páginas" (loc9menu, contraíble «/») + botones Tiempo real/Historico/
+  Detalle HC (solo en páginas 1 y 2, como en el original). Todo con `data-lbgo` → `lbGoTo()`.
+
+## Funcionalidad mínima (estado global `LF`, filtros sincronizados entre páginas)
+- Planta/cluster (slicer o clic en barra de Adopción / Alertas): resalta la planta
+  (atenúa las demás), recalcula tarjetas KPI y filtra las tablas con columna de planta.
+- NombreE (con buscador): filtra tablas. Area (slicer o clic en Adopción Area): filtra
+  tablas con Area, Adopción Area, HC por día y KPI histórico. Año/Mes/Día (multi-selección,
+  21–26 sep 2026; también clic en un día de HC por día): tablas con fecha + HC por día.
+- TipoDia solo tiene "Normal" (único valor en los datos). **Tipo Turno es decorativo**
+  (opciones pendientes de confirmar con el equipo).
+- Tablas ordenables clic en encabezado. Total de "sin marcaje" = total real (228 / 86) sin
+  filtros; con filtro, suma de la muestra.
+- Fecha de corte = hoy, hora actual − 3 min, se recalcula cada 3 min (mismo criterio Eureka).
+
+## Datos: exacto vs. aproximado
+- Exactos: Adopción TR (22 plantas, suman 413/624 = 66,2%), % de la línea histórica,
+  totales 2785/3750/74,27%, Adopción Area (%, 287/246/336), filas de todas las tablas
+  (muestra de lo visible en cada captura), Operación y Mtto Automotriz de HC por día.
+- Aproximados (estimados por altura de barra, etiquetas ilegibles/cortadas en la captura):
+  cantidades por planta de Adopción histórica (cuadran con los totales), segmentos chicos de
+  Alertas jornadas, Operación/Bombeo en Adopción Area (despejados de los totales),
+  Bombeo/Calidad/Mtto Industrial de HC por día. KPI "Personal activo/Turno terminado" al
+  filtrar por planta = proporcional (el general 409/9 es exacto).
+- Columna "Estatus_persona_dia" de Inoperativo TR venía cortada ("Inca", "Rest", "Jubi"…):
+  se completó como Incapacidad / Restricción / Jubilado — "Restricción" es inferido.
+- **Documento (cédula) de HC Historico se muestra enmascarado** (`794•••00`) por ser dato
+  personal — cambiar si el usuario prefiere el número completo.
+- Explicaciones de los popups: breves, a propósito (el usuario las ajusta después).
+- Verificado con Playwright (Edge, escritorio + emulación iPhone 13): navegación, filtros,
+  clic en barras, orden de tablas, botón atrás y flujo App → en construcción. 0 errores.
