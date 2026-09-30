@@ -1,5 +1,7 @@
 # Contexto del proyecto — Manuales Interactivos Eureka
 
+> **Para trabajar en Locombo basta leer la sección "Manual 5" al final de este archivo.**
+
 ## Qué es esto
 Dos manuales de usuario interactivos activos, cada uno un "conjunto"
 que fusiona 2 tableros/apps relacionados en un solo archivo (más 2
@@ -1821,55 +1823,86 @@ proprogram, proentrada1/2, prosalida, procierre, prorechazo).
 
 ---
 
-# Manual 5 — `3.Locombo/index.html` → Tablero Locomboo (2026-09-28)
+# Manual 5 — `3.Locombo/index.html` (Locombo) — 2026-09-28
 
-Pantalla "¿Qué quieres consultar?" sin cambios (App Locombo / Tablero Locombo, igual que
-Orion). **App Locombo sigue "en construcción"** (`#lbAppUC`, se hace después). **Tablero
-Locombo** ya está construido: `#pageHeaderTablero` + `#stageT` > `#boardWrap` (1850px =
-panel "Páginas" 200px + `#boardContent` 1650px, escalado con `fitBoardT()` igual que Orion).
-Motor de tooltip (`data-tip-title`/`data-tip-text`, `bindAllHotspots`) copiado de Orion.
-Capturas de referencia: `Recursos/Locombo/Tablero/loc1…loc10.png`. Logos recortados de
-loc1.png: `LogoCemexDO.png` y `LogoLocomboo.png` (misma carpeta, ruta relativa `../Recursos/...`).
+**Hecho:** Tablero Locomboo completo (réplica de `Recursos/Locombo/Tablero/loc1–loc10.png`).
+Pantalla inicial App/Tablero igual que Orion. **App Locombo = pendiente** (hoy muestra
+"en construcción" en `#lbAppUC`, abierto por `openUnderConstruction()`).
 
-## 3 páginas (`.tablero-screen`, cada una con su `.lb-scroll` interno de 900px)
-- **`#lbTR` Tiempo real** (loc1–loc3): encabezado + 5 filtros (Cluster/Nombre_planta,
-  NombreE, Tipo Turno, TipoDia, Area) + combo Adopción (barras registrado/asignado + línea
-  %, agrupado por cluster) + Detalle de jornadas + tarjeta "Tiempo real" (5 KPI) + 3
-  botones de página + Personal sin marcaje activo / Error / Personal Inoperativo.
-- **`#lbHist` Historico** (loc4–loc6): filtros con "Año, Mes, Día" en vez de Tipo Turno +
-  Adopción histórica + 3 tarjetas (el título "Personal Asigando" tiene ese error de
-  digitación en el tablero real, se dejó igual) + Alertas jornadas (apilado por rango de
-  horas) + Adopción Area + Detalle de jornadas + las 3 tablas de novedades.
-- **`#lbHC` Detalle HC** (loc7–loc8): HC por día (apilado por área), HC Actual (gráfico y
-  tabla VACÍOS a propósito, así están en la captura) y HC Historico.
-- Navegación: panel "Páginas" (loc9menu, contraíble «/») + botones Tiempo real/Historico/
-  Detalle HC (solo en páginas 1 y 2, como en el original). Todo con `data-lbgo` → `lbGoTo()`.
+- Estructura (mismo patrón que el tablero de Orion): `#stageT` > `#boardWrap` (panel
+  "Páginas" + `#boardContent`), `fitBoardT()`, tooltips `data-tip-title/-text`.
+- 3 páginas: `#lbTR` Tiempo real, `#lbHist` Historico, `#lbHC` Detalle HC; navegación con
+  `data-lbgo` → `lbGoTo()`.
+- Filtros sincronizados en `LF` (planta/cluster, NombreE, Area, Año-Mes-Día funcionales; Tipo
+  Turno decorativo, opciones sin confirmar). Clic en barras = filtrar. Tablas ordenables.
+- Datos: tablas y totales exactos de las capturas; algunas cantidades de gráficas estimadas por
+  altura de barra. Documento (cédula) enmascarado. Popups breves (el usuario los ajusta después).
+- Logos recortados: `Recursos/Locombo/Tablero/LogoCemexDO.png`, `LogoLocomboo.png`.
 
-## Funcionalidad mínima (estado global `LF`, filtros sincronizados entre páginas)
-- Planta/cluster (slicer o clic en barra de Adopción / Alertas): resalta la planta
-  (atenúa las demás), recalcula tarjetas KPI y filtra las tablas con columna de planta.
-- NombreE (con buscador): filtra tablas. Area (slicer o clic en Adopción Area): filtra
-  tablas con Area, Adopción Area, HC por día y KPI histórico. Año/Mes/Día (multi-selección,
-  21–26 sep 2026; también clic en un día de HC por día): tablas con fecha + HC por día.
-- TipoDia solo tiene "Normal" (único valor en los datos). **Tipo Turno es decorativo**
-  (opciones pendientes de confirmar con el equipo).
-- Tablas ordenables clic en encabezado. Total de "sin marcaje" = total real (228 / 86) sin
-  filtros; con filtro, suma de la muestra.
-- Fecha de corte = hoy, hora actual − 3 min, se recalcula cada 3 min (mismo criterio Eureka).
+**Siguiente (2026-09-29):** construir la App Locombo (capturas irán en
+`Recursos/Locombo/Aplicacion/`, hoy vacía), reemplazando `#lbAppUC` — tomar como guía el
+patrón de la app Orion (`2.Orion/index.html`).
 
-## Datos: exacto vs. aproximado
-- Exactos: Adopción TR (22 plantas, suman 413/624 = 66,2%), % de la línea histórica,
-  totales 2785/3750/74,27%, Adopción Area (%, 287/246/336), filas de todas las tablas
-  (muestra de lo visible en cada captura), Operación y Mtto Automotriz de HC por día.
-- Aproximados (estimados por altura de barra, etiquetas ilegibles/cortadas en la captura):
-  cantidades por planta de Adopción histórica (cuadran con los totales), segmentos chicos de
-  Alertas jornadas, Operación/Bombeo en Adopción Area (despejados de los totales),
-  Bombeo/Calidad/Mtto Industrial de HC por día. KPI "Personal activo/Turno terminado" al
-  filtrar por planta = proporcional (el general 409/9 es exacto).
-- Columna "Estatus_persona_dia" de Inoperativo TR venía cortada ("Inca", "Rest", "Jubi"…):
-  se completó como Incapacidad / Restricción / Jubilado — "Restricción" es inferido.
-- **Documento (cédula) de HC Historico se muestra enmascarado** (`794•••00`) por ser dato
-  personal — cambiar si el usuario prefiere el número completo.
-- Explicaciones de los popups: breves, a propósito (el usuario las ajusta después).
-- Verificado con Playwright (Edge, escritorio + emulación iPhone 13): navegación, filtros,
-  clic en barras, orden de tablas, botón atrás y flujo App → en construcción. 0 errores.
+---
+
+# Plataforma — Fase 1 (registro/login @cemex.com + consultas) — 2026-09-30
+
+**API (ya existe, Cloudflare Worker + D1 — no se toca desde aquí):**
+`https://manuales-api.santiagoandres-ortiz.workers.dev` (CORS `*`, funciona desde `file://`).
+Todas POST con JSON salvo `GET /health`. Los errores traen `mensaje` en español listo para mostrar.
+
+| Ruta | Body | Respuesta |
+|---|---|---|
+| `/register` | `{nombre, email}` | `{ok, token, usuario}` · 409 `ya_registrado` · 400 `correo_invalido`/`nombre_invalido` |
+| `/login` | `{email}` | `{ok, token, usuario}` · 404 `no_registrado` · 400 `correo_invalido` |
+| `/session` | `{token}` | `{ok, usuario}` · 401 `sesion_invalida` |
+| `/manual-view` | `{token, manual, seccion}` | `{ok, registrado}` |
+| `/logout` | `{token}` | `{ok}` |
+| `GET /activar` | — | página "Conexión activada" (se cierra sola); sirve para aceptar Zscaler |
+
+**`plataforma/plataforma.js`** (único archivo compartido; la URL de la API está SOLO aquí, constante `API`).
+Expone `window.Plataforma` = `registrar(nombre,email)`, `ingresar(email)`, `validarSesion()`,
+`registrarConsulta(manual,seccion)`, `salir()`, más `activarConexion()`, `correoValido()`,
+`getUsuario()`, `getToken()`. Guarda `pfToken` y `pfUsuario` en localStorage (siempre con try/catch).
+Los errores rechazan con `{tipo:'red'}` (fetch lanzó error, timeout de 12 s o respuesta no-JSON,
+p. ej. la página de Zscaler) o `{tipo:'api', status, error, mensaje}`. `validarSesion()` resuelve
+`null` y borra la sesión si la API dice que no es válida; solo rechaza por red.
+`registrarConsulta()` nunca rechaza (fire and forget, `keepalive`); si recibe 401 borra la sesión.
+
+**Pantalla de acceso — `index.html` raíz** (`#pfGate`, CSS `.pf-*`, script al final del body):
+- Capa encima del menú con el estilo de la tarjeta de carga (cabecera navy + logo Desarrollo, fondo
+  `FondoBienvenido.png`). Pestañas "Registrarme" (nombre + correo) / "Ingresar" (correo).
+  Valida en el navegador `@cemex.com` antes de enviar.
+- Si hay token: muestra "Verificando tu sesión…", llama `/session`; OK → cierra la capa y pone
+  "Hola, <nombre> · Cerrar sesión" en `.cx-topbar` (`#pfUser`). `ya_registrado` → pasa a Ingresar
+  con el correo escrito; `no_registrado` → pasa a Registrarme con el correo escrito.
+- "Entrar sin registrarme" (`#pfGuest`) → entra sin medir; se recuerda en sessionStorage
+  (`pfInvitado`) para no volver a pedir acceso al regresar de un manual en la misma pestaña; arriba
+  queda un botón "Ingresar" (`#pfOpenLogin`). El último correo usado se guarda en `pfUltimoCorreo`
+  para prellenar "Ingresar" tras cerrar sesión.
+- Si `plataforma.js` no carga, el script quita `#pfGate` y el sitio queda como antes.
+
+**Manejo de Zscaler (red CEMEX):** desde la red corporativa la primera llamada falla por red hasta
+aceptar la advertencia de Zscaler en una pestaña visible. Cualquier operación de la capa
+(registrar / ingresar / validar sesión) que falle con `tipo:'red'` se guarda como `pendiente` y
+muestra `#pfZscaler`: texto "Para activar tu registro desde la red de CEMEX…" + "Activar conexión"
+(`window.open(API + '/activar', '_blank')`) + "Reintentar". Al volver el foco a la ventana
+(`window` `focus`) o con "Reintentar" se re-ejecuta la operación pendiente automáticamente.
+"Entrar sin registrarme" siempre está visible.
+
+**Consultas en los manuales:** cada manual carga `<script src="../plataforma/plataforma.js">` antes
+de su `<script>` principal y define `pfConsulta(seccion)` (protegido con `if (window.Plataforma)` +
+try/catch). Enganches:
+- Eureka: `showRT()` → "Tiempo real", `showHistorico()` → "Histórico" (también al usar los
+  botones de navegación cruzada RT ↔ Histórico).
+- Orion: `showApp()` → "App", `showTablero()` → "Tablero".
+- Locombo: `openUnderConstruction()` → "App" (hoy "en construcción"), `showTablero()` → "Tablero".
+Si se abre un manual directo sin sesión (o copiado sin la carpeta `plataforma/`) funciona igual,
+solo no registra. Si se agrega un sub-manual nuevo, basta con llamar `pfConsulta('<Sección>')`.
+
+**Verificado con Playwright** (Chromium, API simulada con `route` + pruebas de solo lectura contra la
+API real, sin crear usuarios): validación @cemex.com, ya_registrado/no_registrado, registro → menú
+con saludo, recarga con token → salta al menú, las 6 secciones envían `/manual-view` correcto,
+manual sigue funcionando con la API caída, logout, aviso Zscaler + popup `/activar` + reintento al
+volver el foco y con el botón, modo invitado sin medir, archivos sin `plataforma.js`, móvil 375 px
+sin scroll horizontal, sin errores de consola.

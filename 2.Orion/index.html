@@ -2197,6 +2197,7 @@
 <div id="toast"></div>
 <div id="tourBubble"></div>
 
+<script src="../plataforma/plataforma.js"></script>
 <script>
 /* ---------------- Tooltip engine (hover on desktop, tap on touch) ---------------- */
 const tooltip = document.getElementById('tooltip');
@@ -2273,7 +2274,11 @@ document.getElementById('btnComenzar').addEventListener('click', () => {
 /* =========================================================================
    Manual conjunto: elegir manual (app Orion vs tablero Orion)
    ========================================================================= */
+/* Plataforma: registrar qué sección se consulta. "Fire and forget": si no hay
+   sesión o no cargó ../plataforma/plataforma.js, no hace nada y nunca rompe el manual. */
+function pfConsulta(seccion){ try{ if (window.Plataforma) window.Plataforma.registrarConsulta('Orion', seccion); }catch(e){} }
 function showApp(){
+  pfConsulta('App');
   document.getElementById('stageT').style.display = 'none';
   document.getElementById('stage').style.display = '';
   document.getElementById('pageHeaderTablero').style.display = 'none';
@@ -2282,6 +2287,7 @@ function showApp(){
   fitFrame();
 }
 function showTablero(){
+  pfConsulta('Tablero');
   document.getElementById('stage').style.display = 'none';
   document.getElementById('stageT').style.display = '';
   document.getElementById('pageHeaderApp').style.display = 'none';

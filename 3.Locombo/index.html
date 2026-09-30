@@ -679,6 +679,7 @@
 <div id="tooltip"></div>
 <div id="lbChartTip"></div>
 
+<script src="../plataforma/plataforma.js"></script>
 <script>
 /* ---------------- Tooltip engine (hover on desktop, tap on touch) ---------------- */
 const tooltip = document.getElementById('tooltip');
@@ -767,7 +768,11 @@ document.getElementById('btnComenzar').addEventListener('click', () => {
 });
 
 /* ---------------- Elegir manual (App Locombo / Tablero Locombo) ---------------- */
+/* Plataforma: registrar qué sección se consulta. "Fire and forget": si no hay
+   sesión o no cargó ../plataforma/plataforma.js, no hace nada y nunca rompe el manual. */
+function pfConsulta(seccion){ try{ if (window.Plataforma) window.Plataforma.registrarConsulta('Locombo', seccion); }catch(e){} }
 function openUnderConstruction(which){
+  pfConsulta('App');
   document.getElementById('ucWhich').textContent = which;
   document.getElementById('lbAppUC').style.display = '';
   document.getElementById('pageHeaderTablero').style.display = 'none';
@@ -775,6 +780,7 @@ function openUnderConstruction(which){
   document.getElementById('appContent').style.display = 'block';
 }
 function showTablero(){
+  pfConsulta('Tablero');
   document.getElementById('lbAppUC').style.display = 'none';
   document.getElementById('pageHeaderTablero').style.display = '';
   document.getElementById('stageT').style.display = '';

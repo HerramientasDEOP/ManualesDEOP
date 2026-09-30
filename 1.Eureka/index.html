@@ -1405,6 +1405,7 @@
 <div id="overBookingPopup" role="tooltip"></div>
 <div id="tablePopup" role="tooltip"></div>
 
+<script src="../plataforma/plataforma.js"></script>
 <script>
 /* =========================================================================
    Fuente única de verdad para los popups de cada elemento del tablero.
@@ -4028,7 +4029,11 @@ initHistorico();
 /* =========================================================================
    Manual conjunto: elegir manual + navegación cruzada entre RT <-> Histórico
    ========================================================================= */
+/* Plataforma: registrar qué sección se consulta. "Fire and forget": si no hay
+   sesión o no cargó ../plataforma/plataforma.js, no hace nada y nunca rompe el manual. */
+function pfConsulta(seccion){ try{ if (window.Plataforma) window.Plataforma.registrarConsulta('Eureka', seccion); }catch(e){} }
 function showRT(){
+  pfConsulta('Tiempo real');
   applySemaforos();
   document.getElementById('stageH').style.display = 'none';
   document.getElementById('stage').style.display = '';
@@ -4039,6 +4044,7 @@ function showRT(){
   fitBoard();
 }
 function showHistorico(){
+  pfConsulta('Histórico');
   applySemaforos();
   document.getElementById('stage').style.display = 'none';
   document.getElementById('stageH').style.display = '';

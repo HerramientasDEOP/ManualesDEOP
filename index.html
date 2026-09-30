@@ -153,6 +153,101 @@
     .cx-hero-inner{max-width:100%;}
     .cx-hero-inner h1{font-size:23px;}
   }
+
+  /* ---------- Plataforma: acceso (registro / ingreso @cemex.com) ---------- */
+  body.pf-locked{overflow:hidden;}
+  .pf-gate{
+    position:fixed;inset:0;z-index:7000;display:flex;align-items:center;justify-content:center;
+    padding:16px;overflow-y:auto;
+    /* Velo azul marino CEMEX: más denso detrás de la tarjeta, más transparente hacia los bordes */
+    background-image:radial-gradient(ellipse 55% 65% at 50% 50%,rgba(15,28,77,.70) 0%,rgba(15,28,77,.55) 45%,rgba(15,28,77,.32) 100%),url('Recursos/fondoinicio.png');
+    background-color:#0f1c4d;background-size:cover;background-position:center;
+  }
+  .pf-gate[hidden]{display:none;}
+  .pf-card{
+    position:relative;background:#fff;border-radius:20px;max-width:460px;width:100%;overflow:hidden;margin:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  /* Acento superior con los colores de la línea del logo CEMEX */
+  .pf-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,var(--cx-red) 0%,var(--cx-red) 40%,#1f47c8 40%,#1f47c8 100%);
+  }
+  .pf-logo{display:block;width:190px;max-width:70%;height:auto;margin:6px auto 2px;}
+  .pf-body{padding:30px 32px 22px;display:flex;flex-direction:column;gap:14px;}
+  .pf-head{text-align:center;}
+  .pf-eyebrow{text-transform:uppercase;letter-spacing:1.4px;font-size:11px;font-weight:700;color:var(--cx-navy-2);margin:0 0 4px;}
+  .pf-body h1{margin:0;font-size:22px;font-weight:800;color:var(--cx-navy);}
+  .pf-sub{margin:0 0 16px;font-size:13px;color:var(--cx-muted);line-height:1.5;text-align:center;}
+  .pf-checking{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--cx-muted);padding:14px 0;}
+  .pf-checking[hidden],#pfForms[hidden]{display:none;}
+  .pf-spinner{width:18px;height:18px;border-radius:50%;border:2.5px solid #d9def0;border-top-color:var(--cx-navy-2);animation:pfSpin .8s linear infinite;flex:none;}
+  @keyframes pfSpin{to{transform:rotate(360deg);}}
+
+  .pf-tabs{display:flex;background:var(--cx-bg);border-radius:12px;padding:4px;gap:4px;margin-bottom:14px;}
+  .pf-tab{
+    flex:1;border:none;background:none;border-radius:9px;padding:9px 10px;cursor:pointer;
+    font-family:inherit;font-size:13.5px;font-weight:700;color:var(--cx-muted);
+  }
+  .pf-tab:hover{color:var(--cx-text);}
+  .pf-tab.active{background:#fff;color:var(--cx-navy);box-shadow:0 1px 4px rgba(16,16,102,.12);}
+
+  .pf-form{display:flex;flex-direction:column;gap:12px;}
+  .pf-form[hidden]{display:none;}
+  .pf-field{display:flex;flex-direction:column;gap:5px;}
+  .pf-field label{font-size:12px;font-weight:700;color:var(--cx-text);}
+  .pf-input{position:relative;}
+  .pf-input svg{
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;
+    color:#9aa1b3;pointer-events:none;transition:color .15s ease;
+  }
+  .pf-field input{
+    border:1px solid var(--cx-border);border-radius:10px;padding:10px 12px 10px 38px;font-family:inherit;font-size:14px;
+    color:var(--cx-text);background:#fff;outline:none;width:100%;transition:border-color .15s ease,box-shadow .15s ease;
+  }
+  .pf-field input:focus{border-color:#8fa2e8;box-shadow:0 0 0 3px rgba(74,103,214,.14);}
+  .pf-input:focus-within svg{color:#4a67d6;}
+  .pf-btn{
+    border:none;border-radius:10px;padding:11px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;
+    background:var(--cx-navy-2);color:#fff;transition:background .15s ease;
+  }
+  .pf-btn:hover{background:var(--cx-navy);}
+  .pf-btn:disabled{opacity:.6;cursor:default;}
+  .pf-btn-sec{background:#fff;color:var(--cx-navy-2);border:1px solid #c7cdf5;}
+  .pf-btn-sec:hover{background:#f4f6fb;}
+
+  .pf-msg{margin:0;font-size:12.5px;line-height:1.5;border-radius:10px;padding:9px 12px;}
+  .pf-msg[hidden]{display:none;}
+  .pf-msg.error{background:#fdecef;color:#a3021f;}
+  .pf-msg.info{background:#eef1fb;color:var(--cx-navy);}
+
+  .pf-zscaler{background:#fff8e6;border:1px solid #f3d58a;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;}
+  .pf-zscaler[hidden]{display:none;}
+  .pf-zscaler p{margin:0;font-size:12.5px;line-height:1.55;color:#5c4400;}
+  .pf-zscaler-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .pf-zscaler-actions .pf-btn{flex:1;min-width:130px;padding:9px 12px;font-size:13px;}
+
+  .pf-guest{
+    align-self:center;border:none;background:none;cursor:pointer;font-family:inherit;font-size:12.5px;
+    color:var(--cx-muted);text-decoration:underline;padding:4px;
+  }
+  .pf-guest:hover{color:var(--cx-navy);}
+  .pf-foot{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;}
+  .pf-note{margin:0;font-size:11px;color:#8a8f99;line-height:1.45;}
+
+  .pf-user{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--cx-muted);}
+  .pf-user[hidden]{display:none;}
+  .pf-user strong{color:var(--cx-text);}
+  .pf-user-btn{
+    border:1px solid var(--cx-border);background:#fff;border-radius:9px;padding:6px 12px;cursor:pointer;
+    font-family:inherit;font-size:12.5px;font-weight:700;color:var(--cx-navy-2);white-space:nowrap;
+  }
+  .pf-user-btn:hover{background:#f4f6fb;}
+  @media (max-width:600px){
+    .pf-body{padding:26px 20px 18px;}
+    .pf-logo{width:170px;}
+    .pf-user-hola{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  }
 </style>
 </head>
 <body>
@@ -161,6 +256,13 @@
   <header class="cx-topbar">
     <div class="cx-topbar-inner">
       <div class="cx-brand"><img src="Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones" class="cx-brand-logo"></div>
+      <div class="pf-user" id="pfUser" hidden>
+        <span class="pf-user-hola">Hola, <strong id="pfUserName"></strong></span>
+        <button type="button" class="pf-user-btn" id="pfLogout">Cerrar sesión</button>
+      </div>
+      <div class="pf-user" id="pfGuestBar" hidden>
+        <button type="button" class="pf-user-btn" id="pfOpenLogin">Ingresar</button>
+      </div>
     </div>
   </header>
 
@@ -256,6 +358,62 @@
         </div>
         <p class="cx-empty" id="cxEmptyState" style="display:none;">No encontramos herramientas que coincidan con tu búsqueda.</p>
       </main>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- Plataforma: pantalla de acceso (lógica en plataforma/plataforma.js) ---------- -->
+<div id="pfGate" class="pf-gate" role="dialog" aria-modal="true" aria-labelledby="pfTitle">
+  <div class="pf-card">
+    <div class="pf-body">
+      <div class="pf-head">
+        <img class="pf-logo" src="Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones">
+        <p class="pf-eyebrow">Centro de Herramientas Digitales</p>
+        <h1 id="pfTitle">Manuales de Usuario</h1>
+      </div>
+
+      <div id="pfChecking" class="pf-checking" hidden><span class="pf-spinner"></span><span id="pfCheckingText">Verificando tu sesión…</span></div>
+
+      <div id="pfForms">
+        <p class="pf-sub">Usa tu correo corporativo <strong>@cemex.com</strong> para acceder a los manuales.</p>
+        <div class="pf-tabs" role="tablist">
+          <button type="button" class="pf-tab active" role="tab" data-pf-tab="registro" id="pfTabRegistro">Registrarme</button>
+          <button type="button" class="pf-tab" role="tab" data-pf-tab="ingreso" id="pfTabIngreso">Ingresar</button>
+        </div>
+        <form id="pfFormRegistro" class="pf-form" novalidate>
+          <div class="pf-field">
+            <label for="pfNombre">Nombre completo</label>
+            <div class="pf-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><input type="text" id="pfNombre" autocomplete="name" placeholder="Ej. Ana Gómez"></div>
+          </div>
+          <div class="pf-field">
+            <label for="pfCorreoRegistro">Correo corporativo</label>
+            <div class="pf-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6l-10 7L2 6"></path></svg><input type="email" id="pfCorreoRegistro" autocomplete="email" placeholder="nombre.apellido@cemex.com"></div>
+          </div>
+          <button type="submit" class="pf-btn">Crear mi cuenta</button>
+        </form>
+        <form id="pfFormIngreso" class="pf-form" novalidate hidden>
+          <div class="pf-field">
+            <label for="pfCorreoIngreso">Correo corporativo</label>
+            <div class="pf-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6l-10 7L2 6"></path></svg><input type="email" id="pfCorreoIngreso" autocomplete="email" placeholder="nombre.apellido@cemex.com"></div>
+          </div>
+          <button type="submit" class="pf-btn">Entrar a los manuales</button>
+        </form>
+      </div>
+
+      <p id="pfMsg" class="pf-msg" role="alert" hidden></p>
+
+      <div id="pfZscaler" class="pf-zscaler" hidden>
+        <p>Para activar tu registro desde la red de CEMEX, haz clic en <strong>Activar conexión</strong> y luego en <strong>Continuar</strong> en la advertencia que aparece.</p>
+        <div class="pf-zscaler-actions">
+          <button type="button" class="pf-btn" id="pfActivar">Activar conexión</button>
+          <button type="button" class="pf-btn pf-btn-sec" id="pfReintentar">Reintentar</button>
+        </div>
+      </div>
+
+      <div class="pf-foot">
+        <button type="button" class="pf-guest" id="pfGuest">Entrar sin registrarme</button>
+        <p class="pf-note">Solo usamos tu correo para saber qué manuales se consultan.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -378,6 +536,165 @@ sideFavoritos.addEventListener('click', () => {
 sideAyuda.addEventListener('click', () => {
   cxHelpPanel.classList.toggle('show');
 });
+</script>
+<script src="plataforma/plataforma.js"></script>
+<script>
+/* ---------------- Plataforma: control de la pantalla de acceso ---------------- */
+(function(){
+  const gate = document.getElementById('pfGate');
+  // Si plataforma.js no cargó (archivo faltante), el sitio funciona igual que antes.
+  if (!window.Plataforma){ gate.remove(); return; }
+  const P = window.Plataforma;
+  const $ = id => document.getElementById(id);
+  const KEY_INVITADO = 'pfInvitado';     // sessionStorage: "Entrar sin registrarme" en esta pestaña
+  const KEY_ULTIMO = 'pfUltimoCorreo';   // localStorage: para prellenar "Ingresar"
+  const store = (s) => ({
+    get(k){ try{ return s().getItem(k); }catch(e){ return null; } },
+    set(k, v){ try{ s().setItem(k, v); }catch(e){} },
+    del(k){ try{ s().removeItem(k); }catch(e){} }
+  });
+  const ss = store(() => sessionStorage);
+  const ls = store(() => localStorage);
+
+  let pendiente = null;   // última operación que falló por red, para reintentar
+  let ocupado = false;
+
+  /* ---------- UI ---------- */
+  function abrirGate(){ gate.hidden = false; document.body.classList.add('pf-locked'); }
+  function cerrarGate(){ gate.hidden = true; document.body.classList.remove('pf-locked'); }
+  function modoChecking(texto){
+    $('pfCheckingText').textContent = texto;
+    $('pfChecking').hidden = false; $('pfForms').hidden = true;
+  }
+  function modoForms(){ $('pfChecking').hidden = true; $('pfForms').hidden = false; }
+  function msg(texto, tipo){
+    const el = $('pfMsg');
+    el.textContent = texto || '';
+    el.className = 'pf-msg ' + (tipo || 'error');
+    el.hidden = !texto;
+  }
+  function zscaler(mostrar){ $('pfZscaler').hidden = !mostrar; }
+  function setBusy(b){
+    ocupado = b;
+    gate.querySelectorAll('.pf-form .pf-btn, #pfReintentar').forEach(btn => { btn.disabled = b; });
+    $('pfReintentar').textContent = b ? 'Conectando…' : 'Reintentar';
+  }
+  function tab(cual){
+    gate.querySelectorAll('.pf-tab').forEach(t => t.classList.toggle('active', t.getAttribute('data-pf-tab') === cual));
+    $('pfFormRegistro').hidden = cual !== 'registro';
+    $('pfFormIngreso').hidden = cual !== 'ingreso';
+  }
+  function barra(usuario){
+    $('pfUser').hidden = !usuario;
+    $('pfGuestBar').hidden = !!usuario;
+    if (usuario) $('pfUserName').textContent = usuario.nombre || usuario.email || '';
+  }
+
+  function entrar(usuario){
+    pendiente = null; zscaler(false); msg('');
+    ss.del(KEY_INVITADO);
+    if (usuario && usuario.email) ls.set(KEY_ULTIMO, usuario.email);
+    barra(usuario);
+    cerrarGate();
+  }
+  function mostrarAcceso(){
+    pendiente = null; zscaler(false); msg('');
+    const ultimo = ls.get(KEY_ULTIMO);
+    if (ultimo){ $('pfCorreoIngreso').value = ultimo; tab('ingreso'); } else { tab('registro'); }
+    modoForms(); abrirGate();
+  }
+
+  /* ---------- Ejecutar una operación con manejo de red / Zscaler ---------- */
+  function ejecutar(op){
+    if (ocupado) return;
+    pendiente = null; msg(''); setBusy(true);
+    op.run().then(
+      usuario => { setBusy(false); op.ok(usuario); },
+      err => {
+        setBusy(false);
+        if (err && err.tipo === 'red'){ pendiente = op; zscaler(true); return; }
+        zscaler(false);
+        if (op.apiError) op.apiError(err || {}); else msg((err && err.mensaje) || 'Ocurrió un error. Intenta de nuevo.');
+      }
+    );
+  }
+
+  const opValidar = {
+    run: () => P.validarSesion(),
+    ok: usuario => usuario ? entrar(usuario) : mostrarAcceso()
+  };
+  function opRegistrar(nombre, correo){
+    return {
+      run: () => P.registrar(nombre, correo),
+      ok: entrar,
+      apiError: err => {
+        if (err.error === 'ya_registrado'){
+          $('pfCorreoIngreso').value = correo; tab('ingreso');
+          msg(err.mensaje, 'info');
+        } else msg(err.mensaje);
+      }
+    };
+  }
+  function opIngresar(correo){
+    return {
+      run: () => P.ingresar(correo),
+      ok: entrar,
+      apiError: err => {
+        if (err.error === 'no_registrado'){
+          $('pfCorreoRegistro').value = correo; tab('registro');
+          msg(err.mensaje, 'info'); $('pfNombre').focus();
+        } else msg(err.mensaje);
+      }
+    };
+  }
+
+  /* ---------- Eventos ---------- */
+  gate.querySelectorAll('.pf-tab').forEach(t => t.addEventListener('click', () => {
+    tab(t.getAttribute('data-pf-tab')); msg('');
+  }));
+  $('pfFormRegistro').addEventListener('submit', e => {
+    e.preventDefault();
+    const nombre = $('pfNombre').value.trim();
+    const correo = $('pfCorreoRegistro').value.trim().toLowerCase();
+    if (nombre.length < 2){ msg('Escribe tu nombre completo.'); $('pfNombre').focus(); return; }
+    if (!P.correoValido(correo)){ msg('Usa tu correo corporativo @cemex.com.'); $('pfCorreoRegistro').focus(); return; }
+    ejecutar(opRegistrar(nombre, correo));
+  });
+  $('pfFormIngreso').addEventListener('submit', e => {
+    e.preventDefault();
+    const correo = $('pfCorreoIngreso').value.trim().toLowerCase();
+    if (!P.correoValido(correo)){ msg('Usa tu correo corporativo @cemex.com.'); $('pfCorreoIngreso').focus(); return; }
+    ejecutar(opIngresar(correo));
+  });
+  $('pfActivar').addEventListener('click', () => P.activarConexion());
+  $('pfReintentar').addEventListener('click', () => { if (pendiente) ejecutar(pendiente); });
+  // Al volver de la pestaña de la advertencia de Zscaler, reintentar solo.
+  window.addEventListener('focus', () => { if (pendiente && !gate.hidden) ejecutar(pendiente); });
+  $('pfGuest').addEventListener('click', () => {
+    pendiente = null; zscaler(false); msg('');
+    ss.set(KEY_INVITADO, '1');
+    barra(P.getToken() ? P.getUsuario() : null);
+    cerrarGate();
+  });
+  $('pfLogout').addEventListener('click', () => {
+    P.salir();
+    barra(null);
+    mostrarAcceso();
+  });
+  $('pfOpenLogin').addEventListener('click', () => { ss.del(KEY_INVITADO); mostrarAcceso(); });
+
+  /* ---------- Inicio ---------- */
+  if (P.getToken()){
+    const u = P.getUsuario();
+    modoChecking(u && u.nombre ? `Hola, ${u.nombre}. Verificando tu sesión…` : 'Verificando tu sesión…');
+    abrirGate();
+    ejecutar(opValidar);
+  } else if (ss.get(KEY_INVITADO)){
+    barra(null); cerrarGate();
+  } else {
+    mostrarAcceso();
+  }
+})();
 </script>
 </body>
 </html>
