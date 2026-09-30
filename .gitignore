@@ -1,0 +1,5 @@
+# Pruebas locales de la API (ver CONTEXTO.md, "Plataforma — Fase 3")
+# Clave local: nunca subirla (GitHub Pages publica todo el repo). Plantilla en api/dev/.dev.vars.example
+api/dev/.dev.vars
+# Base D1 local de wrangler
+api/dev/.wrangler/

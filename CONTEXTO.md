@@ -1847,6 +1847,19 @@ patrón de la app Orion (`2.Orion/index.html`).
 
 # Plataforma — Fase 1 (registro/login @cemex.com + consultas) — 2026-09-30
 
+**Dónde vive la API:** en Cloudflare — Worker **`manuales-api`** + base D1 **`manuales-db`**. Se edita
+y despliega desde el panel de Cloudflare, no desde este repo. En el repo hay un **respaldo** en
+[`api/`](api/) (no se despliega; es para control de versiones y la futura migración a SQL Server):
+- [`api/worker.js`](api/worker.js) — copia exacta del código del Worker.
+- [`api/schema.sql`](api/schema.sql) — esquema de las tablas (`usuarios`, `sesiones`, `accesos`,
+  `consultas_manual`, `puntuaciones`) con sus índices, exactamente como se ejecutó en la consola de D1 (más `visitas_anonimas`, Fase 3).
+  `puntuaciones` es para los **puntajes del juego (Fase 2)**: usuario, `puntaje` = metros recorridos,
+  fecha (índice por puntaje descendente para el ranking). **No** son calificaciones de manuales; el
+  Worker de la Fase 1 todavía no la usa.
+
+> ⚠️ **Si se cambia el Worker en Cloudflare, actualizar también `api/worker.js`** (y `api/schema.sql`
+> si cambia alguna tabla), para que el respaldo no quede desfasado.
+
 **API (ya existe, Cloudflare Worker + D1 — no se toca desde aquí):**
 `https://manuales-api.santiagoandres-ortiz.workers.dev` (CORS `*`, funciona desde `file://`).
 Todas POST con JSON salvo `GET /health`. Los errores traen `mensaje` en español listo para mostrar.
@@ -1906,3 +1919,79 @@ con saludo, recarga con token → salta al menú, las 6 secciones envían `/manu
 manual sigue funcionando con la API caída, logout, aviso Zscaler + popup `/activar` + reintento al
 volver el foco y con el botón, modo invitado sin medir, archivos sin `plataforma.js`, móvil 375 px
 sin scroll horizontal, sin errores de consola.
+
+---
+
+# Plataforma — Fase 3 (dashboard de métricas privado) — 2026-09-30
+
+**Página:** [`admin/index.html`](admin/index.html) — `noindex, nofollow`, **no está enlazada desde ninguna
+página** (se abre escribiendo la ruta `/admin/`). Carga `../plataforma/plataforma.js` (misma URL de API y
+mismo manejo de red/Zscaler vía `Plataforma.llamar()`) y Chart.js 4.5.1 desde cdnjs.
+- Pantalla de clave con el estilo de la pantalla de acceso. La clave se guarda solo en
+  **sessionStorage** (`pfAdminClave`, se borra al cerrar la pestaña). "Salir" la borra. Si la API
+  responde 401, se borra y vuelve a pedirla.
+- Filtros: rango 7 / 30 / 90 días / Todo / Personalizado (fechas de Colombia) + manual
+  (Todos/Eureka/Orion/Locombo) + "Actualizar". El manual solo filtra lo relacionado con consultas
+  (consultas, consultas por usuario, visitas anónimas, gráficas por manual/hora, eventos de consulta).
+- 8 KPIs, 4 gráficas (actividad por día en líneas, registros por semana, consultas por
+  manual·sección en barras horizontales, uso por hora 0–23), tabla de usuarios (búsqueda, orden por
+  columna, **CSV UTF-8 con BOM y separador `;`** para Excel en español, protegido contra fórmulas),
+  panel lateral con el historial del usuario (clic o Enter en la fila; Esc cierra) y tabla de
+  actividad reciente. Estados vacíos en todo. Aviso de Zscaler en la pantalla de clave y como banner
+  dentro del dashboard (Activar conexión / Reintentar / reintento al volver el foco).
+- Colores de series validados (contraste ≥ 3:1 y daltonismo): accesos `#2a52c9`, consultas
+  `#e4032e`, visitas anónimas `#12936a`.
+- Nombres y correos se insertan escapados (vienen de lo que escribe cada usuario al registrarse).
+
+**API — rutas nuevas en [`api/worker.js`](api/worker.js)** (las de la Fase 1 no cambiaron):
+- `/admin/*` (POST, `{clave, ...}`): compara la clave con el secreto **`ADMIN_KEY`** (hash SHA-256 +
+  comparación en tiempo constante). Sin secreto → 500 `admin_no_configurado`; clave mala → espera
+  800 ms y 401 `clave_invalida`. Nunca devuelve datos sin clave.
+  - `/admin/resumen {clave, desde?, hasta?, manual?}` → `rango`, `kpis` (usuarios_total,
+    usuarios_nuevos, usuarios_activos, accesos, consultas, pct_recurrentes, consultas_por_usuario,
+    visitas_anonimas), `serie_diaria` (con días en 0), `registros_semanales` (semana = lunes, con 0),
+    `por_manual`, `por_hora` (0–23), `actividad_reciente` (50 últimos: registros, logins, regresos y
+    consultas).
+  - `/admin/usuarios {clave, desde?, hasta?}` → id, nombre, email, creado_en, ultimo_acceso, accesos,
+    consultas y manual_favorito (conteos dentro del rango).
+  - `/admin/usuario {clave, usuario_id}` → usuario + `accesos` y `consultas` completos (desc).
+- Definiciones: **activo** = tuvo acceso o consulta en el rango; **recurrente** = activo en 2 o más
+  días distintos del rango; **consultas por usuario** = consultas / personas que consultaron.
+  **Todo** = desde el primer dato registrado (máx. 1100 días).
+- **Zona horaria:** D1 guarda UTC. Filtros `desde/hasta` llegan en fecha de Colombia y se convierten a
+  un rango UTC (`00:00 Colombia = 05:00 UTC`) para usar índices; todo lo agrupado o mostrado usa
+  `datetime(fecha, '-5 hours')`. Las fechas que devuelve `/admin/*` ya están en hora de Colombia.
+- Pública `/anon-view {manual, seccion}` → inserta en **`visitas_anonimas`** (id, manual, seccion,
+  fecha) sin datos personales; valida textos (60/80).
+
+**`plataforma.js`:** el flag de invitado vive ahora aquí (`marcarInvitado()` / `esInvitado()`,
+sessionStorage `pfInvitado`; el index lo usa). `registrarConsulta()`: con sesión → `/manual-view`;
+sin sesión pero invitado ("Entrar sin registrarme") → `/anon-view`, máx. 1 por manual+sección cada
+10 min (sessionStorage `pfAnon:<manual>|<seccion>`); sin sesión y sin invitado → nada. Siempre fire
+and forget.
+
+**Pruebas locales ([`api/dev/`](api/dev/)) — nunca tocan la base real:**
+- `wrangler.toml` (Worker `manuales-api-dev-local`, D1 con id falso `0000…`), `seed.js` (datos
+  falsos: 60 usuarios, 90 días, días hábiles y horas laborales de Colombia) y
+  **`.dev.vars.example`** (`ADMIN_KEY=clave-de-prueba-local`).
+- **Para probar localmente, primero copiar `api/dev/.dev.vars.example` como `api/dev/.dev.vars`**
+  (ahí wrangler lee `ADMIN_KEY`). `.dev.vars` está en el `.gitignore` de la raíz del repo y **nunca
+  debe subirse**: GitHub Pages publica todo el repo. La base local queda en `api/dev/.wrangler/`
+  (también ignorada). Con `--persist-to` en una ruta con espacios wrangler falla.
+- Desde `api/dev/`:
+  ```
+  cp .dev.vars.example .dev.vars
+  npx wrangler d1 execute DB --local --file ../schema.sql
+  node seed.js > seed.tmp.sql && npx wrangler d1 execute DB --local --file seed.tmp.sql
+  npx wrangler dev --local --port 8787
+  ```
+- Verificado con Playwright redirigiendo la URL de la API al wrangler local: clave vacía/mala/buena,
+  sessionStorage y Salir, los 5 rangos + manual, estados vacíos, fechas invertidas, orden, búsqueda,
+  CSV (BOM + tildes), detalle de usuario, Zscaler (aviso, /activar, reintento por foco y botón),
+  móvil 375 px sin scroll horizontal, `/anon-view` desde los manuales en modo invitado con
+  deduplicación, sin errores de consola. Con curl: todas las rutas, clave mala (~800 ms) y
+  `admin_no_configurado`. La suite de la Fase 1 sigue pasando.
+
+**Despliegue (manual):** pegar `api/worker.js` completo en el editor del Worker `manuales-api` en
+Cloudflare → Deploy. `ADMIN_KEY` ya existe como secreto; `visitas_anonimas` ya existe en D1 (su
+`CREATE TABLE` + índice `idx_visitas_anon` están en `api/schema.sql`).

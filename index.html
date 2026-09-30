@@ -546,14 +546,12 @@ sideAyuda.addEventListener('click', () => {
   if (!window.Plataforma){ gate.remove(); return; }
   const P = window.Plataforma;
   const $ = id => document.getElementById(id);
-  const KEY_INVITADO = 'pfInvitado';     // sessionStorage: "Entrar sin registrarme" en esta pestaña
   const KEY_ULTIMO = 'pfUltimoCorreo';   // localStorage: para prellenar "Ingresar"
   const store = (s) => ({
     get(k){ try{ return s().getItem(k); }catch(e){ return null; } },
     set(k, v){ try{ s().setItem(k, v); }catch(e){} },
     del(k){ try{ s().removeItem(k); }catch(e){} }
   });
-  const ss = store(() => sessionStorage);
   const ls = store(() => localStorage);
 
   let pendiente = null;   // última operación que falló por red, para reintentar
@@ -592,7 +590,7 @@ sideAyuda.addEventListener('click', () => {
 
   function entrar(usuario){
     pendiente = null; zscaler(false); msg('');
-    ss.del(KEY_INVITADO);
+    P.marcarInvitado(false);
     if (usuario && usuario.email) ls.set(KEY_ULTIMO, usuario.email);
     barra(usuario);
     cerrarGate();
@@ -672,7 +670,7 @@ sideAyuda.addEventListener('click', () => {
   window.addEventListener('focus', () => { if (pendiente && !gate.hidden) ejecutar(pendiente); });
   $('pfGuest').addEventListener('click', () => {
     pendiente = null; zscaler(false); msg('');
-    ss.set(KEY_INVITADO, '1');
+    P.marcarInvitado(true);
     barra(P.getToken() ? P.getUsuario() : null);
     cerrarGate();
   });
@@ -681,7 +679,7 @@ sideAyuda.addEventListener('click', () => {
     barra(null);
     mostrarAcceso();
   });
-  $('pfOpenLogin').addEventListener('click', () => { ss.del(KEY_INVITADO); mostrarAcceso(); });
+  $('pfOpenLogin').addEventListener('click', () => { P.marcarInvitado(false); mostrarAcceso(); });
 
   /* ---------- Inicio ---------- */
   if (P.getToken()){
@@ -689,7 +687,7 @@ sideAyuda.addEventListener('click', () => {
     modoChecking(u && u.nombre ? `Hola, ${u.nombre}. Verificando tu sesión…` : 'Verificando tu sesión…');
     abrirGate();
     ejecutar(opValidar);
-  } else if (ss.get(KEY_INVITADO)){
+  } else if (P.esInvitado()){
     barra(null); cerrarGate();
   } else {
     mostrarAcceso();

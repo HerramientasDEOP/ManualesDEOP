@@ -11,6 +11,9 @@
   const TIMEOUT_MS = 12000;
   const KEY_TOKEN = 'pfToken';
   const KEY_USUARIO = 'pfUsuario';
+  const KEY_INVITADO = 'pfInvitado';        // sessionStorage: entró con "Entrar sin registrarme"
+  const KEY_ANON = 'pfAnon:';               // sessionStorage: última visita anónima por manual|sección
+  const MIN_DEDUP_ANON = 10;
 
   /* ---------------- localStorage (siempre envuelto en try/catch) ---------------- */
   function leer(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
@@ -24,6 +27,13 @@
     escribir(KEY_USUARIO, JSON.stringify(usuario || null));
   }
   function limpiarSesion(){ borrar(KEY_TOKEN); borrar(KEY_USUARIO); }
+
+  /* ---------------- Modo invitado (sessionStorage: dura lo que la pestaña) ---------------- */
+  function ss(){ try{ return window.sessionStorage; }catch(e){ return null; } }
+  function marcarInvitado(si){
+    try{ if (si) ss().setItem(KEY_INVITADO, '1'); else ss().removeItem(KEY_INVITADO); }catch(e){}
+  }
+  function esInvitado(){ try{ return ss().getItem(KEY_INVITADO) === '1'; }catch(e){ return false; } }
 
   /* ---------------- Validaciones del lado del navegador ---------------- */
   function normalizarCorreo(email){ return String(email || '').trim().toLowerCase(); }
@@ -86,11 +96,23 @@
       });
   }
 
+  // Invitado: /anon-view sin datos personales, máx. 1 por manual+sección cada 10 min.
+  function registrarVisitaAnonima(manual, seccion){
+    try{
+      const key = KEY_ANON + manual + '|' + (seccion || '');
+      const antes = Number(ss().getItem(key)) || 0;
+      if (Date.now() - antes < MIN_DEDUP_ANON * 60000) return Promise.resolve(false);
+      ss().setItem(key, String(Date.now()));
+      return post('/anon-view', { manual, seccion }, { keepalive: true }).then(() => true, () => false);
+    }catch(e){ return Promise.resolve(false); }
+  }
+
   // "Fire and forget": nunca rechaza ni lanza, para no romper el manual.
+  // Con sesión -> /manual-view; invitado ("Entrar sin registrarme") -> /anon-view; si no, nada.
   function registrarConsulta(manual, seccion){
     try{
       const token = getToken();
-      if (!token) return Promise.resolve(false);
+      if (!token) return esInvitado() ? registrarVisitaAnonima(manual, seccion) : Promise.resolve(false);
       return post('/manual-view', { token, manual, seccion }, { keepalive: true })
         .then(data => !!data.registrado)
         .catch(err => {
@@ -114,6 +136,8 @@
   window.Plataforma = {
     API,
     registrar, ingresar, validarSesion, registrarConsulta, salir,
-    activarConexion, correoValido, getUsuario, getToken
+    activarConexion, correoValido, getUsuario, getToken,
+    marcarInvitado, esInvitado,
+    llamar: post   // POST genérico con la misma distinción red/API (lo usa admin/index.html)
   };
 })();

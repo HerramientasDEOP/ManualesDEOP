@@ -1,0 +1,11 @@
+# SOLO PARA PRUEBAS LOCALES (wrangler dev + D1 local). NO usar para desplegar.
+# El Worker real se edita/pega en el panel de Cloudflare (ver CONTEXTO.md, "Plataforma — Fase 3").
+# database_id es falso a propósito: así ningún comando puede tocar la base real manuales-db.
+name = "manuales-api-dev-local"
+main = "../worker.js"
+compatibility_date = "2026-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "manuales-db-local"
+database_id = "00000000-0000-0000-0000-000000000000"

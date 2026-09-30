@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Métricas de Manuales</title>
+<style>
+  :root{
+    --cx-navy:#101066;
+    --cx-navy-2:#1a1a8c;
+    --cx-marino:#0f1c4d;
+    --cx-red:#e4032e;
+    --cx-blue:#1f47c8;
+    --cx-bg:#eef1f6;
+    --cx-border:#e2e7f2;
+    --cx-text:#20242b;
+    --cx-muted:#626a78;
+    --cx-soft:#8a8f99;
+    --cx-shadow:0 2px 10px rgba(16,16,102,.08);
+    /* Series de las gráficas (validadas: contraste >= 3:1 y separación para daltonismo) */
+    --serie-accesos:#2a52c9;
+    --serie-consultas:#e4032e;
+    --serie-anonimas:#12936a;
+    --grid:#e9edf5;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  body{
+    font-family:"Segoe UI", Arial, Helvetica, sans-serif;background:var(--cx-bg);color:var(--cx-text);
+    min-height:100vh;overflow-x:hidden;
+  }
+  [hidden]{display:none !important;}
+  button{font-family:inherit;}
+
+  /* ---------- Pantalla de clave (mismo estilo que la pantalla de acceso) ---------- */
+  .ad-gate{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;
+    background-image:radial-gradient(ellipse 55% 65% at 50% 50%,rgba(15,28,77,.70) 0%,rgba(15,28,77,.55) 45%,rgba(15,28,77,.32) 100%),url('../Recursos/fondoinicio.png');
+    background-color:var(--cx-marino);background-size:cover;background-position:center;z-index:50;
+  }
+  .ad-card{
+    position:relative;background:#fff;border-radius:20px;max-width:420px;width:100%;overflow:hidden;margin:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  .ad-accent::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,var(--cx-red) 0%,var(--cx-red) 40%,var(--cx-blue) 40%,var(--cx-blue) 100%);
+  }
+  .ad-card-body{padding:30px 32px 24px;display:flex;flex-direction:column;gap:14px;}
+  .ad-head{text-align:center;}
+  .ad-logo{display:block;width:190px;max-width:70%;height:auto;margin:6px auto 2px;}
+  .ad-eyebrow{text-transform:uppercase;letter-spacing:1.4px;font-size:11px;font-weight:700;color:var(--cx-navy-2);margin:0 0 4px;}
+  .ad-head h1{margin:0;font-size:22px;font-weight:800;color:var(--cx-navy);}
+  .ad-sub{margin:4px 0 0;font-size:13px;color:var(--cx-muted);line-height:1.5;}
+
+  .ad-field{display:flex;flex-direction:column;gap:5px;}
+  .ad-field label{font-size:12px;font-weight:700;color:var(--cx-text);}
+  .ad-input{position:relative;}
+  .ad-input svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:#9aa1b3;pointer-events:none;}
+  .ad-input:focus-within svg{color:#4a67d6;}
+  input.ad-text,select.ad-text{
+    border:1px solid var(--cx-border);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:14px;
+    color:var(--cx-text);background:#fff;outline:none;width:100%;transition:border-color .15s ease,box-shadow .15s ease;
+  }
+  .ad-input input.ad-text{padding-left:38px;}
+  .ad-text:focus{border-color:#8fa2e8;box-shadow:0 0 0 3px rgba(74,103,214,.14);}
+
+  .ad-btn{
+    border:none;border-radius:10px;padding:10px 16px;cursor:pointer;font-size:14px;font-weight:700;
+    background:var(--cx-navy-2);color:#fff;transition:background .15s ease;white-space:nowrap;
+  }
+  .ad-btn:hover{background:var(--cx-navy);}
+  .ad-btn:disabled{opacity:.6;cursor:default;}
+  .ad-btn-sec{background:#fff;color:var(--cx-navy-2);border:1px solid #c7cdf5;}
+  .ad-btn-sec:hover{background:#f4f6fb;}
+  .ad-btn-sm{padding:7px 12px;font-size:12.5px;}
+
+  .ad-msg{margin:0;font-size:12.5px;line-height:1.5;border-radius:10px;padding:9px 12px;background:#fdecef;color:#a3021f;}
+  .ad-zscaler{background:#fff8e6;border:1px solid #f3d58a;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;}
+  .ad-zscaler p{margin:0;font-size:12.5px;line-height:1.55;color:#5c4400;}
+  .ad-zscaler-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .ad-zscaler-actions .ad-btn{flex:1;min-width:130px;padding:9px 12px;font-size:13px;}
+  .ad-note{margin:0;font-size:11px;color:var(--cx-soft);text-align:center;line-height:1.45;}
+
+  /* ---------- Dashboard ---------- */
+  .ad-topbar{background:#fff;border-bottom:1px solid var(--cx-border);position:sticky;top:0;z-index:20;}
+  .ad-topbar::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;
+    background:linear-gradient(90deg,var(--cx-red) 0%,var(--cx-red) 40%,var(--cx-blue) 40%,var(--cx-blue) 100%);
+  }
+  .ad-topbar-inner{max-width:1280px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;}
+  .ad-topbar-logo{height:26px;width:auto;display:block;}
+  .ad-topbar-title{font-size:14px;font-weight:800;color:var(--cx-navy);border-left:1px solid var(--cx-border);padding-left:16px;}
+  .ad-topbar-title small{display:block;font-size:11px;font-weight:600;color:var(--cx-muted);}
+  .ad-topbar .ad-btn{margin-left:auto;}
+
+  .ad-main{max-width:1280px;margin:0 auto;padding:20px 24px 60px;display:flex;flex-direction:column;gap:18px;}
+  .ad-panel{background:#fff;border:1px solid var(--cx-border);border-radius:16px;box-shadow:var(--cx-shadow);}
+
+  .ad-filters{padding:14px 16px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px;}
+  .ad-filter-group{display:flex;flex-direction:column;gap:5px;}
+  .ad-filter-group > span{font-size:11px;font-weight:700;color:var(--cx-muted);text-transform:uppercase;letter-spacing:.6px;}
+  .ad-seg{display:flex;background:var(--cx-bg);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap;}
+  .ad-seg button{
+    border:none;background:none;border-radius:8px;padding:7px 11px;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--cx-muted);
+  }
+  .ad-seg button:hover{color:var(--cx-text);}
+  .ad-seg button.active{background:#fff;color:var(--cx-navy);box-shadow:0 1px 4px rgba(16,16,102,.12);}
+  .ad-dates{display:flex;gap:6px;align-items:center;}
+  .ad-dates input{padding:7px 8px;font-size:13px;width:auto;}
+  .ad-filters select.ad-text{padding:8px 10px;font-size:13px;width:auto;min-width:130px;}
+  .ad-filters-meta{margin-left:auto;font-size:11.5px;color:var(--cx-muted);text-align:right;line-height:1.5;}
+
+  .ad-banner{padding:12px 14px;}
+
+  .ad-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+  .ad-kpi{padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .ad-kpi-label{font-size:12px;font-weight:700;color:var(--cx-muted);}
+  .ad-kpi-value{font-size:28px;font-weight:800;color:var(--cx-navy);line-height:1.2;font-variant-numeric:tabular-nums;}
+  .ad-kpi-hint{font-size:11.5px;color:var(--cx-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  .ad-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+  .ad-chart-card{padding:16px 16px 12px;min-width:0;}
+  .ad-card-title{margin:0;font-size:14.5px;font-weight:800;color:var(--cx-text);}
+  .ad-card-sub{margin:2px 0 10px;font-size:12px;color:var(--cx-muted);}
+  .ad-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 8px;font-size:12px;color:var(--cx-muted);}
+  .ad-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .ad-legend i{width:14px;height:3px;border-radius:2px;display:inline-block;}
+  .ad-chart-box{position:relative;height:260px;}
+  .ad-chart-box.tall{height:300px;}
+  .ad-empty{
+    display:flex;align-items:center;justify-content:center;text-align:center;color:var(--cx-soft);font-size:13px;
+    border:1px dashed var(--cx-border);border-radius:12px;padding:24px 12px;
+  }
+  .ad-chart-box .ad-empty{position:absolute;inset:0;}
+
+  .ad-table-card{padding:16px;}
+  .ad-table-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-bottom:12px;}
+  .ad-table-head .ad-card-title{margin-right:auto;}
+  .ad-table-head .ad-count{font-size:12px;color:var(--cx-muted);}
+  .ad-search{min-width:220px;}
+  .ad-search input.ad-text{padding:8px 10px 8px 34px;font-size:13px;}
+  .ad-search svg{left:10px;width:15px;height:15px;}
+  .ad-table-wrap{overflow-x:auto;border:1px solid var(--cx-border);border-radius:12px;}
+  table.ad-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .ad-table th{
+    text-align:left;font-size:11.5px;font-weight:700;color:var(--cx-muted);background:#f7f9fc;
+    padding:9px 12px;border-bottom:1px solid var(--cx-border);white-space:nowrap;position:sticky;top:0;
+  }
+  .ad-table th.num,.ad-table td.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .ad-table th button{
+    border:none;background:none;padding:0;cursor:pointer;font:inherit;color:inherit;display:inline-flex;align-items:center;gap:4px;
+  }
+  .ad-table th button:hover{color:var(--cx-navy);}
+  .ad-table th .ad-sort{font-size:10px;opacity:.35;}
+  .ad-table th[aria-sort] .ad-sort{opacity:1;color:var(--cx-navy);}
+  .ad-table td{padding:9px 12px;border-bottom:1px solid #f0f2f7;white-space:nowrap;}
+  .ad-table tbody tr:last-child td{border-bottom:none;}
+  .ad-table tbody tr.clic{cursor:pointer;}
+  .ad-table tbody tr.clic:hover td{background:#f4f6fb;}
+  .ad-table tbody tr.clic:focus-visible{outline:2px solid #8fa2e8;outline-offset:-2px;}
+  .ad-table .ad-nombre{font-weight:700;color:var(--cx-text);}
+  .ad-table .ad-email{color:var(--cx-muted);font-size:12px;}
+  .ad-scroll{max-height:460px;overflow:auto;}
+
+  .ad-chip{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;background:#eef1f6;color:var(--cx-muted);}
+  .ad-chip.consulta{background:#eef1fb;color:var(--cx-navy-2);}
+  .ad-chip.registro{background:#fff0f3;color:#a3021f;}
+
+  /* ---------- Panel de historial del usuario ---------- */
+  .ad-drawer-bg{position:fixed;inset:0;background:rgba(15,28,77,.45);z-index:60;}
+  .ad-drawer{
+    position:fixed;top:0;right:0;bottom:0;width:440px;max-width:100%;background:#fff;z-index:61;
+    display:flex;flex-direction:column;box-shadow:-10px 0 40px rgba(0,0,0,.2);
+  }
+  .ad-drawer-head{padding:18px 20px 14px;border-bottom:1px solid var(--cx-border);display:flex;gap:12px;align-items:flex-start;position:relative;}
+  .ad-drawer-head::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,var(--cx-red) 0%,var(--cx-red) 40%,var(--cx-blue) 40%,var(--cx-blue) 100%);
+  }
+  .ad-drawer-head h2{margin:0;font-size:17px;font-weight:800;color:var(--cx-navy);word-break:break-word;}
+  .ad-drawer-head p{margin:2px 0 0;font-size:12.5px;color:var(--cx-muted);word-break:break-all;}
+  .ad-close{margin-left:auto;border:none;background:#f4f6fb;border-radius:9px;width:34px;height:34px;cursor:pointer;color:var(--cx-muted);flex:none;font-size:18px;line-height:1;}
+  .ad-close:hover{color:var(--cx-text);}
+  .ad-drawer-body{padding:16px 20px 24px;overflow-y:auto;flex:1;}
+  .ad-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px;}
+  .ad-mini div{background:#f7f9fc;border-radius:10px;padding:9px 11px;}
+  .ad-mini b{display:block;font-size:17px;color:var(--cx-navy);font-variant-numeric:tabular-nums;}
+  .ad-mini span{font-size:11.5px;color:var(--cx-muted);}
+  .ad-hist-dia{font-size:11.5px;font-weight:800;color:var(--cx-muted);text-transform:uppercase;letter-spacing:.6px;margin:14px 0 6px;}
+  .ad-hist-item{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid #f0f2f7;font-size:13px;}
+  .ad-hist-item time{font-variant-numeric:tabular-nums;color:var(--cx-muted);font-size:12px;flex:none;width:42px;}
+
+  .ad-loading{position:fixed;top:0;left:0;right:0;height:3px;z-index:70;overflow:hidden;}
+  .ad-loading::after{
+    content:"";position:absolute;top:0;bottom:0;width:30%;background:var(--cx-blue);animation:adLoad 1s ease-in-out infinite;
+  }
+  @keyframes adLoad{from{left:-30%;}to{left:100%;}}
+
+  @media (max-width:1000px){
+    .ad-kpis{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .ad-charts{grid-template-columns:minmax(0,1fr);}
+    .ad-filters-meta{margin-left:0;text-align:left;width:100%;}
+  }
+  @media (max-width:600px){
+    .ad-topbar-inner{padding:10px 16px;gap:10px;}
+    .ad-topbar-title{font-size:13px;padding-left:10px;}
+    .ad-topbar-title small{display:none;}
+    .ad-topbar-logo{height:20px;}
+    .ad-main{padding:14px 16px 48px;gap:14px;}
+    .ad-card-body{padding:26px 20px 20px;}
+    .ad-kpi{padding:12px;}
+    .ad-kpi-value{font-size:23px;}
+    .ad-kpi-hint{white-space:normal;}
+    .ad-chart-box{height:230px;}
+    .ad-search{min-width:0;flex:1 1 100%;}
+    .ad-dates input{flex:1;min-width:0;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ---------------- Pantalla de clave ---------------- -->
+<div id="adGate" class="ad-gate">
+  <div class="ad-card ad-accent">
+    <form class="ad-card-body" id="adFormClave" novalidate>
+      <div class="ad-head">
+        <img class="ad-logo" src="../Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones">
+        <p class="ad-eyebrow">Panel privado</p>
+        <h1>Métricas de la plataforma</h1>
+        <p class="ad-sub">Uso de los manuales interactivos.</p>
+      </div>
+      <div class="ad-field">
+        <label for="adClave">Clave de administrador</label>
+        <div class="ad-input">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <input class="ad-text" type="password" id="adClave" autocomplete="current-password" placeholder="Escribe la clave">
+        </div>
+      </div>
+      <button type="submit" class="ad-btn" id="adEntrar">Entrar</button>
+      <p class="ad-msg" id="adGateMsg" role="alert" hidden></p>
+      <div class="ad-zscaler" data-zscaler hidden>
+        <p>Para activar tu registro desde la red de CEMEX, haz clic en <strong>Activar conexión</strong> y luego en <strong>Continuar</strong> en la advertencia que aparece.</p>
+        <div class="ad-zscaler-actions">
+          <button type="button" class="ad-btn" data-activar>Activar conexión</button>
+          <button type="button" class="ad-btn ad-btn-sec" data-reintentar>Reintentar</button>
+        </div>
+      </div>
+      <p class="ad-note">La clave se guarda solo mientras esta pestaña esté abierta.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ---------------- Dashboard ---------------- -->
+<div id="adApp" hidden>
+  <div class="ad-loading" id="adLoading" hidden></div>
+  <header class="ad-topbar">
+    <div class="ad-topbar-inner">
+      <img class="ad-topbar-logo" src="../Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones">
+      <div class="ad-topbar-title">Métricas de la plataforma<small>Manuales de usuario interactivos</small></div>
+      <button type="button" class="ad-btn ad-btn-sec ad-btn-sm" id="adSalir">Salir</button>
+    </div>
+  </header>
+
+  <main class="ad-main">
+    <section class="ad-panel ad-filters" aria-label="Filtros">
+      <div class="ad-filter-group">
+        <span>Rango</span>
+        <div class="ad-seg" id="adRango" role="group">
+          <button type="button" data-rango="7">7 días</button>
+          <button type="button" data-rango="30" class="active">30 días</button>
+          <button type="button" data-rango="90">90 días</button>
+          <button type="button" data-rango="todo">Todo</button>
+          <button type="button" data-rango="custom">Personalizado</button>
+        </div>
+      </div>
+      <div class="ad-filter-group" id="adFechas" hidden>
+        <span>Fechas</span>
+        <div class="ad-dates">
+          <input class="ad-text" type="date" id="adDesde" aria-label="Desde">
+          <input class="ad-text" type="date" id="adHasta" aria-label="Hasta">
+        </div>
+      </div>
+      <div class="ad-filter-group">
+        <span>Manual</span>
+        <select class="ad-text" id="adManual">
+          <option value="">Todos</option>
+          <option>Eureka</option>
+          <option>Orion</option>
+          <option>Locombo</option>
+        </select>
+      </div>
+      <button type="button" class="ad-btn" id="adActualizar">Actualizar</button>
+      <div class="ad-filters-meta" id="adMeta">Horas en Colombia (UTC-5)</div>
+    </section>
+
+    <div class="ad-panel ad-banner" id="adBanner" hidden>
+      <div class="ad-zscaler" data-zscaler>
+        <p>No pudimos conectar con el servidor. Para activar tu registro desde la red de CEMEX, haz clic en <strong>Activar conexión</strong> y luego en <strong>Continuar</strong> en la advertencia que aparece.</p>
+        <div class="ad-zscaler-actions">
+          <button type="button" class="ad-btn" data-activar>Activar conexión</button>
+          <button type="button" class="ad-btn ad-btn-sec" data-reintentar>Reintentar</button>
+        </div>
+      </div>
+    </div>
+    <p class="ad-msg" id="adAppMsg" role="alert" hidden></p>
+
+    <section class="ad-kpis" id="adKpis" aria-label="Indicadores"></section>
+
+    <section class="ad-charts">
+      <div class="ad-panel ad-chart-card">
+        <h2 class="ad-card-title">Actividad por día</h2>
+        <p class="ad-card-sub">Accesos, consultas de manuales y visitas sin registro</p>
+        <div class="ad-legend" aria-hidden="true">
+          <span><i style="background:var(--serie-accesos)"></i>Accesos</span>
+          <span><i style="background:var(--serie-consultas)"></i>Consultas</span>
+          <span><i style="background:var(--serie-anonimas)"></i>Visitas anónimas</span>
+        </div>
+        <div class="ad-chart-box"><canvas id="chDiaria" role="img" aria-label="Actividad por día"></canvas><div class="ad-empty" hidden>Sin actividad en este rango.</div></div>
+      </div>
+      <div class="ad-panel ad-chart-card">
+        <h2 class="ad-card-title">Nuevos registros por semana</h2>
+        <p class="ad-card-sub">Semanas de lunes a domingo</p>
+        <div class="ad-chart-box"><canvas id="chSemanal" role="img" aria-label="Nuevos registros por semana"></canvas><div class="ad-empty" hidden>No hubo registros nuevos en este rango.</div></div>
+      </div>
+      <div class="ad-panel ad-chart-card">
+        <h2 class="ad-card-title">Consultas por manual y sección</h2>
+        <p class="ad-card-sub" id="adSubManual">Personas registradas; no incluye visitas anónimas</p>
+        <div class="ad-chart-box tall"><canvas id="chManual" role="img" aria-label="Consultas por manual y sección"></canvas><div class="ad-empty" hidden>No hay consultas en este rango.</div></div>
+      </div>
+      <div class="ad-panel ad-chart-card">
+        <h2 class="ad-card-title">Uso por hora del día</h2>
+        <p class="ad-card-sub">Consultas según la hora de Colombia</p>
+        <div class="ad-chart-box tall"><canvas id="chHora" role="img" aria-label="Consultas por hora del día"></canvas><div class="ad-empty" hidden>No hay consultas en este rango.</div></div>
+      </div>
+    </section>
+
+    <section class="ad-panel ad-table-card" aria-labelledby="adUsuariosTitulo">
+      <div class="ad-table-head">
+        <h2 class="ad-card-title" id="adUsuariosTitulo">Usuarios</h2>
+        <span class="ad-count" id="adUsuariosCount"></span>
+        <div class="ad-input ad-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input class="ad-text" type="search" id="adBuscar" placeholder="Buscar por nombre o correo" aria-label="Buscar usuario">
+        </div>
+        <button type="button" class="ad-btn ad-btn-sec ad-btn-sm" id="adCsv">Descargar CSV</button>
+      </div>
+      <div class="ad-table-wrap ad-scroll">
+        <table class="ad-table" id="adTablaUsuarios">
+          <thead><tr>
+            <th data-col="nombre"><button type="button">Usuario <span class="ad-sort">▲▼</span></button></th>
+            <th data-col="creado_en"><button type="button">Registrado <span class="ad-sort">▲▼</span></button></th>
+            <th data-col="ultimo_acceso"><button type="button">Último acceso <span class="ad-sort">▲▼</span></button></th>
+            <th data-col="accesos" class="num"><button type="button">Accesos <span class="ad-sort">▲▼</span></button></th>
+            <th data-col="consultas" class="num"><button type="button">Consultas <span class="ad-sort">▲▼</span></button></th>
+            <th data-col="manual_favorito"><button type="button">Manual favorito <span class="ad-sort">▲▼</span></button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="ad-empty" id="adUsuariosVacio" hidden style="margin-top:10px;"></div>
+    </section>
+
+    <section class="ad-panel ad-table-card" aria-labelledby="adRecienteTitulo">
+      <div class="ad-table-head">
+        <h2 class="ad-card-title" id="adRecienteTitulo">Actividad reciente</h2>
+        <span class="ad-count">Últimos 50 eventos del rango</span>
+      </div>
+      <div class="ad-table-wrap ad-scroll">
+        <table class="ad-table" id="adTablaReciente">
+          <thead><tr><th>Fecha</th><th>Usuario</th><th>Evento</th><th>Manual</th><th>Sección</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="ad-empty" id="adRecienteVacio" hidden style="margin-top:10px;">Sin actividad en este rango.</div>
+    </section>
+  </main>
+</div>
+
+<!-- ---------------- Historial de un usuario ---------------- -->
+<div class="ad-drawer-bg" id="adDrawerBg" hidden></div>
+<aside class="ad-drawer" id="adDrawer" role="dialog" aria-modal="true" aria-labelledby="adDrawerNombre" hidden>
+  <div class="ad-drawer-head">
+    <div>
+      <h2 id="adDrawerNombre">Usuario</h2>
+      <p id="adDrawerEmail"></p>
+    </div>
+    <button type="button" class="ad-close" id="adDrawerCerrar" aria-label="Cerrar">×</button>
+  </div>
+  <div class="ad-drawer-body" id="adDrawerBody"></div>
+</aside>
+
+<script src="../plataforma/plataforma.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const P = window.Plataforma;
+  const KEY_CLAVE = 'pfAdminClave';        // sessionStorage: se borra al cerrar la pestaña
+  const ss = {
+    get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
+    set(k, v){ try{ sessionStorage.setItem(k, v); }catch(e){} },
+    del(k){ try{ sessionStorage.removeItem(k); }catch(e){} }
+  };
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  if (!P){
+    $('adGateMsg').textContent = 'No se pudo cargar plataforma/plataforma.js.';
+    $('adGateMsg').hidden = false; $('adEntrar').disabled = true;
+    return;
+  }
+
+  let clave = null;
+  let pendiente = null;          // operación que falló por red (Zscaler), para reintentar
+  let ocupado = false;
+  let usuarios = [];
+  let orden = { col: 'ultimo_acceso', dir: -1 };
+  const charts = {};
+
+  /* ---------------- Utilidades de fecha (todo ya viene en hora de Colombia) ---------------- */
+  const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function hoyCol(){ return new Date(Date.now() - 5 * 3600 * 1000).toISOString().slice(0, 10); }
+  function sumarDias(ymd, n){ const d = new Date(ymd + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function fDia(ymd){ if (!ymd) return ''; const [y, m, d] = ymd.slice(0, 10).split('-'); return `${+d} ${MESES[+m - 1]}`; }
+  function fDiaLargo(ymd){ if (!ymd) return ''; const [y, m, d] = ymd.slice(0, 10).split('-'); return `${+d} ${MESES[+m - 1]} ${y}`; }
+  function fHora(s){ return s ? s.slice(11, 16) : ''; }
+  function fFecha(s){ return s ? `${fDiaLargo(s)}, ${fHora(s)}` : '—'; }
+  const num = n => Number(n || 0).toLocaleString('es-CO');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+
+  /* ---------------- Llamadas a la API con clave y manejo de red ---------------- */
+  function api(ruta, extra){ return P.llamar(ruta, Object.assign({ clave }, extra || {})); }
+
+  function zscaler(mostrar){
+    document.querySelectorAll('[data-zscaler]').forEach(el => { if (el.closest('#adBanner')) return; el.hidden = !mostrar; });
+    $('adBanner').hidden = !mostrar || $('adApp').hidden;
+  }
+  function ejecutar(op){
+    if (ocupado) return;
+    ocupado = true; pendiente = null;
+    setCargando(true);
+    op().then(() => { zscaler(false); }, err => {
+      if (err && err.tipo === 'red'){ pendiente = op; zscaler(true); return; }
+      zscaler(false);
+      if (err && err.status === 401){ salir('La clave no es válida.'); return; }
+      mostrarError((err && err.mensaje) || 'Ocurrió un error al consultar las métricas.');
+    }).finally(() => { ocupado = false; setCargando(false); });
+  }
+  function setCargando(b){
+    $('adLoading').hidden = !b;
+    $('adEntrar').disabled = b; $('adActualizar').disabled = b;
+    $('adEntrar').textContent = b && !$('adGate').hidden ? 'Verificando…' : 'Entrar';
+    document.querySelectorAll('[data-reintentar]').forEach(x => { x.disabled = b; x.textContent = b ? 'Conectando…' : 'Reintentar'; });
+  }
+  function mostrarError(t){
+    const el = $('adGate').hidden ? $('adAppMsg') : $('adGateMsg');
+    el.textContent = t; el.hidden = !t;
+  }
+
+  /* ---------------- Entrar / salir ---------------- */
+  function salir(msg){
+    clave = null; ss.del(KEY_CLAVE); pendiente = null;
+    cerrarDrawer();
+    $('adApp').hidden = true; $('adGate').hidden = false;
+    $('adClave').value = '';
+    $('adGateMsg').textContent = msg || ''; $('adGateMsg').hidden = !msg;
+    zscaler(false);
+    $('adClave').focus();
+  }
+  $('adFormClave').addEventListener('submit', e => {
+    e.preventDefault();
+    const v = $('adClave').value.trim();
+    if (!v){ mostrarError('Escribe la clave.'); return; }
+    $('adGateMsg').hidden = true;
+    clave = v;
+    ejecutar(cargar);
+  });
+  $('adSalir').addEventListener('click', () => salir());
+
+  /* ---------------- Filtros ---------------- */
+  let rangoSel = '30';
+  function filtros(){
+    const hasta = hoyCol();
+    const f = { manual: $('adManual').value || undefined };
+    if (rangoSel === 'custom'){
+      f.desde = $('adDesde').value || undefined;
+      f.hasta = $('adHasta').value || hasta;
+    } else if (rangoSel !== 'todo'){
+      f.desde = sumarDias(hasta, -(Number(rangoSel) - 1)); f.hasta = hasta;
+    } else { f.hasta = hasta; }
+    return f;
+  }
+  $('adRango').addEventListener('click', e => {
+    const b = e.target.closest('button[data-rango]'); if (!b) return;
+    rangoSel = b.getAttribute('data-rango');
+    $('adRango').querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+    $('adFechas').hidden = rangoSel !== 'custom';
+    if (rangoSel === 'custom'){
+      if (!$('adHasta').value) $('adHasta').value = hoyCol();
+      if (!$('adDesde').value) $('adDesde').value = sumarDias(hoyCol(), -29);
+      return;                                         // espera a "Actualizar"
+    }
+    ejecutar(cargar);
+  });
+  $('adManual').addEventListener('change', () => ejecutar(cargar));
+  $('adActualizar').addEventListener('click', () => {
+    if (rangoSel === 'custom' && $('adDesde').value && $('adHasta').value && $('adDesde').value > $('adHasta').value){
+      mostrarError('La fecha inicial no puede ser posterior a la final.'); return;
+    }
+    ejecutar(cargar);
+  });
+
+  /* ---------------- Carga principal ---------------- */
+  function cargar(){
+    const f = filtros();
+    return Promise.all([
+      api('/admin/resumen', f),
+      api('/admin/usuarios', { desde: f.desde, hasta: f.hasta })
+    ]).then(([res, us]) => {
+      ss.set(KEY_CLAVE, clave);
+      $('adGate').hidden = true; $('adApp').hidden = false;
+      $('adAppMsg').hidden = true;
+      pintarResumen(res);
+      usuarios = us.usuarios || [];
+      pintarUsuarios();
+      const ahora = new Date(Date.now() - 5 * 3600 * 1000).toISOString();
+      $('adMeta').innerHTML = `${esc(fDiaLargo(res.rango.desde))} – ${esc(fDiaLargo(res.rango.hasta))}` +
+        (res.rango.manual ? ` · ${esc(res.rango.manual)}` : '') +
+        `<br>Horas en Colombia (UTC-5) · actualizado ${ahora.slice(11, 16)}`;
+    });
+  }
+
+  /* ---------------- KPIs ---------------- */
+  function pintarResumen(r){
+    const k = r.kpis, m = r.rango.manual;
+    const soloManual = m ? `Solo ${m}` : null;
+    const tiles = [
+      ['Usuarios registrados', num(k.usuarios_total), 'Total al final del rango'],
+      ['Nuevos registros', num(k.usuarios_nuevos), 'Se registraron en el rango'],
+      ['Usuarios activos', num(k.usuarios_activos), 'Con actividad en el rango'],
+      ['Accesos', num(k.accesos), 'Registros, ingresos y regresos'],
+      ['Consultas', num(k.consultas), soloManual || 'Secciones abiertas por registrados'],
+      ['Usuarios recurrentes', `${String(k.pct_recurrentes).replace('.', ',')} %`, 'Activos en 2 o más días'],
+      ['Consultas por usuario', String(k.consultas_por_usuario).replace('.', ','), soloManual || 'Promedio entre quienes consultaron'],
+      ['Visitas anónimas', num(k.visitas_anonimas), soloManual || 'Entraron sin registrarse']
+    ];
+    $('adKpis').innerHTML = tiles.map(([l, v, h]) =>
+      `<div class="ad-panel ad-kpi"><span class="ad-kpi-label">${esc(l)}</span><span class="ad-kpi-value">${esc(v)}</span><span class="ad-kpi-hint" title="${esc(h)}">${esc(h)}</span></div>`
+    ).join('');
+    pintarGraficas(r);
+    pintarReciente(r.actividad_reciente || []);
+  }
+
+  /* ---------------- Gráficas (Chart.js) ---------------- */
+  function vacio(canvasId, estaVacio){
+    const box = $(canvasId).parentElement;
+    $(canvasId).style.visibility = estaVacio ? 'hidden' : '';
+    box.querySelector('.ad-empty').hidden = !estaVacio;
+  }
+  function baseOpts(extra){
+    return Object.assign({
+      responsive: true, maintainAspectRatio: false, animation: { duration: 250 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#20242b', titleFont: { weight: '700' }, padding: 10, cornerRadius: 8,
+          boxPadding: 4, usePointStyle: true
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, border: { color: '#d7dce8' }, ticks: { color: css('--cx-muted'), maxRotation: 0, autoSkipPadding: 12 } },
+        y: { beginAtZero: true, grid: { color: css('--grid') }, border: { display: false }, ticks: { color: css('--cx-muted'), precision: 0 } }
+      }
+    }, extra || {});
+  }
+  function grafica(id, config){
+    if (charts[id]){ charts[id].data = config.data; charts[id].options = config.options; charts[id].update(); return; }
+    charts[id] = new Chart($(id), config);
+  }
+  function pintarGraficas(r){
+    if (typeof Chart === 'undefined'){
+      document.querySelectorAll('.ad-chart-box .ad-empty').forEach(e => { e.textContent = 'No se pudo cargar la librería de gráficas (cdnjs).'; e.hidden = false; });
+      return;
+    }
+    Chart.defaults.font.family = '"Segoe UI", Arial, Helvetica, sans-serif';
+    Chart.defaults.font.size = 12;
+
+    // Actividad por día
+    const d = r.serie_diaria || [];
+    const linea = (label, key, color) => ({
+      label, data: d.map(x => x[key]), borderColor: color, backgroundColor: color,
+      borderWidth: 2, pointRadius: d.length <= 31 ? 2.5 : 0, pointHoverRadius: 5, tension: 0.25
+    });
+    vacio('chDiaria', !d.some(x => x.accesos || x.consultas || x.visitas_anonimas));
+    grafica('chDiaria', {
+      type: 'line',
+      data: { labels: d.map(x => fDia(x.dia)), datasets: [
+        linea('Accesos', 'accesos', css('--serie-accesos')),
+        linea('Consultas', 'consultas', css('--serie-consultas')),
+        linea('Visitas anónimas', 'visitas_anonimas', css('--serie-anonimas'))
+      ] },
+      options: baseOpts({ interaction: { mode: 'index', intersect: false } })
+    });
+
+    // Registros por semana
+    const s = r.registros_semanales || [];
+    vacio('chSemanal', !s.some(x => x.nuevos));
+    grafica('chSemanal', {
+      type: 'bar',
+      data: { labels: s.map(x => fDia(x.semana)), datasets: [{
+        label: 'Nuevos registros', data: s.map(x => x.nuevos), backgroundColor: css('--serie-accesos'),
+        borderRadius: 4, maxBarThickness: 36
+      }] },
+      options: baseOpts({ plugins: Object.assign(baseOpts().plugins, {
+        tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { title: it => 'Semana del ' + fDiaLargo(s[it[0].dataIndex].semana) } })
+      }) })
+    });
+
+    // Por manual y sección (barras horizontales)
+    const pm = r.por_manual || [];
+    vacio('chManual', !pm.length);
+    const hOpts = baseOpts({ indexAxis: 'y' });
+    hOpts.scales = {
+      x: { beginAtZero: true, grid: { color: css('--grid') }, border: { display: false }, ticks: { color: css('--cx-muted'), precision: 0 } },
+      y: { grid: { display: false }, border: { color: '#d7dce8' }, ticks: { color: css('--cx-text') } }
+    };
+    hOpts.plugins.tooltip.callbacks = { afterLabel: it => `${num(pm[it.dataIndex].personas)} personas` };
+    grafica('chManual', {
+      type: 'bar',
+      data: { labels: pm.map(x => x.seccion ? `${x.manual} · ${x.seccion}` : x.manual), datasets: [{
+        label: 'Consultas', data: pm.map(x => x.consultas), backgroundColor: css('--serie-accesos'),
+        borderRadius: 4, maxBarThickness: 26
+      }] },
+      options: hOpts
+    });
+
+    // Por hora
+    const ph = r.por_hora || [];
+    vacio('chHora', !ph.some(x => x.consultas));
+    const hrOpts = baseOpts();
+    hrOpts.plugins.tooltip.callbacks = { title: it => `${it[0].label}:00 – ${it[0].label}:59` };
+    grafica('chHora', {
+      type: 'bar',
+      data: { labels: ph.map(x => String(x.hora).padStart(2, '0')), datasets: [{
+        label: 'Consultas', data: ph.map(x => x.consultas), backgroundColor: css('--serie-accesos'),
+        borderRadius: 4, maxBarThickness: 22
+      }] },
+      options: hrOpts
+    });
+    $('adSubManual').textContent = r.rango.manual
+      ? `Solo ${r.rango.manual} · personas registradas`
+      : 'Personas registradas; no incluye visitas anónimas';
+  }
+
+  /* ---------------- Tabla de usuarios ---------------- */
+  function filtrados(){
+    const q = $('adBuscar').value.trim().toLowerCase();
+    const lista = q ? usuarios.filter(u => (u.nombre + ' ' + u.email).toLowerCase().includes(q)) : usuarios.slice();
+    const { col, dir } = orden;
+    lista.sort((a, b) => {
+      const x = a[col], y = b[col];
+      if (x == null && y == null) return 0;
+      if (x == null) return 1;                      // vacíos siempre al final
+      if (y == null) return -1;
+      return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y), 'es')) * dir;
+    });
+    return lista;
+  }
+  function pintarUsuarios(){
+    const lista = filtrados();
+    $('adUsuariosCount').textContent = `${num(lista.length)} de ${num(usuarios.length)}`;
+    $('adTablaUsuarios').querySelector('tbody').innerHTML = lista.map(u => `
+      <tr class="clic" tabindex="0" data-id="${u.id}">
+        <td><div class="ad-nombre">${esc(u.nombre)}</div><div class="ad-email">${esc(u.email)}</div></td>
+        <td>${esc(fFecha(u.creado_en))}</td>
+        <td>${esc(fFecha(u.ultimo_acceso))}</td>
+        <td class="num">${num(u.accesos)}</td>
+        <td class="num">${num(u.consultas)}</td>
+        <td>${u.manual_favorito ? esc(u.manual_favorito) : '<span style="color:var(--cx-soft)">—</span>'}</td>
+      </tr>`).join('');
+    const vacioEl = $('adUsuariosVacio');
+    vacioEl.hidden = lista.length > 0;
+    vacioEl.textContent = usuarios.length ? 'Ningún usuario coincide con la búsqueda.' : 'Todavía no hay usuarios registrados.';
+    $('adTablaUsuarios').parentElement.hidden = lista.length === 0;
+    $('adTablaUsuarios').querySelectorAll('th[data-col]').forEach(th => {
+      const activo = th.getAttribute('data-col') === orden.col;
+      if (activo) th.setAttribute('aria-sort', orden.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
+      th.querySelector('.ad-sort').textContent = activo ? (orden.dir > 0 ? '▲' : '▼') : '▲▼';
+    });
+  }
+  $('adBuscar').addEventListener('input', pintarUsuarios);
+  $('adTablaUsuarios').querySelector('thead').addEventListener('click', e => {
+    const th = e.target.closest('th[data-col]'); if (!th) return;
+    const col = th.getAttribute('data-col');
+    orden = { col, dir: orden.col === col ? -orden.dir : (['nombre', 'manual_favorito'].includes(col) ? 1 : -1) };
+    pintarUsuarios();
+  });
+  const tbodyU = $('adTablaUsuarios').querySelector('tbody');
+  tbodyU.addEventListener('click', e => { const tr = e.target.closest('tr[data-id]'); if (tr) abrirUsuario(Number(tr.getAttribute('data-id'))); });
+  tbodyU.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const tr = e.target.closest('tr[data-id]'); if (!tr) return;
+    e.preventDefault(); abrirUsuario(Number(tr.getAttribute('data-id')));
+  });
+
+  /* ---------------- CSV (UTF-8 con BOM, separador ";" para Excel en español) ---------------- */
+  $('adCsv').addEventListener('click', () => {
+    const lista = filtrados();
+    const celda = v => {
+      let s = v == null ? '' : String(v);
+      if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;       // evita que Excel lo interprete como fórmula
+      return '"' + s.replace(/"/g, '""') + '"';
+    };
+    const filas = [['Nombre', 'Correo', 'Registrado (hora Colombia)', 'Último acceso (hora Colombia)', 'Accesos en el rango', 'Consultas en el rango', 'Manual favorito']]
+      .concat(lista.map(u => [u.nombre, u.email, u.creado_en, u.ultimo_acceso, u.accesos, u.consultas, u.manual_favorito]));
+    const csv = '﻿' + filas.map(f => f.map(celda).join(';')).join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url; a.download = `usuarios-manuales-${hoyCol()}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  /* ---------------- Actividad reciente ---------------- */
+  const TIPOS = { registro: 'Se registró', login: 'Ingresó', regreso: 'Regresó', consulta: 'Consultó' };
+  const chip = t => `<span class="ad-chip ${t === 'consulta' ? 'consulta' : t === 'registro' ? 'registro' : ''}">${esc(TIPOS[t] || t)}</span>`;
+  function pintarReciente(lista){
+    $('adTablaReciente').querySelector('tbody').innerHTML = lista.map(e => `
+      <tr>
+        <td>${esc(fFecha(e.fecha))}</td>
+        <td><div class="ad-nombre">${esc(e.nombre)}</div><div class="ad-email">${esc(e.email)}</div></td>
+        <td>${chip(e.tipo)}</td>
+        <td>${e.manual ? esc(e.manual) : '—'}</td>
+        <td>${e.seccion ? esc(e.seccion) : '—'}</td>
+      </tr>`).join('');
+    $('adRecienteVacio').hidden = lista.length > 0;
+    $('adTablaReciente').parentElement.hidden = lista.length === 0;
+  }
+
+  /* ---------------- Historial de un usuario ---------------- */
+  let ultimoFoco = null;
+  function abrirUsuario(id){
+    ultimoFoco = document.activeElement;
+    const u = usuarios.find(x => x.id === id);
+    $('adDrawerNombre').textContent = u ? u.nombre : 'Usuario';
+    $('adDrawerEmail').textContent = u ? u.email : '';
+    $('adDrawerBody').innerHTML = '<div class="ad-empty">Cargando historial…</div>';
+    $('adDrawer').hidden = false; $('adDrawerBg').hidden = false;
+    $('adDrawerCerrar').focus();
+    api('/admin/usuario', { usuario_id: id }).then(pintarHistorial, err => {
+      $('adDrawerBody').innerHTML = `<div class="ad-empty">${esc(err && err.tipo === 'red'
+        ? 'No pudimos conectar con el servidor. Cierra el panel e intenta de nuevo.'
+        : (err && err.mensaje) || 'No se pudo cargar el historial.')}</div>`;
+    });
+  }
+  function pintarHistorial(r){
+    const u = r.usuario;
+    $('adDrawerNombre').textContent = u.nombre; $('adDrawerEmail').textContent = u.email;
+    const cuenta = {};
+    r.consultas.forEach(c => { cuenta[c.manual] = (cuenta[c.manual] || 0) + 1; });
+    const fav = Object.keys(cuenta).sort((a, b) => cuenta[b] - cuenta[a])[0];
+    const eventos = r.accesos.map(a => ({ fecha: a.fecha, tipo: a.tipo }))
+      .concat(r.consultas.map(c => ({ fecha: c.fecha, tipo: 'consulta', manual: c.manual, seccion: c.seccion })))
+      .sort((a, b) => b.fecha.localeCompare(a.fecha));
+    let html = `<div class="ad-mini">
+      <div><b>${esc(fDiaLargo(u.creado_en))}</b><span>Registrado</span></div>
+      <div><b>${esc(u.ultimo_acceso ? fDiaLargo(u.ultimo_acceso) : '—')}</b><span>Último acceso</span></div>
+      <div><b>${num(r.accesos.length)}</b><span>Accesos (total)</span></div>
+      <div><b>${num(r.consultas.length)}</b><span>Consultas (total)${fav ? ' · más: ' + esc(fav) : ''}</span></div>
+    </div>`;
+    if (!eventos.length) html += '<div class="ad-empty">Este usuario todavía no tiene actividad.</div>';
+    let dia = null;
+    eventos.forEach(e => {
+      const d = e.fecha.slice(0, 10);
+      if (d !== dia){ dia = d; html += `<div class="ad-hist-dia">${esc(fDiaLargo(d))}</div>`; }
+      const detalle = e.tipo === 'consulta' ? `${esc(e.manual)}${e.seccion ? ' · ' + esc(e.seccion) : ''}` : '';
+      html += `<div class="ad-hist-item"><time>${esc(fHora(e.fecha))}</time>${chip(e.tipo)}<span>${detalle}</span></div>`;
+    });
+    $('adDrawerBody').innerHTML = html;
+  }
+  function cerrarDrawer(){
+    if ($('adDrawer').hidden) return;
+    $('adDrawer').hidden = true; $('adDrawerBg').hidden = true;
+    if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus();
+  }
+  $('adDrawerCerrar').addEventListener('click', cerrarDrawer);
+  $('adDrawerBg').addEventListener('click', cerrarDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarDrawer(); });
+
+  /* ---------------- Zscaler: activar y reintentar ---------------- */
+  document.querySelectorAll('[data-activar]').forEach(b => b.addEventListener('click', () => P.activarConexion()));
+  document.querySelectorAll('[data-reintentar]').forEach(b => b.addEventListener('click', () => { if (pendiente) ejecutar(pendiente); }));
+  window.addEventListener('focus', () => { if (pendiente) ejecutar(pendiente); });
+
+  /* ---------------- Inicio ---------------- */
+  const guardada = ss.get(KEY_CLAVE);
+  if (guardada){ clave = guardada; ejecutar(cargar); }
+  else $('adClave').focus();
+})();
+</script>
+</body>
+</html>

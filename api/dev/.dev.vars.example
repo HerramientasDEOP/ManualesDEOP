@@ -1,0 +1,3 @@
+# Copiar este archivo como .dev.vars (en esta misma carpeta) para probar con wrangler dev.
+# Es SOLO para la base local; la clave real es el secreto ADMIN_KEY en Cloudflare.
+ADMIN_KEY=clave-de-prueba-local
