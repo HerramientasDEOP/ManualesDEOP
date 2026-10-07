@@ -1826,8 +1826,8 @@ proprogram, proentrada1/2, prosalida, procierre, prorechazo).
 # Manual 5 — `3.Locombo/index.html` (Locombo) — 2026-09-28
 
 **Hecho:** Tablero Locomboo completo (réplica de `Recursos/Locombo/Tablero/loc1–loc10.png`).
-Pantalla inicial App/Tablero igual que Orion. **App Locombo = pendiente** (hoy muestra
-"en construcción" en `#lbAppUC`, abierto por `openUnderConstruction()`).
+Pantalla inicial App/Tablero igual que Orion. **App Locombo = construida (2026-10-07)**, ver
+"App Locomboo" más abajo.
 
 - Estructura (mismo patrón que el tablero de Orion): `#stageT` > `#boardWrap` (panel
   "Páginas" + `#boardContent`), `fitBoardT()`, tooltips `data-tip-title/-text`.
@@ -1839,9 +1839,40 @@ Pantalla inicial App/Tablero igual que Orion. **App Locombo = pendiente** (hoy m
   altura de barra. Documento (cédula) enmascarado. Popups breves (el usuario los ajusta después).
 - Logos recortados: `Recursos/Locombo/Tablero/LogoCemexDO.png`, `LogoLocomboo.png`.
 
-**Siguiente (2026-09-29):** construir la App Locombo (capturas irán en
-`Recursos/Locombo/Aplicacion/`, hoy vacía), reemplazando `#lbAppUC` — tomar como guía el
-patrón de la app Orion (`2.Orion/index.html`).
+## App Locomboo — construida (2026-10-07)
+Réplica funcional de `Recursos/Locombo/Aplicacion/loc1–loc40` dentro de `3.Locombo/index.html`
+(reemplazó `#lbAppUC` y su imagen base64 de 2 MB). Todo lo de la app lleva prefijo `lc`/`lc-`
+(CSS en un `<style>` propio al final del `<head>`, HTML antes de `#pageHeaderTablero`, JS en un
+`<script>` propio después del del tablero, envuelto en una IIFE; expone `window.LC` para pruebas).
+- **Entrada:** `btnChooseApp` → `showAppLc()` (registra `pfConsulta('App')`) → `lcShowApp()`.
+  `showTablero()` y el `.ph-back` llaman `lcHideApp()` (también corta el recorrido activo).
+- **Marco:** `#lcStage > #lcFrame` (1440×810), `fitLc()`; pantallas `.lc-screen`, navegación `lcGo(id)`
+  (cada pantalla se reinicia al entrar, `ON_ENTER`). Topbars generados desde `data-title/-back/-timer/-print`.
+- **Pantallas:** `lcNavMode` (libre/guiada) · `lcGuided` · `lcMenu` (loc1, modal `lcSelRegistro` loc2) ·
+  `lcRegistro` (loc3) · `lcTiempo` (loc4–6) · `lcLogin` (loc7, usuario y contraseña **Operaciones**,
+  sin distinguir mayúsculas) · `lcMenuCoord` (loc8) · `lcSolicitud` (loc9–14) · `lcRevision` (loc15–19) ·
+  `lcGestor` (loc20–29) · `lcCarnet` (loc30) · `lcImprimir` + diálogo `lcPrDialog` (loc31–32, simulado) ·
+  `lcManual` (loc33) · `lcHoras` (loc34–35) · `lcProg` (Construccion.png) · `lcPqr` (loc40; el botón del
+  menú se renombró "Añadir una PQR" y abre directo el formulario).
+- **Capas compartidas:** escáner simulado `lcScan()` (lee en orden `SCAN_SEQ`; Revisión usa `REV_SCAN`),
+  ventana de confirmación `lcConfirm()/lcInfo()` (botón `#lcConfirmOk`), toast `#lcToast`.
+- **Datos (en memoria, se pierden al recargar):** `LC_EMP` 14 empleados — 5 nombres de las capturas +
+  9 inventados; **cédulas, códigos y correos ficticios**; fotos = silueta SVG genérica (`personSVG`).
+  Vigencias "Vencida/Vigente" se calculan contra la fecha de hoy. `LC_HE` trae 10 horas extra de ejemplo.
+  Lo que se envía/edita sí cambia los datos de la sesión (estado, préstamo, reasignación, retiro, nuevo).
+- **Imágenes nuevas** (ruta relativa `../Recursos/Locombo/Aplicacion/`): `app_arte.png`, `app_titulo3d.png`,
+  `app_logo.png`, `app_ilustracion.png` (recortes de loc1/loc3/loc7) y `app_atenea.png` (logoatenea.png
+  con fondo transparente).
+- **Navegación guiada:** `LC_TOURS` (5 de operario, 12 de coordinador) + `LC_QA` (14 respuestas rápidas:
+  las 4 de loc36–39 sin el "contacta a Santiago Luque" + 10 nuevas; un solo aviso general de contacto
+  al final). Motor igual al de Orion (`lcTourNotify(evento)`, bloqueo estricto de clics, burbuja
+  `#lcTourBubble`, cierre `#lcTourDone`). Si se cambia un flujo, revisar el `lcTourNotify` correspondiente.
+- **Verificado con Playwright:** los 17 recorridos de punta a punta, móvil 375 px sin scroll horizontal,
+  ida y vuelta App ↔ Tablero, sin errores de consola. Script de prueba en el scratchpad (no en el repo).
+- **Pendiente de confirmar con el equipo:** qué mide el cronómetro azul 00:00:00 (hoy: tiempo con la
+  pantalla abierta); regla exacta de "Día solicitados" (hoy: días entre salida y regreso, mínimo 1);
+  listas de Razón manual, Tipo de extra, Equipo PQR y Estados; qué hace el ícono "→|" de Seguimiento
+  (hoy: oculta/muestra el panel izquierdo); formulario de Ingreso sin "Imagen de carnet".
 
 ---
 
@@ -1909,7 +1940,7 @@ try/catch). Enganches:
 - Eureka: `showRT()` → "Tiempo real", `showHistorico()` → "Histórico" (también al usar los
   botones de navegación cruzada RT ↔ Histórico).
 - Orion: `showApp()` → "App", `showTablero()` → "Tablero".
-- Locombo: `openUnderConstruction()` → "App" (hoy "en construcción"), `showTablero()` → "Tablero".
+- Locombo: `showAppLc()` → "App", `showTablero()` → "Tablero".
 Si se abre un manual directo sin sesión (o copiado sin la carpeta `plataforma/`) funciona igual,
 solo no registra. Si se agrega un sub-manual nuevo, basta con llamar `pfConsulta('<Sección>')`.
 
