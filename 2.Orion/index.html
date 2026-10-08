@@ -1051,6 +1051,38 @@
     .cx-tool-header{flex-wrap:wrap;}
     .page-header{padding:14px 16px;}
   }
+
+  /* ---------- Preguntas frecuentes: pestañas por rol + respuestas rápidas (2026-10-07) ---------- */
+  #screenGuidedMenu .gm-wrap{position:relative;min-height:734px;padding:30px 60px 24px;display:flex;flex-direction:column;}
+  .gm-head{text-align:center;margin-bottom:14px;}
+  .gm-head h2{color:var(--navy);font-size:24px;margin:0 0 4px;}
+  .gm-head p{color:var(--text-muted);font-size:13.5px;margin:0;}
+  .gm-tabs{display:flex;justify-content:center;gap:10px;margin-bottom:16px;}
+  .gm-tab{border:2px solid var(--card-border);background:#fff;border-radius:30px;padding:9px 20px;font-size:14px;font-weight:700;color:var(--navy);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;}
+  .gm-tab:hover{border-color:var(--blue);}
+  .gm-tab.active{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+  .gm-tab .n{background:#eef0fb;color:var(--indigo);border-radius:10px;padding:0 7px;font-size:11.5px;}
+  .gm-tab.active .n{background:rgba(255,255,255,.22);color:#fff;}
+  .gm-pane{display:none;max-height:560px;overflow-y:auto;padding:4px 8px 8px;}
+  .gm-pane.active{display:block;}
+  .gm-pane::-webkit-scrollbar{width:8px;}
+  .gm-pane::-webkit-scrollbar-thumb{background:#c4c8d4;border-radius:4px;}
+  .gm-sub{max-width:1060px;margin:4px auto 10px;font-size:12px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;}
+  .gm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:1060px;margin:0 auto 18px;}
+  .gm-grid .faq-item{padding:13px 16px;}
+  .gm-grid .faq-item.shared .faq-icon{background:#e7f6ec;color:#1d6b35;}
+  .gm-qa{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:9px;}
+  .gm-qa details{background:#fff;border:1.5px solid var(--card-border);border-radius:12px;overflow:hidden;}
+  .gm-qa summary{list-style:none;cursor:pointer;padding:13px 46px 13px 18px;font-weight:700;color:var(--navy);font-size:14.5px;position:relative;}
+  .gm-qa summary::-webkit-details-marker{display:none;}
+  .gm-qa summary::after{content:"+";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--indigo);font-weight:400;}
+  .gm-qa details[open] summary::after{content:"–";}
+  .gm-qa details[open] summary{background:#eef0fb;}
+  .gm-qa .ans{padding:6px 22px 14px;font-size:14px;color:#30353f;line-height:1.6;}
+  .gm-qa .ans ol{margin:6px 0 0;padding-left:20px;}
+  .gm-qa .formula{display:inline-block;background:#f4f6fb;border:1px solid var(--card-border);border-radius:8px;padding:4px 10px;font-family:Consolas,monospace;font-size:13px;margin:4px 0;}
+  #tourBubble{z-index:3200;} /* por encima de los popups de explicación */
+  .gm-contact{max-width:960px;margin:14px auto 0;background:var(--navy);color:#fff;border-radius:14px;padding:14px 18px;font-size:14px;line-height:1.5;}
 </style>
 <style>
   /* ---------- Botón "atrás" en el encabezado de cada tablero ---------- */
@@ -1200,47 +1232,26 @@
 
   <!-- ================= GUIDED MENU (preguntas frecuentes) ================= -->
   <section class="app-screen" id="screenGuidedMenu">
-    <div class="role-screen" style="position:relative;">
+    <div class="gm-wrap">
       <button type="button" class="navmode-back hotspot" data-go="screenNavMode"
         data-tip-title="Regresar" data-tip-text="Vuelve a elegir el modo de navegación.">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
       </button>
-      <h2>Preguntas frecuentes</h2>
-      <p class="sub">Elige qué quieres aprender a hacer y te vamos guiando paso a paso.</p>
-      <div class="faq-list">
-        <button type="button" class="faq-item hotspot" id="faqCrearSolicitud"
-          data-tip-title="¿Cómo crear una solicitud?"
-          data-tip-text="Te guiamos paso a paso: ingresar, elegir el tipo de mantenimiento, buscar la placa, llenar el formulario y enviar la solicitud.">
-          <span class="faq-icon">1</span>
-          <span class="faq-text">
-            <h4>¿Cómo crear una solicitud?</h4>
-            <p>Recorrido guiado: desde ingresar hasta enviar la solicitud.</p>
-          </span>
-        </button>
-        <button type="button" class="faq-item hotspot" id="faqRevisarSolicitudes"
-          data-tip-title="¿Cómo revisar mis solicitudes?"
-          data-tip-text="Te guiamos paso a paso: ingresar, filtrar por planta, revisar el resumen de una solicitud y chatear con el programador encargado.">
-          <span class="faq-icon">2</span>
-          <span class="faq-text">
-            <h4>¿Cómo revisar mis solicitudes?</h4>
-            <p>Recorrido guiado: filtrar, revisar el resumen y chatear con el programador.</p>
-          </span>
-        </button>
+      <div class="gm-head">
+        <h2>Preguntas frecuentes</h2>
+        <p>Elige qué quieres aprender. En los recorridos te guiamos paso a paso dentro de Orion; en "Respuestas rápidas" encuentras soluciones breves.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ================= GUIDED (programadores) — EN CONSTRUCCIÓN ================= -->
-  <section class="app-screen" id="screenGuidedProg">
-    <div class="role-screen" style="position:relative;">
-      <button type="button" class="navmode-back hotspot" data-go="screenNavMode"
-        data-tip-title="Regresar" data-tip-text="Vuelve a elegir el modo de navegación.">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-      </button>
-      <img class="construccion-img" src="../Recursos/Construccion.png" alt="En construcción">
-      <h2>Navegación guiada para programadores</h2>
-      <p class="sub">Estamos construyendo los recorridos guiados del rol programador. Mientras tanto, puedes explorar todas sus secciones (Gestor de novedades de mixers y de bombas) en la navegación libre.</p>
-      <button type="button" class="btn-comenzar" data-go="screenLogin">Ir a navegación libre →</button>
+      <div class="gm-tabs">
+        <button type="button" class="gm-tab hotspot" data-gmtab="general" data-tip-title="Usuario general" data-tip-text="Recorridos para quien crea y consulta solicitudes: coordinadores, jefes de planta, analistas.">Usuario general <span class="n" id="gmCountGeneral"></span></button>
+        <button type="button" class="gm-tab hotspot" data-gmtab="prog" data-tip-title="Programador" data-tip-text="Recorridos del Gestor de novedades: gestionar cada ticket por etapas, rechazar solicitudes y trabajar mixers y bombas.">Programador <span class="n" id="gmCountProg"></span></button>
+        <button type="button" class="gm-tab hotspot" data-gmtab="qa" data-tip-title="Respuestas rápidas" data-tip-text="Preguntas frecuentes con su respuesta breve, sin hacer un recorrido.">Respuestas rápidas <span class="n" id="gmCountQa"></span></button>
+      </div>
+      <div class="gm-pane" id="gmPaneGeneral"></div>
+      <div class="gm-pane" id="gmPaneProg"></div>
+      <div class="gm-pane" id="gmPaneQa">
+        <div class="gm-qa" id="gmQaList"></div>
+        <div class="gm-contact">¿Con estas respuestas no solucionaste tu duda? Escríbele al <b>programador del taller</b> por el chat del ticket (Mis chats) o contacta al equipo de <b>Desarrollo de Operaciones</b>.</div>
+      </div>
     </div>
   </section>
 
@@ -1508,7 +1519,7 @@
 
     <div id="tourComplete" class="tour-complete-overlay">
       <div class="tour-complete-box">
-        <h3>🎉 ¡Listo!</h3>
+        <h3>¡Listo!</h3>
         <p>Ya sabes cómo crear una solicitud en Orion: ingresar, elegir el tipo de mantenimiento, buscar la placa, llenar el detalle de la novedad y enviar.</p>
         <button type="button" class="btn-comenzar" id="btnTourFinish" style="padding:12px 30px;font-size:14px;">Finalizar recorrido</button>
       </div>
@@ -1814,7 +1825,7 @@
 
     <div id="tourComplete2" class="tour-complete-overlay">
       <div class="tour-complete-box">
-        <h3>🎉 ¡Listo!</h3>
+        <h3>¡Listo!</h3>
         <p>Ya sabes cómo revisar tus solicitudes en Orion: filtrar por planta, ver el resumen de una solicitud y chatear con el programador encargado.</p>
         <button type="button" class="btn-comenzar" id="btnTourFinish2" style="padding:12px 30px;font-size:14px;">Finalizar recorrido</button>
       </div>
@@ -1822,6 +1833,14 @@
   </section>
 
   <!-- ================= GESTOR DE NOVEDADES (rol programador: mixers / bombas) ================= -->
+  <div id="tourCompleteGen" class="tour-complete-overlay">
+    <div class="tour-complete-box">
+      <h3>¡Listo!</h3>
+      <p id="tourCompleteGenText"></p>
+      <button type="button" class="btn-comenzar" id="btnTourFinishGen" style="padding:12px 30px;font-size:14px;">Finalizar recorrido</button>
+    </div>
+  </div>
+
   <section class="app-screen" id="screenGestor">
     <div class="sidebar-backdrop"></div>
     <div class="sidebar" id="sidebarGestor">
@@ -2353,7 +2372,7 @@ function goToScreen(id){
   if (id === 'screenMisSolicitudes'){ renderTicketsTable(); tourNotify('misSolShown'); }
   if (id === 'screenMisChats'){ selectChatTicket(currentChatTicket || TICKETS[0].ticket); tourNotify('chatOpened'); }
   if (id === 'screenFeed'){ tourNotify('feedShown'); }
-  if (id === 'screenGestor'){ renderGestor(); }
+  if (id === 'screenGestor'){ renderGestor(); tourNotify('gestorShown'); }
   if (tourState.active) tourReposition();
 }
 
@@ -2367,7 +2386,8 @@ document.getElementById('roleGeneral').addEventListener('click', () => { setRole
 document.getElementById('roleProgramador').addEventListener('click', () => { setRole('programador'); goToScreen('screenNavMode'); });
 // Navegación guiada: usuario general → preguntas frecuentes; programador → en construcción
 document.getElementById('btnNavGuiada').addEventListener('click', () => {
-  goToScreen(currentRole === 'programador' ? 'screenGuidedProg' : 'screenGuidedMenu');
+  setGmTab(currentRole === 'programador' ? 'prog' : 'general');
+  goToScreen('screenGuidedMenu');
 });
 document.getElementById('btnIngresar').addEventListener('click', () => {
   goToScreen('screenLoading');
@@ -2394,6 +2414,7 @@ function wireSidebar(sidebarId, toggleId){
     e.stopPropagation();
     sb.classList.toggle('expanded');
     if (backdrop) backdrop.classList.toggle('show', sb.classList.contains('expanded'));
+    if (sb.classList.contains('expanded')){ tourNotify('sidebarOpened'); if (tourState.active) setTimeout(tourReposition, 260); }
   });
   if (backdrop){
     backdrop.addEventListener('click', () => {
@@ -2893,6 +2914,7 @@ document.getElementById('misSolSearch').addEventListener('input', (e) => {
   filters.placa = e.target.value;
   document.getElementById('fltPlaca').value = e.target.value;
   renderTicketsTable();
+  typeNotify('misSolSearched', () => e.target.value.trim().length >= 2 && document.querySelector('#ticketsTbody [data-info]'));
 });
 
 document.querySelectorAll('.filter-clear[data-clear]').forEach(btn => {
@@ -2931,7 +2953,7 @@ function setMisSolClase(clase){
   renderTicketsTable();
 }
 document.querySelectorAll('#misSolClaseRow [data-msclase]').forEach(opt => {
-  opt.addEventListener('click', (e) => { e.stopPropagation(); setMisSolClase(opt.getAttribute('data-msclase')); });
+  opt.addEventListener('click', (e) => { e.stopPropagation(); setMisSolClase(opt.getAttribute('data-msclase')); tourNotify('misSolClase:' + opt.getAttribute('data-msclase')); });
 });
 
 document.getElementById('btnSortRecent').addEventListener('click', (e) => {
@@ -3146,9 +3168,13 @@ let TOUR_STEPS = TOUR_CREAR_STEPS;
 let currentTourName = null;
 const tourState = { active: false, stepIndex: 0, currentTargets: [] };
 
-function startTour(name){
+let tourPrevRole = null;
+function startTour(name, role){
   const def = TOUR_DEFS[name];
   if (!def) return;
+  tourPrevRole = currentRole;
+  setRole(role || def.role || currentRole);
+  if (def.prog) gestorState.stage = 'espera';
   currentTourName = name;
   TOUR_STEPS = def.steps;
   document.getElementById(def.completeId).classList.remove('show');
@@ -3176,7 +3202,9 @@ function tourNext(){
 function tourFinish(){
   tourClearHighlight();
   document.getElementById('tourBubble').classList.remove('visible');
-  document.getElementById(TOUR_DEFS[currentTourName].completeId).classList.add('show');
+  const defDone = TOUR_DEFS[currentTourName];
+  if (defDone.fin) document.getElementById('tourCompleteGenText').innerHTML = defDone.fin;
+  document.getElementById(defDone.completeId).classList.add('show');
   tourState.active = false;
 }
 
@@ -3190,7 +3218,7 @@ function tourRender(){
   const step = TOUR_STEPS[tourState.stepIndex];
   if (!step) return;
   const bubble = document.getElementById('tourBubble');
-  const hints = { click: '👆 Haz clic donde se indica', select: '👆 Selecciona la opción indicada', type: '⌨️ Escribe en el campo indicado' };
+  const hints = { click: 'Haz clic donde se indica', select: 'Selecciona la opción indicada', type: 'Escribe en el campo indicado' };
   let actionsHtml;
   if (step.mode === 'wait'){
     actionsHtml = `<button type="button" class="tour-exit" id="tourExitBtn">Salir ✕</button>`;
@@ -3218,6 +3246,8 @@ function tourPositionForCurrentStep(){
   if (targets.length){
     targets.forEach(el => el.classList.add('tour-highlight'));
     tourState.currentTargets = targets;
+    const rr = targets[0].getBoundingClientRect();
+    if (rr.top < 0 || rr.bottom > window.innerHeight) targets[0].scrollIntoView({ block: 'center' });
     positionTourBubble(targets[0]);
   } else {
     positionTourBubbleCenter();
@@ -3238,7 +3268,7 @@ function positionTourBubble(el){
   let top = r.bottom + margin;
   if (top + bh > window.innerHeight - margin) top = r.top - bh - margin;
   left = Math.max(margin, Math.min(left, window.innerWidth - bw - margin));
-  top = Math.max(margin, top);
+  top = Math.max(margin, Math.min(top, window.innerHeight - bh - margin));
   bubble.style.left = left + 'px';
   bubble.style.top = top + 'px';
 }
@@ -3254,6 +3284,7 @@ function exitTour(){
   document.getElementById('tourBubble').classList.remove('visible');
   if (currentTourName) document.getElementById(TOUR_DEFS[currentTourName].completeId).classList.remove('show');
   tourState.active = false;
+  restoreTourRole();
   goToScreen('screenGuidedMenu');
 }
 
@@ -3281,16 +3312,192 @@ document.addEventListener('click', (e) => {
   }
 }, true);
 
-document.getElementById('faqCrearSolicitud').addEventListener('click', (e) => { e.stopPropagation(); startTour('crear'); });
-document.getElementById('faqRevisarSolicitudes').addEventListener('click', (e) => { e.stopPropagation(); startTour('revisar'); });
+/* ---------------- Preguntas frecuentes por rol + recorridos nuevos (2026-10-07) ----------------
+   grupo: 'general' (usuario general), 'prog' (programador) o 'ambos' (aparece en las dos
+   pestañas y corre con el rol de la pestaña desde la que se abrió). Los recorridos nuevos
+   terminan en #tourCompleteGen con el texto de `fin`. */
+let typeTimerO;
+function typeNotify(ev, cond){ clearTimeout(typeTimerO); typeTimerO = setTimeout(() => { if (cond()) tourNotify(ev); }, 900); }
+function restoreTourRole(){ if (tourPrevRole){ setRole(tourPrevRole); tourPrevRole = null; } }
+const TS = (target, text, advanceOn, mode) => ({ target, text, advanceOn, mode });
+const T_LOGIN = [
+  TS('#btnIngresar', 'Haz clic en <b>Ingresar</b> para iniciar sesión en Orion.', 'ingresarClicked', 'click'),
+  TS(null, 'Espera unos segundos mientras la aplicación carga…', 'feedShown', 'wait')
+];
+const T_GESTOR = (clase) => [
+  ...T_LOGIN,
+  TS('#sbToggleFeed', 'Abre el <b>menú lateral</b> con este botón.', 'sidebarOpened', 'click'),
+  TS(`#sidebarFeed [data-gestor="${clase}"]`, clase === 'bomba'
+    ? 'Haz clic en <b>Programador bomba</b>: abre el Gestor de novedades solo con las solicitudes de bombas.'
+    : 'Haz clic en <b>Programador</b>: abre el Gestor de novedades con las solicitudes de mixers.', 'gestorShown', 'click')
+];
+const T_STAGE = (key, label, txt) => TS(`#stageRadios [data-stage="${key}"]`, `Elige la etapa <b>${label}</b>. ${txt}`, 'gStage:' + key, 'click');
+const T_PICK = TS('#gList', 'Haz clic en el ticket que vas a gestionar en la lista de la izquierda (puedes buscarlo por número o placa arriba).', 'gTicketSelected', 'click');
+const T_SEND = (txt) => TS('#gEnviar', txt || 'Haz clic en <b>Enviar</b>: el ticket pasa a la siguiente etapa.', 'gEnviado', 'click');
+const resetMisSol = () => {
+  Object.keys(filters).forEach(k => filters[k] = '');
+  ['fltPlanta','fltEstatus','fltTipo','fltPlaca','fltTicket','fltNombre'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('misSolSearch').value = '';
+  document.getElementById('filterPanel').classList.remove('open');
+  document.getElementById('btnToggleFilter').classList.remove('active');
+  setMisSolClase('mixer');
+};
+const closeSidebars = () => document.querySelectorAll('.sidebar.expanded').forEach(sb => {
+  sb.classList.remove('expanded'); const bd = sb.parentElement.querySelector('.sidebar-backdrop'); if (bd) bd.classList.remove('show');
+});
+const progSetup = () => { closeSidebars(); gestorState.stage = 'espera'; gestorState.ticket = null; gestorState.estatus = ''; gestorState.planta = ''; };
+
+Object.assign(TOUR_DEFS.crear, { grupo: 'general', titulo: '¿Cómo crear una solicitud?', desc: 'Desde ingresar hasta enviar la solicitud de una mixer.' });
+Object.assign(TOUR_DEFS.revisar, { grupo: 'ambos', titulo: '¿Cómo revisar mis solicitudes?', desc: 'Filtrar, ver el resumen y chatear sobre el ticket.' });
+Object.assign(TOUR_DEFS, {
+  despegue: { grupo: 'general', role: 'general', titulo: '¿Cómo solicito un despegue?', desc: 'Lo monta el coordinador; el programador le da entrada.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: TOUR_DEFS.crear.setup,
+    fin: 'Tu solicitud de despegue quedó creada. El programador del taller le da entrada apenas la ve y te llega la notificación por correo cuando se asigna.',
+    steps: [ ...T_LOGIN,
+      TS('.feed-card .btn-acceder[data-open-modal], #btnNuevaSolicitud', 'Haz clic en "Acceder" de la tarjeta <b>Nueva solicitud</b>.', 'modalOpened', 'click'),
+      TS('.modal-options [data-choose="despegue"]', 'Elige <b>Despegue</b>: es para despegar el concreto seco de la olla de la mixer.', 'typeChosen', 'click'),
+      TS('.plate-panel', 'Busca la placa de la mixer y haz clic en su tarjeta.', 'plateSelected', 'click'),
+      TS('#dfNombreAS', 'Despegue pide menos datos. Escribe el <b>Nombre AS</b> (agente de servicio).', 'field:NombreAS', 'type'),
+      TS('#dfTelefonoAS', 'Escribe el <b>Teléfono AS</b>.', 'field:TelefonoAS', 'type'),
+      TS('#dfPlantaReporte', 'Selecciona la <b>Planta de reporte</b>.', 'field:PlantaReporte', 'select'),
+      TS('#obsBox', 'Escribe en Observaciones una breve descripción (por ejemplo, cuánto concreto hay pegado).', 'obsFilled', 'type'),
+      TS('#btnEnviar', 'Haz clic en <b>Enviar</b>.', 'enviarClicked', 'click') ] },
+  buscar: { grupo: 'ambos', titulo: '¿Cómo encuentro una solicitud por placa?', desc: 'Buscar en Mis solicitudes y cambiar entre mixers y bombas.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: () => { closeSidebars(); resetMisSol(); },
+    fin: 'Ya sabes buscar una solicitud por placa y cambiar entre mixers y bombas. Borra el texto del buscador para volver a ver todas.',
+    steps: [ ...T_LOGIN,
+      TS('.feed-card .btn-acceder[data-go="screenMisSolicitudes"]', 'Haz clic en "Acceder" de la tarjeta <b>Mis solicitudes</b>.', 'misSolShown', 'click'),
+      TS('#misSolSearch', 'Escribe parte de la <b>placa</b> en el buscador (por ejemplo los primeros caracteres). La tabla se filtra mientras escribes.', 'misSolSearched', 'type'),
+      TS('#ticketsTbody', 'Aquí ves la solicitud: su ticket, la planta, la fecha y el <b>estatus</b> (en qué paso de la gestión va). Haz clic en Siguiente.', 'manual', 'manual'),
+      TS('#misSolClaseRow [data-msclase="bomba"]', 'Las bombas se consultan aparte: marca <b>BOMBA</b>. (El buscador mantiene lo que escribiste; bórralo para ver todas.)', 'misSolClase:bomba', 'click') ] },
+  chats: { grupo: 'ambos', titulo: '¿Cómo me comunico por el chat de un ticket?', desc: 'Mis chats: escoger el ticket y escribir.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: () => { closeSidebars(); document.getElementById('chatTicketSearch').value = ''; currentChatTicket = null; },
+    fin: 'El chat queda asociado al ticket: el usuario general y el programador ven la misma conversación.',
+    steps: [ ...T_LOGIN,
+      TS('#sbToggleFeed', 'Abre el <b>menú lateral</b>.', 'sidebarOpened', 'click'),
+      TS('#sidebarFeed [data-go="screenMisChats"]', 'Haz clic en <b>Mis chats</b>.', 'chatOpened', 'click'),
+      TS('.chat-list-panel', 'Busca el ticket y haz clic en una solicitud <b>distinta</b> a la que está abierta.', 'chatTicketSwitched', 'click'),
+      TS('.chat-info-panel', 'En el centro ves el resumen del ticket (información general, novedad y adjuntos). Haz clic en Siguiente.', 'manual', 'manual'),
+      TS('.chat-input-row', 'Escribe un mensaje y haz clic en enviar.', 'chatMessageSent', 'type') ] },
+
+  pEspera: { grupo: 'prog', role: 'programador', prog: true, titulo: '¿Cómo gestiono un ticket nuevo?', desc: 'Etapa En espera: recibir la solicitud y diligenciar el Gestor Ticket.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: progSetup,
+    fin: 'El ticket pasó de Abierto a <b>En Espera</b>. El usuario general ya ve el nuevo estatus y tus comentarios en Mis solicitudes.',
+    steps: [ ...T_GESTOR('mixer'),
+      TS('#stageRadios', 'Arriba están las etapas del proceso. Estás en <b>En Espera</b>: aquí llegan las solicitudes nuevas (estatus Abierto). Haz clic en Siguiente.', 'manual', 'manual'),
+      T_PICK,
+      TS('#gDisp', 'Indica la <b>Disponibilidad</b>: Inoperativo si el vehículo no puede seguir rodando.', 'g:gDisp', 'select'),
+      TS('#gComent', 'Escribe un <b>comentario</b> para el usuario general (por ejemplo, "Se revisa mañana en taller").', 'g:gComent', 'type'),
+      T_SEND() ] },
+  pProgramar: { grupo: 'prog', role: 'programador', prog: true, titulo: '¿Cómo programo un ticket?', desc: 'Etapa Programación: tipo, taller, fecha y salida.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: progSetup,
+    fin: 'El ticket quedó <b>En Programación</b>. Recuerda: si marcas el vehículo como Inoperativo, deja de contar como disponible.',
+    steps: [ ...T_GESTOR('mixer'),
+      T_STAGE('programacion', 'Programación', 'Aquí aparecen los tickets que están En Espera.'),
+      T_PICK,
+      TS('#gPTipo', 'Elige el <b>Tipo de mantenimiento</b>: Correctivo o Preventivo.', 'g:gPTipo', 'select'),
+      TS('#gPHora', 'Elige la <b>hora de programación</b> (la fecha viene con el día de hoy; cámbiala si hace falta).', 'g:gPHora', 'select'),
+      TS('#gPSalFecha, #gPSalHora', 'Ajusta la <b>Fecha y hora de salida</b> estimadas: la "Fecha Salida Prog" se arma sola. Haz clic en Siguiente.', 'manual', 'manual'),
+      T_SEND() ] },
+  pEntrada: { grupo: 'prog', role: 'programador', prog: true, titulo: '¿Cómo registro la entrada al taller?', desc: 'Etapa Entrada: Safety Features y OT obligatorios.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: progSetup,
+    fin: 'El vehículo quedó <b>En Entrada</b>: mientras esté en el taller la mixer cuenta como inhabilitada.',
+    steps: [ ...T_GESTOR('mixer'),
+      T_STAGE('entrada', 'Entrada', 'Aquí aparecen los tickets En Programación.'),
+      T_PICK,
+      TS('#gESafety', '<b>Safety Features Operativos</b> es obligatorio: indica si los elementos de seguridad llegan operativos.', 'g:gESafety', 'select'),
+      TS('#gEOT', 'Escribe la <b>OT</b> (orden de trabajo). También es obligatoria: sin ella no se habilita Enviar.', 'g:gEOT', 'type'),
+      T_SEND() ] },
+  pSalida: { grupo: 'prog', role: 'programador', prog: true, titulo: '¿Cómo registro la salida y el cierre técnico?', desc: 'Etapas Salida y Cierre técnico.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: progSetup,
+    fin: 'El ticket completó todo su recorrido: Abierto → En espera → En programación → Entrada → Salida → <b>Cierre técnico</b>.',
+    steps: [ ...T_GESTOR('mixer'),
+      T_STAGE('salida', 'Salida', 'Aquí aparecen los tickets En Entrada.'),
+      T_PICK,
+      TS('#gSPlanta', 'Elige la <b>Planta</b> a la que regresa el vehículo (obligatorio).', 'g:gSPlanta', 'select'),
+      T_SEND('Haz clic en <b>Enviar</b>: el ticket pasa a En Salida.'),
+      T_STAGE('cierre', 'Cierre Técnico', 'Aquí aparecen los tickets En Salida, incluido el que acabas de enviar.'),
+      T_PICK,
+      T_SEND('Las observaciones son opcionales. Haz clic en <b>Enviar</b> para hacer el cierre técnico.') ] },
+  pRechazo: { grupo: 'prog', role: 'programador', prog: true, titulo: '¿Cómo rechazo una solicitud?', desc: 'Etapa Rechazado: el motivo es obligatorio.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: progSetup,
+    fin: 'La solicitud quedó <b>Rechazada</b> y el usuario general ve el motivo en su resumen. Un ticket se puede rechazar en cualquier paso de la gestión (usa el filtro Estatus para encontrarlo).',
+    steps: [ ...T_GESTOR('mixer'),
+      T_STAGE('rechazo', 'Rechazado', 'Por defecto lista los tickets Abiertos.'),
+      T_PICK,
+      TS('#gRObs', 'Escribe el <b>motivo del rechazo</b> (por ejemplo, "Ticket duplicado"). El botón Enviar aparece cuando lo escribes.', 'g:gRObs', 'type'),
+      T_SEND('Haz clic en <b>Enviar</b> para rechazar la solicitud.') ] },
+  pNaranja: { grupo: 'prog', role: 'programador', prog: true, titulo: '¿Cómo abro un ticket directo desde Mis solicitudes?', desc: 'El botón naranja lo lleva a la etapa que le corresponde.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: () => { progSetup(); resetMisSol(); },
+    fin: 'Con el botón naranja no tienes que buscar la etapa: el gestor abre el ticket justo donde va.',
+    steps: [ ...T_LOGIN,
+      TS('.feed-card .btn-acceder[data-go="screenMisSolicitudes"]', 'Haz clic en "Acceder" de la tarjeta <b>Mis solicitudes</b>.', 'misSolShown', 'click'),
+      TS('#ticketsTbody [data-gestor-ticket]', 'Como programador ves un <b>botón naranja</b> (calendario) en cada fila. Haz clic en el de cualquier solicitud.', 'gestorShown', 'click'),
+      TS('#stageRadios, #gContent', 'El gestor se abrió con ese ticket en la <b>etapa que le corresponde</b> según su estatus. Haz clic en Siguiente.', 'manual', 'manual') ] },
+  pBombas: { grupo: 'prog', role: 'programador', prog: true, titulo: '¿Cómo gestiono las solicitudes de bombas?', desc: 'Programador bomba: el mismo gestor, solo bombas.',
+    startScreen: 'screenLogin', completeId: 'tourCompleteGen', setup: progSetup,
+    fin: 'Las bombas se gestionan igual que las mixers, con las mismas etapas; solo cambia la lista de tickets.',
+    steps: [ ...T_GESTOR('bomba'),
+      TS('#gestorTitle', 'El título ahora dice <b>BOMBAS</b>: la lista de la izquierda solo muestra solicitudes de bombas. Haz clic en Siguiente.', 'manual', 'manual'),
+      TS('#stageRadios', 'Las etapas y el formulario son exactamente los mismos que para mixers. Haz clic en Siguiente para terminar.', 'manual', 'manual') ] }
+});
+
+const GM_QA = [
+  ['¿Cuándo queda inhabilitada una mixer (o su ticket)?', ['Cuando su ticket está <b>En Entrada</b> o <b>En Salida</b> del taller.', 'O cuando el programador del taller, al hacer la programación, marca la disponibilidad del vehículo como <b>Inoperativo</b>.']],
+  ['¿Quién crea las solicitudes de despegue?', ['El <b>coordinador</b> de la planta monta el ticket de tipo Despegue.', 'El <b>programador del taller</b> le da entrada apenas lo ve.']],
+  ['¿Me avisan cuando asignan mi ticket?', ['Sí. Todos los tickets se notifican por <b>correo</b> cuando se asignan.', 'También puedes seguir su estatus en Mis solicitudes y escribir en Mis chats.']],
+  ['¿De dónde sale la lista de mixers y placas?', ['Se actualiza desde el <b>maestro de vehículos de SAP</b>.', 'Si una placa no aparece o tiene datos desactualizados, debe corregirse en SAP.']],
+  ['¿Cómo se calcula la disponibilidad?', ['<span class="formula">Disponibilidad = (Dispo total − vehículos en taller) ÷ Dispo objetivo</span>', 'La <b>dispo objetivo</b> son los vehículos asignados a rodar en la planta: todos los que no están en reserva de mantenimiento ni de operación.']],
+  ['¿Qué pasos debe tener un ticket?', ['Todos los tickets deben pasar por toda su gestión: <b>Abierto → En espera → En programación → En entrada → En salida → Cierre técnico</b>.', 'Cualquier ticket puede ser <b>rechazado</b> en cualquier paso de la programación.']],
+  ['¿Qué diferencia hay entre Crítico, No crítico y Despegue?', ['<b>Crítico (varada):</b> la mixer no puede operar; se atiende el mismo día.', '<b>No crítico:</b> puede seguir operando y se programa después.', '<b>Despegue:</b> retirar concreto seco de la olla; suele tomar el día completo.']],
+  ['No encuentro la placa al crear la solicitud, ¿qué hago?', ['Revisa que tengas marcado el <b>tipo de placa</b> correcto (MIXER o BOMBA).', 'Busca solo una parte de la placa.', 'Si aun así no aparece, la placa debe crearse o actualizarse en el maestro de vehículos de SAP.']],
+  ['¿Cómo sé en qué va mi solicitud?', ['En <b>Mis solicitudes</b> la columna Estatus te dice en qué paso está.', 'Con la flecha azul ves el resumen y lo que diligenció el programador (OT, comentarios).']],
+  ['¿Cómo hablo con el programador de mi ticket?', ['Entra a <b>Mis chats</b> (o al ícono de chat de la fila en Mis solicitudes) y escribe en el chat de ese ticket.']],
+  ['¿Por qué no me deja enviar la entrada al taller?', ['En la etapa Entrada son obligatorios <b>Safety Features Operativos</b> y la <b>OT</b>. Mientras falte alguno, Enviar queda bloqueado y la app te dice qué falta.']],
+  ['¿Por qué no aparece el botón Enviar al rechazar?', ['Las <b>observaciones</b> del rechazo son obligatorias: el botón aparece cuando escribes el motivo.']],
+  ['¿Qué diferencia hay entre Programador y Programador bomba?', ['Es el mismo Gestor de novedades. <b>Programador</b> muestra las solicitudes de mixers y <b>Programador bomba</b> las de bombas.']],
+  ['¿Por qué no veo las opciones de Programador en el menú?', ['Solo aparecen para usuarios con <b>rol programador</b>. Si lo necesitas, solicita el permiso al equipo de Desarrollo de Operaciones.']]
+];
+
+function setGmTab(tab){
+  document.querySelectorAll('[data-gmtab]').forEach(b => b.classList.toggle('active', b.getAttribute('data-gmtab') === tab));
+  [['general','gmPaneGeneral'],['prog','gmPaneProg'],['qa','gmPaneQa']].forEach(([t, id]) => document.getElementById(id).classList.toggle('active', t === tab));
+}
+(function buildGuidedMenu(){
+  const item = (k, d, i, shared, role) => `<button type="button" class="faq-item${shared ? ' shared' : ''}" data-tour="${k}" data-role="${role}"><span class="faq-icon">${i}</span><span class="faq-text"><h4>${d.titulo}</h4><p>${d.desc}</p></span></button>`;
+  const pane = (grupo, role) => {
+    const own = Object.entries(TOUR_DEFS).filter(([, d]) => d.grupo === grupo);
+    const shared = Object.entries(TOUR_DEFS).filter(([, d]) => d.grupo === 'ambos');
+    let n = 0;
+    return { n: own.length + shared.length, html:
+      `<div class="gm-sub">${grupo === 'prog' ? 'Programador' : 'Usuario general'}</div><div class="gm-grid">${own.map(([k, d]) => item(k, d, ++n, false, role)).join('')}</div>
+       <div class="gm-sub">Útiles para ambos roles</div><div class="gm-grid">${shared.map(([k, d]) => item(k, d, ++n, true, role)).join('')}</div>` };
+  };
+  const g = pane('general', 'general'), p = pane('prog', 'programador');
+  document.getElementById('gmPaneGeneral').innerHTML = g.html; document.getElementById('gmCountGeneral').textContent = g.n;
+  document.getElementById('gmPaneProg').innerHTML = p.html; document.getElementById('gmCountProg').textContent = p.n;
+  document.getElementById('gmQaList').innerHTML = GM_QA.map(([q, a]) => `<details><summary>${q}</summary><div class="ans"><ol>${a.map(x => `<li>${x}</li>`).join('')}</ol></div></details>`).join('');
+  document.getElementById('gmCountQa').textContent = GM_QA.length;
+  document.querySelectorAll('#screenGuidedMenu [data-tour]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); startTour(b.getAttribute('data-tour'), b.getAttribute('data-role')); }));
+  document.querySelectorAll('[data-gmtab]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); setGmTab(b.getAttribute('data-gmtab')); }));
+  setGmTab('general');
+})();
+document.getElementById('btnTourFinishGen').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('tourCompleteGen').classList.remove('show');
+  restoreTourRole();
+  goToScreen('screenGuidedMenu');
+});
 document.getElementById('btnTourFinish').addEventListener('click', (e) => {
   e.stopPropagation();
   document.getElementById('tourComplete').classList.remove('show');
+  restoreTourRole();
   goToScreen('screenGuidedMenu');
 });
 document.getElementById('btnTourFinish2').addEventListener('click', (e) => {
   e.stopPropagation();
   document.getElementById('tourComplete2').classList.remove('show');
+  restoreTourRole();
   goToScreen('screenGuidedMenu');
 });
 window.addEventListener('resize', () => { if (tourState.active) tourReposition(); });
@@ -3315,7 +3522,7 @@ const GESTOR_STAGES = [
   {key:'cierre', label:'Cierre Técnico', title:'Cierre Técnico', from:'salida', to:'cierre', side:false,
     tip:'Lista los tickets En Salida. Se confirma el cierre técnico del ticket, con observaciones opcionales. Al Enviar, pasa a Cierre Técnico y el proceso termina.'},
   {key:'rechazo', label:'Rechazado', title:'Rechazado', from:'abierto', to:'rechazado', side:false,
-    tip:'Lista los tickets Abiertos. Permite rechazar una solicitud (por ejemplo, si está duplicada o mal reportada). Las observaciones son obligatorias: el botón Enviar aparece cuando las escribes. Al Enviar, pasa a Rechazado.'}
+    tip:'Lista los tickets Abiertos, pero un ticket se puede rechazar en cualquier paso de la gestión (usa el filtro Estatus para ver los que ya avanzaron). Sirve, por ejemplo, si está duplicado o mal reportado. Las observaciones son obligatorias: el botón Enviar aparece cuando las escribes. Al Enviar, pasa a Rechazado.'}
 ];
 const STAGE_FOR_STATUS = {abierto:'espera', espera:'programacion', programacion:'entrada', entrada:'salida', salida:'cierre', cierre:'cierre', rechazado:'rechazo'};
 const PEND_OPTS = ['Pendiente de confirmar'];
@@ -3370,6 +3577,7 @@ function renderGestor(){
     gestorState.stage = r.getAttribute('data-stage');
     gestorState.ticket = null;
     renderGestor();
+    tourNotify('gStage:' + gestorState.stage);
   }));
   const plantas = [...new Set(TICKETS.filter(t => (t.clase || 'mixer') === gestorState.clase).map(t => t.planta).filter(Boolean))].sort();
   const fp = document.getElementById('gFltPlanta');
@@ -3399,6 +3607,7 @@ function renderGestorList(){
       <div class="gc-user"><span class="gc-avatar">${iniciales(t.solicitante)}</span>${escHtml(t.solicitante)}</div>
     </div>`).join('');
   wrap.querySelectorAll('.g-card').forEach(card => card.addEventListener('click', () => {
+    tourNotify('gTicketSelected');
     if (gestorState.ticket === card.getAttribute('data-gticket')) return;
     gestorState.ticket = card.getAttribute('data-gticket');
     wrap.querySelectorAll('.g-card').forEach(c => c.classList.toggle('selected', c === card));
@@ -3598,8 +3807,10 @@ function updateSalidaProg(){
 function gestorValidation(t){
   const st = stageDef();
   if (!t) return {ok:false, msg:''};
-  if (t.estatus !== st.from){
-    return {ok:false, msg:'Este ticket está en estatus ' + ESTATUS_LABELS[t.estatus] + ' — la etapa ' + st.label + ' solo gestiona tickets en estatus ' + ESTATUS_LABELS[st.from] + '.'};
+  if (st.key === 'rechazo' ? ['cierre','rechazado'].includes(t.estatus) : t.estatus !== st.from){
+    return {ok:false, msg: st.key === 'rechazo'
+      ? 'Este ticket está en ' + ESTATUS_LABELS[t.estatus] + ': ya terminó su gestión y no se puede rechazar.'
+      : 'Este ticket está en estatus ' + ESTATUS_LABELS[t.estatus] + ' — la etapa ' + st.label + ' solo gestiona tickets en estatus ' + ESTATUS_LABELS[st.from] + '.'};
   }
   if (st.key === 'entrada'){
     const faltan = [];
@@ -3640,6 +3851,7 @@ function gestorEnviar(){
   if (st.key === 'rechazo') g.coment = 'Solicitud rechazada: ' + gv('gRObs');
   t.estatus = st.to;
   showToast('✅ ' + t.ticket + ' pasó a ' + ESTATUS_LABELS[t.estatus] + ' (simulación).');
+  tourNotify('gEnviado');
   renderGestorList();
   renderGestorContent();
 }
@@ -3654,8 +3866,12 @@ document.getElementById('gContent').addEventListener('change', (e) => {
   if (id === 'gSubsistema') document.getElementById('gCondicion').innerHTML = gOpt(condicionOptionsFor(e.target.value), 'Find items');
   if (id === 'gPSalFecha' || id === 'gPSalHora') updateSalidaProg();
   updateGestorSend();
+  if (e.target.tagName === 'SELECT' && e.target.value) tourNotify('g:' + id);
 });
-document.getElementById('gContent').addEventListener('input', updateGestorSend);
+document.getElementById('gContent').addEventListener('input', (e) => {
+  updateGestorSend();
+  if (['gComent','gEOT','gRObs'].includes(e.target.id)) typeNotify('g:' + e.target.id, () => e.target.value.trim().length >= 2);
+});
 document.getElementById('gSearch').addEventListener('input', (e) => { gestorState.search = e.target.value; renderGestorList(); renderGestorContent(); });
 document.getElementById('gFltPlanta').addEventListener('change', (e) => { gestorState.planta = e.target.value; renderGestorList(); renderGestorContent(); });
 document.getElementById('gFltEstatus').addEventListener('change', (e) => { gestorState.estatus = e.target.value; renderGestorList(); renderGestorContent(); });

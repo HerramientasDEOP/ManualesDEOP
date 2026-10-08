@@ -1790,6 +1790,28 @@ proprogram, proentrada1/2, prosalida, procierre, prorechazo).
   aparece en el gestor), usuario general sin elementos de programador, y los 2
   recorridos guiados existentes siguen terminando OK — sin errores de consola.
 
+## Orion — Preguntas frecuentes por rol + respuestas rápidas (2026-10-07)
+Archivo `2.Orion/index.html`. Reemplaza el menú guiado de 2 botones y la pantalla
+"en construcción" del programador (`#screenGuidedProg`, eliminada).
+- `#screenGuidedMenu` tiene 3 pestañas (`setGmTab('general'|'prog'|'qa')`; Navegación guiada
+  abre la del rol elegido). Las listas se generan desde `TOUR_DEFS` según `grupo`:
+  `general`, `prog` o `ambos` (aparece en las dos pestañas y corre con el rol de la pestaña).
+- `startTour(name, role)` cambia el rol para el recorrido y `restoreTourRole()` lo devuelve
+  al salir o al terminar. Los recorridos nuevos cierran en `#tourCompleteGen` con su texto `fin`.
+- Recorridos: general = crear, **despegue**; programador = **pEspera, pProgramar, pEntrada,
+  pSalida (+cierre), pRechazo, pNaranja, pBombas**; ambos = revisar, **buscar**, **chats**.
+- Ganchos nuevos de `tourNotify`: `sidebarOpened`, `gestorShown`, `gStage:<etapa>`,
+  `gTicketSelected`, `g:<id del select>`, `g:gComent|gEOT|gRObs` (con `typeNotify`, espera 0,9 s),
+  `gEnviado`, `misSolSearched`, `misSolClase:<clase>`.
+- `GM_QA`: 14 respuestas rápidas (las 6 que dio el usuario, redactadas, + 8 nuevas) y un aviso
+  general de contacto (programador por el chat del ticket o Desarrollo de Operaciones).
+- Cambio de lógica pedido en las FAQ: un ticket se puede **rechazar en cualquier paso** (antes
+  solo Abierto); solo se bloquea si ya está en Cierre técnico o Rechazado.
+- Motor: si el paso resaltado está fuera de la pantalla, se desplaza hasta él, la burbuja no se
+  sale de la ventana y queda por encima de los popups de explicación (`z-index:3200`).
+- Verificado con Playwright: los 15 recorridos (los de "ambos" con los dos roles) de punta a
+  punta y el rol se restaura al salir. Sin errores de consola.
+
 ## Correcciones Eureka + botón atrás en encabezados (2026-09-24)
 - **Semáforos coherentes (`1.Eureka/index.html`):** los colores de los
   indicadores ya no se escriben a mano. `SEM_RULES` (mismas reglas que muestra

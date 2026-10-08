@@ -1092,21 +1092,21 @@
           <p>Elige qué quieres aprender. En los recorridos te guiamos dentro de la app; en "Respuestas rápidas" encuentras soluciones breves.</p>
         </div>
         <div class="lc-gm-tabs">
-          <button type="button" class="lc-gm-tab active hotspot" data-gmtab="op" data-tip-title="Como operario" data-tip-text="Lo que hace cualquier operario desde la tablet de la planta, sin usuario ni contraseña: registrar ingreso/salida, pedir tiempo fuera y enviar una PQR.">👷 Como operario <span class="n" id="lcGmCountOp">0</span></button>
-          <button type="button" class="lc-gm-tab hotspot" data-gmtab="co" data-tip-title="Como coordinador" data-tip-text="Lo que hace un coordinador con sus credenciales: gestionar tiempo fuera, préstamos, consultar y editar personal, imprimir carnets, ingresos/salidas manuales y horas extras.">🧑‍💼 Como coordinador <span class="n" id="lcGmCountCo">0</span></button>
-          <button type="button" class="lc-gm-tab hotspot" data-gmtab="qa" data-tip-title="Respuestas rápidas" data-tip-text="Preguntas frecuentes con su respuesta breve, para resolver problemas comunes sin hacer un recorrido.">💬 Respuestas rápidas <span class="n" id="lcGmCountQa">0</span></button>
+          <button type="button" class="lc-gm-tab active hotspot" data-gmtab="op" data-tip-title="Usuario general" data-tip-text="Lo que hace cualquier persona de la planta desde la tablet, sin usuario ni contraseña: registrar ingreso/salida, pedir tiempo fuera y enviar una PQR.">Usuario general <span class="n" id="lcGmCountOp">0</span></button>
+          <button type="button" class="lc-gm-tab hotspot" data-gmtab="co" data-tip-title="Gestor de personal" data-tip-text="Lo que hacen las personas que gestionan el personal de la planta, entrando con sus credenciales: gestionar tiempo fuera, préstamos, consultar y editar personal, imprimir carnets, ingresos/salidas manuales y horas extras.">Gestor de personal <span class="n" id="lcGmCountCo">0</span></button>
+          <button type="button" class="lc-gm-tab hotspot" data-gmtab="qa" data-tip-title="Respuestas rápidas" data-tip-text="Preguntas frecuentes con su respuesta breve, para resolver problemas comunes sin hacer un recorrido.">Respuestas rápidas <span class="n" id="lcGmCountQa">0</span></button>
         </div>
         <div class="lc-gm-pane active" id="lcGmOp">
-          <div class="lc-gm-intro"><span>👷</span><span>Estas tareas se hacen desde el <b>menú principal</b> de la tablet de la planta. Solo necesitas tu <b>carnet</b>: al escanearlo, la app llena tus datos sola.</span></div>
+          <div class="lc-gm-intro"><span>Estas tareas se hacen desde el <b>menú principal</b> de la tablet de la planta. Solo necesitas tu <b>carnet</b>: al escanearlo, la app llena tus datos sola.</span></div>
           <div class="lc-faq-grid" id="lcFaqOp"></div>
         </div>
         <div class="lc-gm-pane" id="lcGmCo">
-          <div class="lc-gm-intro"><span>🔐</span><span>Estas tareas requieren entrar con las <b>credenciales de coordinador</b>. En este manual son: usuario <b>Operaciones</b> · contraseña <b>Operaciones</b> (en la app real cada coordinador usa las suyas).</span></div>
+          <div class="lc-gm-intro"><span>Estas tareas son del <b>gestor de personal</b>: la persona que gestiona el personal de la planta. Requieren entrar con credenciales; en este manual son: usuario <b>Operaciones</b> · contraseña <b>Operaciones</b> (en la app real cada gestor de personal usa las suyas).</span></div>
           <div class="lc-faq-grid" id="lcFaqCo"></div>
         </div>
         <div class="lc-gm-pane" id="lcGmQa">
           <div class="lc-qa" id="lcQaList"></div>
-          <div class="lc-qa-contact"><span style="font-size:26px;">📩</span><span>¿Con estas respuestas no solucionaste tu duda? Contacta a <b>Santiago Luque</b> (<a href="mailto:omarsantiago.luque@cemex.com">omarsantiago.luque@cemex.com</a>) para recibir soporte técnico. También puedes dejar tu caso registrado desde el botón <b>"Añadir una PQR"</b> del menú principal.</span></div>
+          <div class="lc-qa-contact"><span>¿Con estas respuestas no solucionaste tu duda? Contacta a <b>Santiago Luque</b> (<a href="mailto:omarsantiago.luque@cemex.com">omarsantiago.luque@cemex.com</a>) para recibir soporte técnico. También puedes dejar tu caso registrado desde el botón <b>"Añadir una PQR"</b> del menú principal.</span></div>
         </div>
       </div>
     </section>
@@ -1562,7 +1562,6 @@
     </div>
     <div class="lc-tour-done" id="lcTourDone">
       <div class="box">
-        <div style="font-size:42px;margin-bottom:6px;">🎉</div>
         <h3>¡Listo!</h3>
         <p id="lcTourDoneText">Completaste el recorrido.</p>
         <button type="button" class="btn-comenzar" id="lcTourDoneBtn">Volver a preguntas frecuentes</button>
@@ -3858,7 +3857,7 @@ function tourRender(){
   tourClear();
   const st = tour.steps[tour.i]; if (!st) return;
   const b = $('lcTourBubble');
-  const hints = { click: '👆 Haz clic donde se indica', select: '👆 Selecciona en el campo indicado', type: '⌨️ Escribe en el campo indicado' };
+  const hints = { click: 'Haz clic donde se indica', select: 'Selecciona en el campo indicado', type: 'Escribe en el campo indicado' };
   const exit = '<button type="button" class="tx" id="lcTourExit">Salir ✕</button>';
   const actions = st.mode === 'wait' ? exit : hints[st.mode] ? `<span class="th">${hints[st.mode]}</span>${exit}` : `${exit}<button type="button" class="tn" id="lcTourNextBtn">Siguiente →</button>`;
   b.innerHTML = `<div class="tc">${esc(LC_TOURS[tour.name].titulo)} · Paso ${tour.i + 1} de ${tour.steps.length}</div><div class="tt">${st.text}</div><div class="ta">${actions}</div>`;
