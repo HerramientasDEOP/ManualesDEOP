@@ -1812,6 +1812,18 @@ Archivo `2.Orion/index.html`. Reemplaza el menú guiado de 2 botones y la pantal
 - Verificado con Playwright: los 15 recorridos (los de "ambos" con los dos roles) de punta a
   punta y el rol se restaura al salir. Sin errores de consola.
 
+## Sin avisos de "pendiente" en la interfaz (2026-10-08)
+Pedido del usuario: nada visible debe decir "pendiente de definir/confirmar", "decorativo por
+ahora" o "en construcción" (salvo la sección Programador de la app Locomboo, que él pidió así).
+- Orion tablero: las 12 tarjetas y las de `statCardHtml` (ahora `STAT_TIPS`) tienen descripción
+  definitiva; filtros sin aviso; el botón "Disponibilidad - Actual por horas" (`pending:true`, sin
+  contenido) ya no se muestra en los menús (`renderMenuRow` filtra `pending`).
+- Orion app: Ayuda, Año & Mes y Fecha con texto definitivo; listas `ING_OPTS`, `PLAN_OPTS`,
+  `TALLER_OPTS` y opciones genéricas de Subsistema/Condición en lugar de "Pendiente de confirmar".
+- Eureka: se quitaron las notas "filtro decorativo". Locomboo tablero: filtro Tipo Turno sin nota.
+- Las secciones "Pendiente" de este archivo siguen siendo válidas como lista interna de cosas por
+  confirmar con el equipo; solo se quitaron de la interfaz.
+
 ## Correcciones Eureka + botón atrás en encabezados (2026-09-24)
 - **Semáforos coherentes (`1.Eureka/index.html`):** los colores de los
   indicadores ya no se escriben a mano. `SEM_RULES` (mismas reglas que muestra

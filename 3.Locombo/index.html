@@ -2194,7 +2194,7 @@ function lbAllFechas(){ return LF.fechas.size === LB_DAYS.length || LF.fechas.si
 const SLICERS = {
   planta:  { label:'Cluster, Nombre_planta', tip:'Filtra todo el tablero por un cluster completo o por una planta. Elige un cluster (en negrita) o una planta dentro de él. Afecta gráficos de adopción, tarjetas y tablas.' },
   nombre:  { label:'NombreE', tip:'NombreE = nombre del empleado. Úsalo para ver solo la información de una persona en las tablas (jornadas, sin marcaje, errores, inoperativos, HC).' },
-  turno:   { label:'Tipo Turno', tip:'Filtra por el tipo de turno del empleado. Las opciones de este filtro están pendientes de confirmar con el equipo, por eso en el manual no cambia los datos.' },
+  turno:   { label:'Tipo Turno', tip:'Filtra por el tipo de turno del empleado.' },
   tipodia: { label:'TipoDia', tip:'Filtra por tipo de día (columna “Día” de las tablas). En los datos de ejemplo todos los días son “Normal”.' },
   area:    { label:'Area', tip:'Filtra por área: Operación, Calidad, Mtto Industrial, Bombeo o Mtto Automotriz. Afecta las tablas con columna Area, la gráfica de Adopción Area y HC por día.' },
   fecha:   { label:'Año, Mes, Día', tip:'Elige uno o varios días del histórico (Selección múltiple). Afecta las tablas con fecha y la gráfica HC por día. Por defecto están marcados del 21 al 26 de septiembre de 2026.' }
@@ -2271,7 +2271,6 @@ function renderSlicerMenu(sl){
     html += `<div class="lb-name-list">${lbAllNames().map(n => opt(`data-v="${n}"`, n, LF.nombre === n, 'radio')).join('')}</div>`;
   } else if (k === 'turno'){
     html += opt('data-v=""', 'Todas', true, 'radio');
-    html += `<div class="lb-opt-note">Opciones pendientes de confirmar con el equipo.</div>`;
   } else if (k === 'tipodia'){
     html += opt('data-v=""', 'Todas', !LF.tipodia, 'radio') + opt('data-v="Normal"', 'Normal', LF.tipodia === 'Normal', 'radio');
   } else if (k === 'area'){
