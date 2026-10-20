@@ -2060,3 +2060,123 @@ and forget.
 **Despliegue (manual):** pegar `api/worker.js` completo en el editor del Worker `manuales-api` en
 Cloudflare → Deploy. `ADMIN_KEY` ya existe como secreto; `visitas_anonimas` ya existe en D1 (su
 `CREATE TABLE` + índice `idx_visitas_anon` están en `api/schema.sql`).
+
+---
+
+# Resumen de la sesión 2026-10-07 → 2026-10-12
+
+Esta sección resume lo que se hizo en la sesión, las conclusiones y los comentarios para el
+usuario. El detalle técnico de cada punto está en su sección propia (App Locomboo dentro de
+"Manual 5", "Orion — Preguntas frecuentes por rol" y "Sin avisos de pendiente en la interfaz").
+
+## Qué se hizo
+1. **App Locomboo construida completa** (réplica funcional de las capturas loc1–loc40):
+   - Menú principal, Ingreso a planta (con escaneo simulado y confirmación de hora), Tiempo fuera
+     (Vive CEMEX y Permiso), login de coordinadores y menú de coordinador.
+   - Secciones de coordinador: Solicitud tiempo fuera (7 pestañas, incluido Préstamo/Reasignación),
+     Revisión de personal, Gestor de personal (Operación / Recursos Humanos, Ingreso / Edición /
+     Retiro, carnet con código de barras y QR, impresión simulada), Ingresos/Salidas manuales y
+     Horas extras (Registro y Seguimiento).
+   - Programador (en construcción, a pedido del usuario) y "Añadir una PQR" con su formulario.
+   - Navegación libre y guiada: 17 recorridos y 14 respuestas rápidas, con un solo aviso
+     general de contacto a Santiago Luque.
+2. **Nombre corregido a "Locomboo"** (doble o) en todo lo visible. Las carpetas, los archivos y el
+   nombre que se envía a la API siguen como "Locombo" para no romper enlaces ni métricas.
+3. **Orion — preguntas frecuentes rehechas** igual que en Locomboo:
+   - Pestañas Usuario general / Programador / Respuestas rápidas.
+   - 15 recorridos, contando los de "ambos roles" en las dos pestañas.
+   - 14 respuestas rápidas (las 6 que dio el usuario, redactadas mejor, + 8 nuevas).
+   - Se reemplazó el "en construcción" del programador.
+4. **Sin emojis** en las preguntas frecuentes de Orion y Locomboo (preferencia del usuario: nada
+   de emojis en la interfaz; si hacen falta, íconos más adelante).
+5. **Roles de Locomboo renombrados** en preguntas frecuentes: "Usuario general" y
+   "Gestor de personal" (antes "Como operario" / "Como coordinador").
+6. **Se quitaron todos los avisos de "pendiente / por confirmar / decorativo"** de la interfaz de
+   Eureka, Orion y Locomboo, para que todo se vea como terminado.
+7. **Discurso de presentación** (introducción y cierre, ~2 min) para los usuarios de los manuales;
+   entregado solo en el chat, no está guardado en el repo.
+
+## Conclusiones
+- Los 3 manuales (Eureka, Orion, Locomboo) quedaron completos y sin avisos de "pendiente" a la vista.
+- Todos los recorridos guiados (17 de Locomboo y 15 de Orion) se probaron de punta a punta con
+  Playwright y funcionan, sin errores de consola.
+- Mejora general del motor de recorridos de Orion: la burbuja ya no se sale de la pantalla y
+  queda por encima de los popups de explicación.
+- Cambio de lógica en Orion: un ticket se puede **rechazar en cualquier paso** de la gestión
+  (antes solo en Abierto), para que coincida con lo que dicen las preguntas frecuentes.
+
+## Comentarios y decisiones que conviene revisar con el equipo
+- **Datos inventados para que la app se vea lista** (cambiarlos si se tienen los reales):
+  - Locomboo: cédulas, códigos y correos ficticios; fotos = silueta genérica; horarios de turno;
+    listas de Razón manual, Tipo de extra, Equipo de la PQR y Estados.
+  - Orion: listas de Ing. responsable, Plan. responsable, Taller, Subsistema y Condición por
+    defecto; descripciones nuevas de las tarjetas del tablero (`STAT_TIPS`).
+- **Supuestos de Locomboo a confirmar:**
+  - El cronómetro azul cuenta el tiempo con la pantalla abierta.
+  - "Día solicitados" = días entre salida y regreso (mínimo 1).
+  - El ícono "→|" de Seguimiento oculta o muestra el panel izquierdo.
+- **Contacto de Orion:** el aviso final dice "programador del taller por el chat o equipo de
+  Desarrollo de Operaciones" porque no se dio un nombre (en Locomboo es Santiago Luque).
+  Cambiarlo si hay una persona de contacto.
+- **Orion "Disponibilidad - Actual por horas":** no tiene contenido, así que se ocultó del menú del
+  tablero. Para mostrarlo hacen falta las capturas.
+- **Programador de Locomboo:** sigue "en construcción" a propósito. Falta definir qué debe mostrar.
+- **Quedan emojis fuera de las preguntas frecuentes:** el aviso ⚠ de datos ilustrativos, el 💡 del
+  login de Locomboo, toasts con ✅ 🔄 🖨 y algunos textos de Orion (🔍, 📅). El usuario puede pedir
+  quitarlos también.
+- **Favoritos de la página de inicio:** quien ya tenía "Locombo" como favorito debe volver a
+  marcarlo, porque cambió el nombre con el que se guarda.
+- **Respaldos y pruebas:** las copias previas a los cambios y los scripts de prueba de Playwright
+  quedaron en el scratchpad de la sesión (no están en el repo).
+
+---
+
+# POLARIS — nueva identidad del portal (2026-10-19, rama `polaris`)
+
+El portal pasó de "Centro de Herramientas Digitales" a **POLARIS** ("Aprende. Comprende. Avanza.").
+Solo cambió la capa del portal; las apps y tableros replicados dentro de los manuales no se tocaron.
+
+**Logos — `Recursos/polaris/`** (recortes de la hoja `Recursos/polaris.png`, que se conserva como fuente):
+`polaris-logo.png` (principal), `polaris-horizontal.png` (encabezados), `polaris-simbolo.png` (hero),
+`polaris-wordmark.png` (animación), `polaris-icono-32.png` / `-180.png` (favicon / apple-touch).
+Fondo convertido a transparencia y **sin el eslogan incrustado** de la hoja ("Explora. Comprende.
+Avanza."), porque el texto acordado es "Aprende. Comprende. Avanza." y va como HTML.
+Ojo: la carpeta es `Recursos` con R mayúscula; GitHub Pages distingue mayúsculas.
+
+**`index.html`:**
+- Rutas de los logos centralizadas en `:root` (`--px-logo-principal/-horizontal/-simbolo/-wordmark`),
+  usadas como fondo de `.px-logo--main/--h/--symbol/--wordmark` (`role="img"` + `aria-label`).
+- Paleta del logo en `--px-*` (navy `#00185c`, azul `#0752aa`/`#2e84ce`, rojo `#f5221b`, rojo de texto
+  `#c8102e`, plata `#bcc9da`). Las variables anteriores (`--cx-*`, `--navy`…) quedaron como alias.
+- Hero nuevo, sección "Explora las herramientas", tarjetas con chips de manuales incluidos,
+  `data-keywords` para la búsqueda (sin tildes ni mayúsculas: "historico" encuentra Eureka), contador
+  de resultados, estado vacío con ícono, pie con el logo de Desarrollo de Operaciones.
+- Favoritos: la estrella activa es roja y lleva `aria-pressed`; mensaje sin emoji.
+- Menos de 900 px: el menú lateral pasa a barra horizontal (antes se ocultaba y en móvil no había
+  Favoritos ni Ayuda). El saludo "Hola, nombre" se recorta con "…" para no desbordar en 320–375 px.
+- Descripciones corregidas: Orion = mantenimiento de la flota; Locomboo = ingreso a planta, tiempos
+  fuera y gestión del personal (antes decía "Información y reportes de negocio").
+
+**Bienvenida animada — `window.PolarisBienvenida.mostrar(usuario, alCubrir)`** (`#pxWelcome`, CSS `.px-welcome*`):
+- Solo en el `ok` de **registro e ingreso** (`entrarConBienvenida`). No en la validación de sesión al
+  recargar (`opValidar`) ni en "Entrar sin registrarme". La API ya confirmó y guardó el token antes.
+- Estrella en SVG con la geometría del símbolo (aguja azul/roja, alas, punta plata, anillo y arco del
+  horizonte) + wordmark real. Solo anima `transform`/`opacity`. ~2.8 s en total.
+- Se omite con clic, Esc/Enter/Espacio o el botón "Omitir". Tiene un límite de seguridad de 4.5 s.
+  Si falla o no existe `#pxWelcome`, se cierra el acceso igual.
+- `prefers-reduced-motion`: sin movimiento, estado final con fundido, ~1.5 s.
+
+**Manuales (1.Eureka, 2.Orion, 3.Locombo) y admin:** solo cambió el `<title>` (+ "· POLARIS"), el favicon y,
+en los manuales, el logo de la barra de la pantalla "¿Qué quieres consultar?" (ahora enlaza al inicio).
+
+**Verificado con Playwright** (servidor local que distingue mayúsculas, sitio bajo `/ManualesDEOP/`, API
+simulada): validaciones, ya_registrado/no_registrado, Zscaler, registro e ingreso con bienvenida,
+recarga sin bienvenida, invitado, Esc, movimiento reducido, falla de la animación, búsqueda, favoritos,
+ayuda, teclado, los 3 manuales y sus 6 sub-manuales, 1366/820/375/320 px sin scroll horizontal y sin
+errores de consola.
+
+**Corregido — métricas de Eureka:** en el commit `b73f9da` ("Feat: Locomboo app"), al renombrar Locombo →
+Locomboo, se borraron por accidente 5 líneas de `1.Eureka/index.html`: el `<script src="../plataforma/plataforma.js">`,
+la función `pfConsulta()` y sus llamadas en `showRT()` ("Tiempo real") y `showHistorico()` ("Histórico"). Las consultas
+a Eureka dejaron de registrarse desde ese commit. Se restauraron tal como estaban en `dc449da`; verificado con
+Playwright que ambos sub-manuales vuelven a registrar la consulta.
