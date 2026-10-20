@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manual de Usuario Interactivo — Eureka</title>
+<title>Manual de Usuario Interactivo — Eureka · POLARIS</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../Recursos/polaris/polaris-icono-32.png">
+<link rel="apple-touch-icon" href="../Recursos/polaris/polaris-icono-180.png">
 <style>
   :root{
     --navy:#1b3a8c;
@@ -835,7 +837,7 @@
 <div id="chooseManualScreen">
   <header class="cx-navbar">
     <div class="cx-navbar-inner">
-      <div class="cx-brand"><img src="../Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones" class="cx-brand-logo"></div>
+      <a class="cx-brand" href="../index.html" aria-label="POLARIS, volver al inicio"><img src="../Recursos/polaris/polaris-horizontal.png" alt="POLARIS CEMEX" class="cx-brand-logo" style="height:34px"></a>
       <a class="cx-navbar-link" href="../index.html">← Volver al inicio</a>
     </div>
   </header>
@@ -1405,6 +1407,7 @@
 <div id="overBookingPopup" role="tooltip"></div>
 <div id="tablePopup" role="tooltip"></div>
 
+<script src="../plataforma/plataforma.js"></script>
 <script>
 /* =========================================================================
    Fuente única de verdad para los popups de cada elemento del tablero.
@@ -4026,7 +4029,11 @@ initHistorico();
 /* =========================================================================
    Manual conjunto: elegir manual + navegación cruzada entre RT <-> Histórico
    ========================================================================= */
+/* Plataforma: registrar qué sección se consulta. "Fire and forget": si no hay
+   sesión o no cargó ../plataforma/plataforma.js, no hace nada y nunca rompe el manual. */
+function pfConsulta(seccion){ try{ if (window.Plataforma) window.Plataforma.registrarConsulta('Eureka', seccion); }catch(e){} }
 function showRT(){
+  pfConsulta('Tiempo real');
   applySemaforos();
   document.getElementById('stageH').style.display = 'none';
   document.getElementById('stage').style.display = '';
@@ -4037,6 +4044,7 @@ function showRT(){
   fitBoard();
 }
 function showHistorico(){
+  pfConsulta('Histórico');
   applySemaforos();
   document.getElementById('stage').style.display = 'none';
   document.getElementById('stageH').style.display = '';
@@ -4091,7 +4099,7 @@ document.querySelectorAll('[data-ph-back]').forEach(btn => btn.addEventListener(
   document.getElementById('chooseManualScreen').style.display = '';
   window.scrollTo(0, 0);
 }));
- document.getElementById('btnEurekaHistoricoNav').addEventListener('click', (e) => {
+document.getElementById('btnEurekaHistoricoNav').addEventListener('click', (e) => {
   e.stopPropagation();
   showHistorico();
 });
