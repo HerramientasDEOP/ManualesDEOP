@@ -1,5 +1,5 @@
 /* =========================================================================
-   Plataforma de manuales — Fase 1: registro/login @cemex.com y registro de
+   Plataforma de manuales — Fase 1: registro/login @cemex.com / @ext.cemex.com y registro de
    consultas. Archivo compartido por index.html (raíz) y los 3 manuales.
 
    Todas las funciones devuelven promesas. Los errores rechazan con:
@@ -37,7 +37,8 @@
 
   /* ---------------- Validaciones del lado del navegador ---------------- */
   function normalizarCorreo(email){ return String(email || '').trim().toLowerCase(); }
-  function correoValido(email){ return /^[^\s@]+@cemex\.com$/.test(normalizarCorreo(email)); }
+  // Solo correos corporativos: @cemex.com o @ext.cemex.com (externos/contratistas)
+  function correoValido(email){ return /^[^\s@]+@(ext\.)?cemex\.com$/.test(normalizarCorreo(email)); }
 
   /* ---------------- POST JSON con distinción red / API ---------------- */
   function post(ruta, body, opts){

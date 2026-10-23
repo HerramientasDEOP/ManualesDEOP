@@ -65,7 +65,7 @@ async function registrar(env, body, ua) {
   const nombre = limpiarNombre(body.nombre);
   const email = limpiarEmail(body.email);
   if (!nombre) return json({ ok: false, error: 'nombre_invalido', mensaje: 'Escribe tu nombre (mínimo 2 letras).' }, 400);
-  if (!email) return json({ ok: false, error: 'correo_invalido', mensaje: 'Usa tu correo corporativo @cemex.com.' }, 400);
+  if (!email) return json({ ok: false, error: 'correo_invalido', mensaje: 'Usa tu correo corporativo @cemex.com o @ext.cemex.com.' }, 400);
 
   const existe = await env.DB.prepare('SELECT id FROM usuarios WHERE email = ?').bind(email).first();
   if (existe) return json({ ok: false, error: 'ya_registrado', mensaje: 'Este correo ya está registrado. Ingresa solo con tu correo.' }, 409);
@@ -87,7 +87,7 @@ async function registrar(env, body, ua) {
 
 async function login(env, body, ua) {
   const email = limpiarEmail(body.email);
-  if (!email) return json({ ok: false, error: 'correo_invalido', mensaje: 'Usa tu correo corporativo @cemex.com.' }, 400);
+  if (!email) return json({ ok: false, error: 'correo_invalido', mensaje: 'Usa tu correo corporativo @cemex.com o @ext.cemex.com.' }, 400);
 
   const u = await env.DB.prepare('SELECT id, nombre, email FROM usuarios WHERE email = ?').bind(email).first();
   if (!u) return json({ ok: false, error: 'no_registrado', mensaje: 'Este correo no está registrado. Regístrate primero.' }, 404);
@@ -372,7 +372,8 @@ async function validarSesion(env, token) {
 function limpiarEmail(v) {
   if (typeof v !== 'string') return null;
   const e = v.trim().toLowerCase();
-  return e.length <= 120 && /^[a-z0-9._%+-]+@cemex\.com$/.test(e) ? e : null;
+  // Solo correos corporativos: @cemex.com o @ext.cemex.com (externos/contratistas)
+  return e.length <= 120 && /^[a-z0-9._%+-]+@(ext\.)?cemex\.com$/.test(e) ? e : null;
 }
 function limpiarNombre(v) {
   if (typeof v !== 'string') return null;

@@ -306,7 +306,7 @@
     .cx-footer{padding:16px;justify-content:center;text-align:center;}
   }
 
-  /* ---------- Plataforma: acceso (registro / ingreso @cemex.com) ---------- */
+  /* ---------- Plataforma: acceso (registro / ingreso @cemex.com o @ext.cemex.com) ---------- */
   body.pf-locked{overflow:hidden;}
   .pf-gate{
     position:fixed;inset:0;z-index:7000;display:flex;align-items:center;justify-content:center;
@@ -647,7 +647,7 @@
       <div id="pfChecking" class="pf-checking" hidden role="status"><span class="pf-spinner" aria-hidden="true"></span><span id="pfCheckingText">Verificando tu sesión…</span></div>
 
       <div id="pfForms">
-        <p class="pf-sub">Usa tu correo corporativo <strong>@cemex.com</strong> para acceder a los manuales de las herramientas digitales.</p>
+        <p class="pf-sub">Usa tu correo corporativo <strong>@cemex.com</strong> o <strong>@ext.cemex.com</strong> para acceder a los manuales de las herramientas digitales.</p>
         <div class="pf-tabs" role="tablist">
           <button type="button" class="pf-tab active" role="tab" data-pf-tab="registro" id="pfTabRegistro">Registrarme</button>
           <button type="button" class="pf-tab" role="tab" data-pf-tab="ingreso" id="pfTabIngreso">Ingresar</button>
@@ -1042,13 +1042,13 @@ window.PolarisBienvenida = (function(){
     const nombre = $('pfNombre').value.trim();
     const correo = $('pfCorreoRegistro').value.trim().toLowerCase();
     if (nombre.length < 2){ msg('Escribe tu nombre completo.'); $('pfNombre').focus(); return; }
-    if (!P.correoValido(correo)){ msg('Usa tu correo corporativo @cemex.com.'); $('pfCorreoRegistro').focus(); return; }
+    if (!P.correoValido(correo)){ msg('Usa tu correo corporativo @cemex.com o @ext.cemex.com.'); $('pfCorreoRegistro').focus(); return; }
     ejecutar(opRegistrar(nombre, correo));
   });
   $('pfFormIngreso').addEventListener('submit', e => {
     e.preventDefault();
     const correo = $('pfCorreoIngreso').value.trim().toLowerCase();
-    if (!P.correoValido(correo)){ msg('Usa tu correo corporativo @cemex.com.'); $('pfCorreoIngreso').focus(); return; }
+    if (!P.correoValido(correo)){ msg('Usa tu correo corporativo @cemex.com o @ext.cemex.com.'); $('pfCorreoIngreso').focus(); return; }
     ejecutar(opIngresar(correo));
   });
   $('pfActivar').addEventListener('click', () => P.activarConexion());

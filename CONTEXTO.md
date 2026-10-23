@@ -2180,3 +2180,20 @@ Locomboo, se borraron por accidente 5 líneas de `1.Eureka/index.html`: el `<scr
 la función `pfConsulta()` y sus llamadas en `showRT()` ("Tiempo real") y `showHistorico()` ("Histórico"). Las consultas
 a Eureka dejaron de registrarse desde ese commit. Se restauraron tal como estaban en `dc449da`; verificado con
 Playwright que ambos sub-manuales vuelven a registrar la consulta.
+
+---
+
+# Correos @ext.cemex.com habilitados (2026-10-23, rama `main`)
+
+Ahora pueden registrarse e ingresar los correos **`@cemex.com`** y **`@ext.cemex.com`** (externos y
+contratistas). Ningún otro dominio ni subdominio entra (`@otro.cemex.com`, `@ext.cemex.com.co`, etc.).
+Regla `@(ext\.)?cemex\.com$`, en dos lugares que deben coincidir:
+- Navegador: `correoValido()` en `plataforma/plataforma.js` (+ textos y mensajes de `index.html`).
+- API: `limpiarEmail()` en `api/worker.js` (+ mensaje de `correo_invalido` en `/register` y `/login`).
+
+> ⚠️ **Hay que desplegar el Worker a mano** (pegar `api/worker.js` en `manuales-api` en Cloudflare → Deploy).
+> Hasta entonces, la API real seguirá rechazando `@ext.cemex.com` con `correo_invalido`.
+
+Verificado: 15 casos límite iguales en navegador y API; Worker local (`api/dev`, D1 local) con registro,
+ingreso, duplicado y rechazos; portal de punta a punta contra el Worker local con un correo `@ext.cemex.com`
+y otro `@cemex.com` (registro → bienvenida, ingreso, recarga con sesión); batería general 57/57.
