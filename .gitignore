@@ -3,3 +3,5 @@
 api/dev/.dev.vars
 # Base D1 local de wrangler
 api/dev/.wrangler/
+# Caché de Miniflare que crea wrangler dev (contiene la ubicación aproximada de la conexión)
+api/dev/node_modules/
