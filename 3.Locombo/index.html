@@ -987,6 +987,7 @@
   .lc-tour-done p{color:#5b6270;font-size:14.5px;margin:0 0 20px;line-height:1.5;}
 </style>
 
+<link rel="stylesheet" href="tableros/ld.css?v=1">
 </head>
 <body>
 
@@ -1008,19 +1009,19 @@
     <span class="sep">›</span>
     <a href="../index.html">Herramientas</a>
     <span class="sep">›</span>
-    <span class="current">Locomboo</span>
+    <span class="current" id="cxCrumbCurrent">Locomboo</span>
   </div>
 
   <div class="cx-tool-header">
-    <a class="cx-back" href="../index.html" aria-label="Volver a herramientas">←</a>
+    <a class="cx-back" id="cxToolBack" href="../index.html" aria-label="Volver a herramientas">←</a>
     <div class="cx-tool-header-icon"><img src="../Recursos/Logo-Locombo.jpeg" alt="Locomboo"></div>
     <div>
-      <h1>Locomboo</h1>
-      <p>Información y reportes de negocio.</p>
+      <h1 id="cxToolTitle">Locomboo</h1>
+      <p id="cxToolSub">Información y reportes de negocio.</p>
     </div>
   </div>
 
-  <div class="cx-manual-section">
+  <div class="cx-manual-section" id="cxMenuMain">
     <h2>¿Qué quieres consultar?</h2>
     <div class="cx-manual-grid">
       <button type="button" class="cx-manual-card" id="btnChooseApp">
@@ -1036,6 +1037,52 @@
         <span class="cx-manual-body">
           <span class="cx-manual-title">Tablero Locomboo</span>
           <span class="cx-manual-desc">Indicadores de gestión.</span>
+          <span class="cx-manual-cta">Abrir manual →</span>
+        </span>
+      </button>
+      <button type="button" class="cx-manual-card" id="btnChooseCemento">
+        <span class="cx-manual-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4V10l6 4V4h6v17z"></path></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">Locomboo Cemento</span>
+          <span class="cx-manual-desc">Tableros de Cemento, Caracolito, Portería y Nómina.</span>
+          <span class="cx-manual-cta">Ver tableros →</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="cx-manual-section" id="cxMenuCemento" style="display:none;">
+    <h2>¿Qué tablero quieres consultar?</h2>
+    <div class="cx-manual-grid">
+      <button type="button" class="cx-manual-card" data-ld-board="cemento" data-ld-name="Cemento" data-ld-sub="Jornadas, errores, extras y nómina">
+        <span class="cx-manual-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4V10l6 4V4h6v17z"></path></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">Cemento</span>
+          <span class="cx-manual-desc">Jornadas, errores, extras y nómina del personal de cemento.</span>
+          <span class="cx-manual-cta">Abrir manual →</span>
+        </span>
+      </button>
+      <button type="button" class="cx-manual-card" data-ld-board="caracolito" data-ld-name="Caracolito" data-ld-sub="Ejecutiva, satélite y nómina">
+        <span class="cx-manual-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l6-12 4 6 3-4 5 10z"></path></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">Caracolito</span>
+          <span class="cx-manual-desc">Vista ejecutiva, satélite, nómina y formato de reporte.</span>
+          <span class="cx-manual-cta">Abrir manual →</span>
+        </span>
+      </button>
+      <button type="button" class="cx-manual-card" data-ld-board="porteria" data-ld-name="Portería" data-ld-sub="Jornada, almuerzos e historia">
+        <span class="cx-manual-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"></path><path d="M9 21v-8h6v8"></path></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">Portería</span>
+          <span class="cx-manual-desc">Jornada en tiempo real, almuerzos, errores e historia.</span>
+          <span class="cx-manual-cta">Abrir manual →</span>
+        </span>
+      </button>
+      <button type="button" class="cx-manual-card" data-ld-board="nomina" data-ld-name="Nómina" data-ld-sub="Nómina, reporte y horas extras">
+        <span class="cx-manual-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="3"></circle></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">Nómina</span>
+          <span class="cx-manual-desc">Nómina, formato de reporte y horas extras de PTA.</span>
           <span class="cx-manual-cta">Abrir manual →</span>
         </span>
       </button>
@@ -1765,9 +1812,23 @@
       </div>
     </section>
 
+    <!-- ================= PÁGINAS NUEVAS (las dibuja tableros/ld-boards.js) ================= -->
+    <section class="tablero-screen" id="lbNom"></section>
+    <section class="tablero-screen" id="lbOcu"></section>
+
     </div>
   </div>
   </div>
+
+  <!-- ===================== LOCOMBOO CEMENTO (tableros/ld-*.js) ===================== -->
+  <div class="page-header" id="pageHeaderLd" style="display:none;">
+    <button type="button" class="ph-back" data-ph-back aria-label="Volver" title="Volver a Locomboo Cemento">←</button>
+    <p class="cx-ph-eyebrow">Manual interactivo</p>
+    <h1><span id="ldHeaderTitle"></span> <span class="badge" id="ldHeaderBadge"></span></h1>
+    <p>Pasa el cursor sobre cualquier título, filtro o botón (o tócalo en móvil) para ver su explicación. Usa los filtros, haz clic en las barras, ordena las tablas y cambia de página tal como lo harías en el tablero real.</p>
+    <p class="cx-ph-note">⚠️ Los datos que ves son ilustrativos — no corresponden a información real de la operación.</p>
+  </div>
+  <div id="ldStage" style="display:none;"><div id="ldWrap"></div></div>
 </div>
 
 <div id="loadingOverlay">
@@ -1878,6 +1939,7 @@ function showAppLc(){
   pfConsulta('App');
   document.getElementById('pageHeaderTablero').style.display = 'none';
   document.getElementById('stageT').style.display = 'none';
+  hideLd();
   document.getElementById('appContent').style.display = 'block';
   hideTooltip();
   if (window.lcShowApp) window.lcShowApp();
@@ -1885,11 +1947,39 @@ function showAppLc(){
 function showTablero(){
   pfConsulta('Tablero');
   if (window.lcHideApp) window.lcHideApp();
+  hideLd();
   document.getElementById('pageHeaderTablero').style.display = '';
   document.getElementById('stageT').style.display = '';
   document.getElementById('appContent').style.display = 'block';
   hideTooltip();
   lbGoTo('lbTR');
+}
+function hideLd(){
+  document.getElementById('pageHeaderLd').style.display = 'none';
+  document.getElementById('ldStage').style.display = 'none';
+}
+function showLd(board, name, sub){
+  pfConsulta('Cemento - ' + name);
+  if (window.lcHideApp) window.lcHideApp();
+  document.getElementById('pageHeaderTablero').style.display = 'none';
+  document.getElementById('stageT').style.display = 'none';
+  document.getElementById('ldHeaderTitle').textContent = 'Gestor de Recursos Locomboo — ' + name;
+  document.getElementById('ldHeaderBadge').textContent = sub;
+  document.getElementById('pageHeaderLd').style.display = '';
+  document.getElementById('ldStage').style.display = '';
+  document.getElementById('appContent').style.display = 'block';
+  hideTooltip();
+  window.scrollTo(0, 0);
+  window.LD.open(board);
+}
+/* Menú: Locomboo <-> Locomboo Cemento */
+function cxShowMenu(cemento){
+  document.getElementById('cxMenuMain').style.display = cemento ? 'none' : '';
+  document.getElementById('cxMenuCemento').style.display = cemento ? '' : 'none';
+  document.getElementById('cxToolTitle').textContent = cemento ? 'Locomboo Cemento' : 'Locomboo';
+  document.getElementById('cxToolSub').textContent = cemento ? 'Gestor de recursos: Cemento, Caracolito, Portería y Nómina.' : 'Información y reportes de negocio.';
+  document.getElementById('cxCrumbCurrent').textContent = cemento ? 'Locomboo Cemento' : 'Locomboo';
+  window.scrollTo(0, 0);
 }
 const LOADING_OPTS = {
   title: 'Estamos realizando tu pedido…',
@@ -1904,6 +1994,14 @@ document.getElementById('btnChooseTablero').addEventListener('click', () => {
   document.getElementById('chooseManualScreen').style.display = 'none';
   showLoadingOverlay(LOADING_OPTS, showTablero);
 });
+document.getElementById('btnChooseCemento').addEventListener('click', () => cxShowMenu(true));
+document.getElementById('cxToolBack').addEventListener('click', (e) => {
+  if (document.getElementById('cxMenuCemento').style.display !== 'none'){ e.preventDefault(); cxShowMenu(false); }
+});
+document.querySelectorAll('[data-ld-board]').forEach(btn => btn.addEventListener('click', () => {
+  document.getElementById('chooseManualScreen').style.display = 'none';
+  showLoadingOverlay(LOADING_OPTS, () => showLd(btn.dataset.ldBoard, btn.dataset.ldName, btn.dataset.ldSub));
+}));
 document.querySelectorAll('#btnUcBack, [data-ph-back]').forEach(btn => btn.addEventListener('click', () => {
   hideTooltip(); lbTipHide(); lbCloseSlicers();
   document.getElementById('appContent').style.display = 'none';
@@ -2641,7 +2739,7 @@ function renderHistKpi(){
 /* =========================================================================
    Navegación entre páginas (panel "Páginas" + botones de página)
    ========================================================================= */
-const LB_PAGES = [['lbTR','Tiempo real'], ['lbHist','Historico'], ['lbHC','Detalle HC']];
+const LB_PAGES = [['lbTR','Tiempo real'], ['lbHist','Historico'], ['lbHC','Detalle HC'], ['lbNom','Nómina'], ['lbOcu','Ocupacion_As']];
 let lbCurrent = 'lbTR';
 function renderPagesSidebar(){
   const nav = document.getElementById('pagesNav');
@@ -2652,7 +2750,7 @@ function renderPagesSidebar(){
 }
 function renderNavPills(){
   document.querySelectorAll('.lb-nav').forEach(box => {
-    box.innerHTML = LB_PAGES.map(([id, label]) =>
+    box.innerHTML = LB_PAGES.slice(0, 3).map(([id, label]) =>
       `<button type="button" class="lb-nav-btn hotspot${id === box.dataset.current ? ' active' : ''}" data-lbgo="${id}"
         data-tip-title="Botón ${label}" data-tip-text="${id === box.dataset.current ? 'Estás en esta página.' : 'Salta a la página ' + label + ' del tablero (igual que el panel Páginas de la izquierda).'}">${label}</button>`).join('');
     bindAllHotspots(box);
@@ -2661,6 +2759,7 @@ function renderNavPills(){
 function lbGoTo(id){
   lbCurrent = id;
   document.querySelectorAll('#boardContent .tablero-screen').forEach(s => s.classList.toggle('active', s.id === id));
+  if (window.LD) window.LD.mountMain(id);
   const sc = document.querySelector('#' + id + ' .lb-scroll');
   if (sc) sc.scrollTop = 0;
   renderPagesSidebar();
@@ -2725,6 +2824,9 @@ renderPagesSidebar();
 lbRenderAll();
 bindAllHotspots();
 </script>
+<script src="tableros/ld-engine.js?v=1"></script>
+<script src="tableros/ld-data.js?v=1"></script>
+<script src="tableros/ld-boards.js?v=1"></script>
 <script>
 /* =========================================================================
    APP LOCOMBOO — réplica funcional de Recursos/Locombo/Aplicacion/loc1–loc40

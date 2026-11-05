@@ -1,0 +1,97 @@
+/* Estilos del motor de tableros Locomboo (LD). Reutiliza las clases lb-* del tablero principal. */
+#ldStage{
+  --lb-blue:#0303b0;--lb-bar1:#118dff;--lb-bar2:#12239e;--lb-line:#6b007b;--lb-red:#d9434f;
+  --lb-lav:#a992dc;--lb-green:#00632e;--lb-ink:#252423;
+  margin:20px auto 0;
+}
+#ldWrap{
+  width:1850px;background:#fff;border-radius:10px;overflow:hidden;
+  box-shadow:0 2px 14px rgba(20,30,60,.12);transform-origin:top left;
+  border:1px solid #e6e8ee;display:flex;align-items:stretch;
+}
+.ld-content{flex:1;min-width:0;}
+.ld-screen{display:none;}
+.ld-screen.active{display:block;}
+
+/* Filtros */
+.ld-filters{display:flex;gap:16px;justify-content:center;margin:12px 0 18px;}
+.ld-slicer{flex:0 1 232px;min-width:0;position:relative;}
+.ld-slicer .lb-slicer-box{min-height:28px;}
+.ld-slicer.open .lb-slicer-menu{display:block;}
+.ld-slicer.filtered .lb-slicer-box{border-color:var(--lb-blue);background:#f2f2ff;font-weight:700;}
+.ld-slicer:nth-last-child(-n+2) .lb-slicer-menu{left:auto;right:0;}
+.ld-filters .lb-opt.grp{font-weight:700;}
+
+/* Bloques */
+.ld-row{gap:16px;}
+.ld-row > .lb-block,.ld-row > .ld-col,.ld-row > .ld-row{min-width:0;}
+.ld-row .ld-row{margin-bottom:0;}
+.ld-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.ld-col > .lb-block{margin-bottom:0;}
+.ld-leaf{min-width:0;}
+.ld-baronly{margin-bottom:0;}
+.ld-sub{background:#12239e;color:#fff;font-weight:700;font-size:13.5px;text-align:center;padding:3px 8px;position:relative;z-index:2;}
+.lb-bar + .ld-sub{margin-top:-1px;}
+.ld-round{border:2px solid var(--lb-blue);border-top:none;border-radius:0 0 40px 40px;padding:10px 16px 18px;margin-top:-10px;padding-top:18px;background:#fff;}
+.ld-round > .lb-tablebox{border-bottom:none;}
+.ld-chartplain svg{display:block;width:100%;height:auto;overflow:visible;font-family:"Segoe UI",Arial,sans-serif;}
+.ld-chartplain{padding:8px 4px 0;}
+.lb-chartbox .ld-hscroll svg,.ld-chartplain .ld-hscroll svg{max-width:none;}
+.ld-hscroll{overflow-x:auto;padding-bottom:6px;}
+.ld-hscroll::-webkit-scrollbar,.ld-vscroll::-webkit-scrollbar{width:9px;height:9px;}
+.ld-hscroll::-webkit-scrollbar-thumb,.ld-vscroll::-webkit-scrollbar-thumb{background:#b9bcc4;border-radius:5px;}
+.ld-vscroll{overflow-y:auto;}
+.ld-legend-top svg{display:block;width:100%;height:auto;}
+.lb-hit{cursor:pointer;}
+.lb-hit:hover{fill:rgba(3,3,176,.07);}
+.ld-corte-stack{flex-direction:column;gap:3px;align-items:center;}
+.ld-stamp{text-align:center;color:var(--lb-blue);font-size:14px;padding:8px 4px 0;}
+.ld-kpi{margin:0 4px;padding:18px 22px;}
+.ld-kpi .k{font-size:18px;}
+.ld-kpi .v{white-space:nowrap;font-size:19px;}
+.ld-nav{margin-top:0;flex-wrap:wrap;gap:6px;}
+.ld-nav .lb-nav-btn{padding:9px 9px;font-size:11.5px;}
+#ldWrap .pages-nav-item{white-space:normal;}
+.ld-toggle{display:flex;justify-content:center;margin:0 0 14px;}
+.ld-tog{border:1px solid #333;background:#fff;color:#333;font-family:inherit;font-size:13px;padding:9px 34px;cursor:pointer;}
+.ld-tog + .ld-tog{border-left:none;}
+.ld-tog.on{background:#333;color:#fff;}
+.ld-ucinline{margin:30px auto;box-shadow:none;}
+.ld-ucinline img{max-width:420px;}
+
+/* Tablas */
+.ld-t th{white-space:normal;min-width:58px;vertical-align:bottom;line-height:1.15;}
+.ld-t th.num{text-align:right;}
+.ld-t tbody tr:hover td{background-color:rgba(3,3,176,.05);}
+.ld-t tr.ld-rowsel td{background:#d6e7f5 !important;}
+.ld-tree tr.ld-lv0 td,.ld-tree tr.ld-lv1 td,.ld-pivot .ld-totcol{font-weight:700;}
+.ld-tree tr.ld-lv2 td{font-weight:400;}
+.ld-treecell{border-right:1px solid #9cc8ee;}
+.ld-exp{
+  display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;margin-right:6px;
+  border:1px solid #8a8f99;font-size:10px;line-height:1;color:#444;cursor:pointer;user-select:none;background:#fff;
+}
+.ld-exp:hover{border-color:var(--lb-blue);color:var(--lb-blue);}
+.ld-pivot th{border-bottom:1px solid #d6d6d6;}
+.ld-pivot thead tr:last-child th{border-bottom:2px solid #9cc8ee;}
+.ld-pivot thead tr:first-child th{top:0;}
+.ld-pivot thead tr + tr th{top:26px;}
+
+/* Ventana "En construcción" */
+#ldUc{
+  position:fixed;inset:0;z-index:7000;display:none;align-items:center;justify-content:center;
+  background:rgba(15,20,35,.55);padding:16px;
+}
+#ldUc.show{display:flex;}
+.ld-uc-card{
+  position:relative;background:#fff;border-radius:18px;padding:26px 30px 24px;max-width:480px;width:100%;
+  text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.ld-uc-card img{width:100%;max-width:360px;height:auto;}
+.ld-uc-card h3{margin:12px 0 6px;color:#101066;font-size:18px;}
+.ld-uc-card p{margin:0;color:#5b6270;font-size:13.5px;line-height:1.5;}
+.ld-uc-x{
+  position:absolute;top:10px;right:12px;width:32px;height:32px;border:none;border-radius:50%;background:#eef1f6;
+  font-size:20px;line-height:1;color:#101066;cursor:pointer;font-family:inherit;
+}
+.ld-uc-x:hover{background:#101066;color:#fff;}

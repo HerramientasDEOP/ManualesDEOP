@@ -2197,3 +2197,46 @@ Regla `@(ext\.)?cemex\.com$`, en dos lugares que deben coincidir:
 Verificado: 15 casos límite iguales en navegador y API; Worker local (`api/dev`, D1 local) con registro,
 ingreso, duplicado y rechazos; portal de punta a punta contra el Worker local con un correo `@ext.cemex.com`
 y otro `@cemex.com` (registro → bienvenida, ingreso, recarga con sesión); batería general 57/57.
+
+---
+
+# Locomboo Cemento + pestañas Nómina y Ocupacion_As (2026-11-05)
+
+**Qué se agregó en `3.Locombo/index.html`:**
+- Tablero principal: 2 pestañas nuevas, `lbNom` (Nómina, loc12–13) y `lbOcu` (Ocupacion_As, loc14–21). Salen solo en el panel
+  Páginas; los botones de página de Tiempo real e Historico siguen con las 3 originales (`LB_PAGES.slice(0, 3)`).
+- Menú: tarjeta "Locomboo Cemento" (`#btnChooseCemento`) que abre el sub-menú `#cxMenuCemento` con 4 tableros:
+  Cemento, Caracolito, Portería y Nómina. Se registran en métricas como `Cemento - <nombre>`.
+
+**Código en `3.Locombo/tableros/` (cargado con `?v=1`; subir la versión si se cambia, por la caché):**
+- `ld-engine.js`: motor genérico (`window.LD`). Filtros, tablas con filas perezosas y orden, matriz expandible (`tree`),
+  tabla dinámica (`pivot`), gráficas `stack`, `columns`, `combo`, `hpair`, tarjetas, botones, ventana "En construcción" (`LD.ucShow`).
+- `ld-data.js`: datos planos generados con semilla fija (`LD.data`), siempre iguales.
+- `ld-boards.js`: qué lleva cada página (`LD.boards.*`, `LD.main.*`). Para cambiar un tablero, normalmente se toca solo este archivo.
+- `ld.css`: estilos; reutiliza las clases `lb-*` del tablero principal.
+- Usa `hideTooltip`, `lbTipShow`, `lbTipHide`, `bindAllHotspots` del primer `<script>` de `index.html`.
+- Se usa la clase `.ld-slicer` y no `.lb-slicer` a propósito: `updateSlicerLabels()` del tablero viejo sobrescribiría las etiquetas.
+
+**Cómo funcionan los filtros:** cada página tiene su propio estado (como slicers no sincronizados de Power BI), con los valores por
+defecto de la captura. Excepción: "Detalle Error" de Cemento es una página oculta que comparte el estado de Ejecutiva (`stateOf`).
+Clic en una barra o leyenda = filtrado cruzado (`st.cross`): las otras barras se atenúan y las tablas se filtran; otro clic lo quita.
+
+**Datos: qué es exacto y qué es inventado**
+- Exacto frente a la captura: conteos por día y turno de Cemento (estimados donde la captura no trae etiqueta) y de Caracolito;
+  promedios por planta de Ocupación (ocupación, productividad, encolamiento, preoperativo, postoperativo) calibrados con `calibrate()`;
+  jornadas con 0 y 1 viaje de las plantas visibles; pivote de Horas Extras PTA (664 h); tarjetas de Caracolito (126/91/32) y Portería (98/76/20, almuerzos 66/8/55 y 11/2/9).
+- Aproximado: totales de tablas de Cemento, Nómina principal y Ocupación (salen de sumar filas, quedan cerca pero no iguales).
+- Inventado: filas de relleno, horas exactas, plantas de Cemento ("Molienda Cemento", "Terminal Cemento"), septiembre de Caracolito,
+  octubre de Horas Extras PTA, listas de obras, Tiempo entre viajes salvo los valores visibles en loc21.
+- **Las cédulas y los códigos son ficticios**, no los de las capturas. Los nombres de personas sí son los de las capturas.
+
+**Decisiones a revisar con el equipo**
+- Formato unificado en español aunque varias capturas estén en inglés ("All", "Blank", "Sum of Cedula", fechas M/D/AAAA).
+- Satélite: por defecto (Mes = septiembre) el tiempo real sale "(En blanco)" como en 5.png; al elegir octubre aparecen los datos.
+- Tablero Nómina: la captura no define los botones de Ejecutiva; se usan los de 2.png. "Detalle Error" queda en construcción y "Horas Extra" abre Horas Extras PTA.
+- Caracolito: se usa la misma tabla Error que Nómina (2.png), así que con Mes = septiembre tiene filas, aunque 8.1 la muestra vacía.
+- Programación Jornadas (Cemento) y Visitantes (Portería) quedan vacías como en las capturas.
+- `Detalle semana` del tablero principal lleva Mes = "octubre" fijo, como se pidió, y toda la captura es la semana 3.
+
+**Verificado con Playwright (script en el scratchpad, no en el repo):** 75 comprobaciones con clics reales: menú, filtros, árbol de fechas,
+filtrado cruzado, orden, filas perezosas, matriz, pivote, en construcción, navegación, tablero viejo y app intactos, móvil 375 px sin scroll horizontal.
