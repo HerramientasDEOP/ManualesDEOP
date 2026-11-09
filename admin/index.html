@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Métricas de Manuales · POLARIS</title>
 <link rel="icon" type="image/png" sizes="32x32" href="../Recursos/polaris/polaris-icono-32.png">
+<link rel="stylesheet" href="preguntas.css?v=1">
 <style>
   :root{
     --cx-navy:#101066;
@@ -260,12 +261,66 @@
   <header class="ad-topbar">
     <div class="ad-topbar-inner">
       <img class="ad-topbar-logo" src="../Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones">
-      <div class="ad-topbar-title">Métricas de la plataforma<small>Manuales de usuario interactivos</small></div>
+      <div class="ad-topbar-title">Panel de la plataforma<small>Métricas y centro de ayuda</small></div>
+      <div class="ap-tabs" role="tablist" aria-label="Secciones del panel">
+        <button type="button" class="ap-tab on" role="tab" aria-selected="true" data-ad-tab="metricas">Métricas</button>
+        <button type="button" class="ap-tab" role="tab" aria-selected="false" data-ad-tab="preguntas">Preguntas <span class="ap-badge" id="adPBadge" hidden>0</span></button>
+        <button type="button" class="ap-tab" role="tab" aria-selected="false" data-ad-tab="faqs">Preguntas frecuentes</button>
+      </div>
       <button type="button" class="ad-btn ad-btn-sec ad-btn-sm" id="adSalir">Salir</button>
     </div>
   </header>
 
-  <main class="ad-main">
+  <main class="ad-main" id="adPreguntas" hidden>
+    <section class="ap-kpis" id="adPKpis" aria-label="Indicadores de preguntas"></section>
+    <section class="ad-panel ad-filters ap-filtros" aria-label="Filtros de preguntas">
+      <div class="ad-filter-group">
+        <span>Estado</span>
+        <div class="ad-seg" id="adPEstados" role="group">
+          <button type="button" data-estado="pendientes" class="active">Por atender</button>
+          <button type="button" data-estado="todas">Todas</button>
+          <button type="button" data-estado="abierta">Recibidas</button>
+          <button type="button" data-estado="en_proceso">En revisión</button>
+          <button type="button" data-estado="respondida">Respondidas</button>
+          <button type="button" data-estado="cerrada">Cerradas</button>
+        </div>
+      </div>
+      <div class="ad-filter-group">
+        <span>Herramienta</span>
+        <select class="ad-text" id="adPHerr"><option value="">Todas</option><option>Eureka</option><option>Orion</option><option>Locomboo</option><option>POLARIS</option></select>
+      </div>
+      <div class="ad-filter-group">
+        <span>Buscar</span>
+        <input class="ad-text" type="search" id="adPBuscar" placeholder="Pregunta, nombre o correo">
+      </div>
+    </section>
+    <section class="ap-bandeja">
+      <div class="ad-panel ap-col"><span class="ap-cuenta" id="adPCuenta"></span><div class="ap-lista" id="adPLista"></div></div>
+      <div class="ad-panel ap-detalle" id="adPDetalle"><div class="ap-vacio-det">Elige una pregunta para ver la conversación y responder.</div></div>
+    </section>
+  </main>
+
+  <main class="ad-main" id="adFaqs" hidden>
+    <section class="ad-panel ad-table-card">
+      <div class="ad-table-head">
+        <h2 class="ad-card-title">Preguntas frecuentes</h2>
+        <span class="ad-count" id="adFCuenta"></span>
+        <select class="ad-text" id="adFHerr" aria-label="Herramienta"><option value="">Todas</option><option>Eureka</option><option>Orion</option><option>Locomboo</option><option>POLARIS</option></select>
+        <div class="ad-input ad-search"><input class="ad-text" type="search" id="adFBuscar" placeholder="Buscar" aria-label="Buscar pregunta frecuente"></div>
+        <button type="button" class="ad-btn ad-btn-sm" id="adFNueva">Nueva</button>
+      </div>
+      <p class="ap-aviso">Es lo que ven todos en el Centro de ayuda y lo que se le sugiere a quien escribe una pregunta. También será la base de conocimiento del futuro asistente.</p>
+      <div class="ad-table-wrap ad-scroll">
+        <table class="ad-table">
+          <thead><tr><th>Pregunta</th><th>Herramienta</th><th class="num">Útil sí / no</th><th>Estado</th><th></th></tr></thead>
+          <tbody id="adFTabla"></tbody>
+        </table>
+      </div>
+      <div class="ad-empty" id="adFVacio" hidden style="margin-top:10px;">No hay preguntas frecuentes con estos filtros.</div>
+    </section>
+  </main>
+
+  <main class="ad-main" id="adMetricas">
     <section class="ad-panel ad-filters" aria-label="Filtros">
       <div class="ad-filter-group">
         <span>Rango</span>
@@ -290,7 +345,7 @@
           <option value="">Todos</option>
           <option>Eureka</option>
           <option>Orion</option>
-          <option value="Locombo">Locomboo</option>
+          <option>Locomboo</option>
         </select>
       </div>
       <button type="button" class="ad-btn" id="adActualizar">Actualizar</button>
@@ -392,6 +447,22 @@
   </div>
   <div class="ad-drawer-body" id="adDrawerBody"></div>
 </aside>
+
+<div class="ap-editor-bg" id="apEditorBg" hidden></div>
+<div class="ap-editor" id="apEditor" role="dialog" aria-modal="true" aria-labelledby="apEdTitulo" hidden>
+  <div class="ap-ed-cab"><h2 id="apEdTitulo">Pregunta frecuente</h2><button type="button" class="ad-close" id="apEdCerrar" aria-label="Cerrar">×</button></div>
+  <form id="apEdForm" novalidate>
+    <div class="ap-ed-fila">
+      <label>Herramienta<select class="ad-text" id="apEdHerr"></select></label>
+      <label>Parte<select class="ad-text" id="apEdSec"></select></label>
+    </div>
+    <label>Pregunta<input class="ad-text" type="text" id="apEdPreg" maxlength="200"></label>
+    <label>Respuesta<textarea class="ad-text" id="apEdResp" rows="7" maxlength="4000"></textarea></label>
+    <label class="ap-check"><input type="checkbox" id="apEdActiva"> Publicada (visible para todos)</label>
+    <p class="ad-msg" id="apEdMsg" role="alert" hidden></p>
+    <div class="ap-acc"><button type="button" class="ad-btn ad-btn-sec ad-btn-sm" id="apEdCancelar">Cancelar</button><button type="submit" class="ad-btn ad-btn-sm">Guardar</button></div>
+  </form>
+</div>
 
 <script src="../plataforma/plataforma.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
@@ -523,6 +594,7 @@
       ss.set(KEY_CLAVE, clave);
       $('adGate').hidden = true; $('adApp').hidden = false;
       $('adAppMsg').hidden = true;
+      if (window.AdminApp && window.AdminApp.alEntrar) window.AdminApp.alEntrar();
       pintarResumen(res);
       usuarios = us.usuarios || [];
       pintarUsuarios();
@@ -795,11 +867,15 @@
   document.querySelectorAll('[data-reintentar]').forEach(b => b.addEventListener('click', () => { if (pendiente) ejecutar(pendiente); }));
   window.addEventListener('focus', () => { if (pendiente) ejecutar(pendiente); });
 
+  /* Lo usa admin/preguntas.js (gestión de preguntas) */
+  window.AdminApp = { api, ejecutar, esc, fFecha };
+
   /* ---------------- Inicio ---------------- */
   const guardada = ss.get(KEY_CLAVE);
   if (guardada){ clave = guardada; ejecutar(cargar); }
   else $('adClave').focus();
 })();
 </script>
+<script src="preguntas.js?v=1"></script>
 </body>
 </html>

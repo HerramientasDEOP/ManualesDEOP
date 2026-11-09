@@ -13,7 +13,7 @@ const APELLIDOS = ['Gómez', 'Rodríguez', 'Martínez', 'López', 'García', 'P�
   'Vargas', 'Moreno', 'Rojas', 'Castro', 'Ortiz', 'Muñoz', 'Jiménez', 'Herrera', 'Suárez'];
 const SECCIONES = [
   ['Eureka', 'Tiempo real', 30], ['Eureka', 'Histórico', 18], ['Orion', 'App', 16],
-  ['Orion', 'Tablero', 12], ['Locombo', 'Tablero', 10], ['Locombo', 'App', 4],
+  ['Orion', 'Tablero', 12], ['Locomboo', 'Tablero', 10], ['Locomboo', 'App', 4],
 ];
 const TOTAL_PESO = SECCIONES.reduce((a, x) => a + x[2], 0);
 const seccionAlAzar = () => {

@@ -2240,3 +2240,35 @@ Clic en una barra o leyenda = filtrado cruzado (`st.cross`): las otras barras se
 
 **Verificado con Playwright (script en el scratchpad, no en el repo):** 75 comprobaciones con clics reales: menú, filtros, árbol de fechas,
 filtrado cruzado, orden, filas perezosas, matriz, pivote, en construcción, navegación, tablero viejo y app intactos, móvil 375 px sin scroll horizontal.
+
+---
+
+# Centro de ayuda y seguimiento de preguntas (2026-11-06)
+
+**Requiere cambios en Cloudflare, en este orden:**
+1. D1 `manuales-db` → Console: pegar [`api/migracion_centro_ayuda.sql`](api/migracion_centro_ayuda.sql) (crea 3 tablas, carga 51 preguntas frecuentes y unifica el nombre Locombo → Locomboo en las consultas viejas; se puede repetir sin duplicar). Comprobar con `SELECT COUNT(*) FROM faqs;` → 51.
+2. Worker `manuales-api`: pegar [`api/worker.js`](api/worker.js) completo → Deploy. No necesita secretos nuevos. Las rutas viejas no cambiaron.
+3. Publicar el sitio (push). Si se publica antes de los pasos 1 y 2, el centro de ayuda muestra "no está disponible en este momento" y el resto del sitio sigue igual.
+
+**Interfaz — [`plataforma/ayuda.js`](plataforma/ayuda.js) + [`ayuda.css`](plataforma/ayuda.css)** (`window.Ayuda`, prefijo `ay-`):
+- Se carga después de `plataforma.js`; en los manuales lleva `data-herramienta`. Inserta solo el botón "Tengo una pregunta" en cada `.page-header` y un aviso en cada `.cx-manual-section`.
+- **Contexto automático:** `Plataforma.registrarConsulta()` ahora guarda el último manual y sección (`getContexto()`), y la página sale de `.pages-nav-item.active`. Un sub-manual nuevo solo necesita llamar `pfConsulta()`; si es parte de un catálogo nuevo, agregarlo a `CATALOGO` en `ayuda.js`, `api/worker.js` y `admin/preguntas.js`.
+- Portal: botón en el hero (`#ayHeroPreguntar`), menú lateral "Centro de ayuda" y "Seguimiento de preguntas" (con contador de respuestas sin leer). El antiguo "Ayuda" se renombró "Cómo usar POLARIS". `Ayuda.embeber()` dibuja la vista completa; `Ayuda.abrir(vista, ctx)` el panel lateral.
+- Sin sesión: se pueden leer las preguntas frecuentes, pero para preguntar se pide ingresar. El borrador queda en localStorage (`ayBorrador`).
+- Red o Zscaler: aviso con Activar conexión / Reintentar, sin perder lo escrito.
+
+**Admin — pestañas Métricas / Preguntas / Preguntas frecuentes** ([`admin/preguntas.js`](admin/preguntas.js), [`preguntas.css`](admin/preguntas.css)): bandeja con filtros, indicadores, conversación, notas internas, cambio de estado, sugerencias a partir de las frecuentes y "Publicar como frecuente".
+
+**API nueva:** públicas `/ayuda/faqs`, `/ayuda/faq-voto`. Con `token`: `/preguntas/crear|mias|detalle|responder|calificar|cerrar` (solo sobre preguntas propias; 404 si es de otro). Con `clave`: `/admin/preguntas|pregunta|pregunta-responder|pregunta-estado|faqs|faq-guardar`. Límites: 8 preguntas y 30 mensajes por usuario por hora.
+
+**Tablas:** `preguntas` (el caso: herramienta, sección, página, categoría, estado, calificación, no leídos), `pregunta_mensajes` (la conversación: `autor_tipo` usuario / agente / ia / sistema, `interno`, `metadatos`), `faqs` (base de conocimiento). Estados: `abierta` → `en_proceso` → `respondida` → `cerrada`. Las 51 FAQ iniciales: 14 de Orion y 14 de Locomboo salen de las respuestas rápidas de los manuales; 19 de Eureka se redactaron con las explicaciones de los indicadores del manual (`INDICATORS` en `1.Eureka/index.html`: fórmulas, semáforos, estándares y fuentes); 4 de POLARIS son nuevas.
+
+**Cómo queda proyectado el asistente de IA:** toda respuesta entra por `registrarRespuesta()` del Worker, y la interfaz ya muestra los mensajes `autor_tipo = 'ia'` como "Asistente POLARIS · Respuesta automática". Falta: al crear o responder una pregunta, llamar al modelo con `faqs` como base de conocimiento, guardar la respuesta con esa función (fuentes y confianza en `metadatos`) y, si la confianza es baja, dejarla en la bandeja del equipo. La calificación "¿resolvió tu duda?" ya mide si funciona. Para un chat en vivo, además habría que responder dentro de la misma llamada o por streaming.
+
+**Puntos abiertos:**
+- El ingreso solo pide el correo: quien conozca el correo de otra persona podría entrar como ella y ver sus preguntas. Conviene resolverlo antes de que circulen datos sensibles por aquí.
+- No hay aviso por correo: la persona ve la respuesta cuando vuelve a POLARIS (contador en el menú). Un correo requiere un servicio externo.
+- **Corregido (2026-11-09):** el filtro Manual → Locomboo de Métricas enviaba `Locombo`, pero desde el commit `b73f9da` el manual registra `Locomboo`. Ahora el filtro envía `Locomboo`, la migración renombra las filas viejas de `consultas_manual` y `visitas_anonimas`, y `api/dev/seed.js` usa el nombre nuevo.
+- Eureka, Calidad: el manual dice "Viajes con retrabajo ÷ viajes totales", pero el valor (95–97%) y el texto del Histórico indican que es el porcentaje **sin** retrabajo. La pregunta frecuente lo explica como "sin retrabajo"; conviene confirmar la fórmula con el equipo.
+
+**Verificado con Playwright:** la interfaz real contra el `worker.js` real corriendo en Chromium y el binding D1 simulado con SQLite (script en el scratchpad, no en el repo). No se probó en el D1 real de Cloudflare.

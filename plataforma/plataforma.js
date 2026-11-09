@@ -108,9 +108,13 @@
     }catch(e){ return Promise.resolve(false); }
   }
 
+  // Último manual y sección abiertos en esta página: el centro de ayuda los usa para preseleccionar.
+  let contexto = null;
+
   // "Fire and forget": nunca rechaza ni lanza, para no romper el manual.
   // Con sesión -> /manual-view; invitado ("Entrar sin registrarme") -> /anon-view; si no, nada.
   function registrarConsulta(manual, seccion){
+    contexto = { manual, seccion };
     try{
       const token = getToken();
       if (!token) return esInvitado() ? registrarVisitaAnonima(manual, seccion) : Promise.resolve(false);
@@ -139,6 +143,7 @@
     registrar, ingresar, validarSesion, registrarConsulta, salir,
     activarConexion, correoValido, getUsuario, getToken,
     marcarInvitado, esInvitado,
+    getContexto: () => contexto,
     llamar: post   // POST genérico con la misma distinción red/API (lo usa admin/index.html)
   };
 })();

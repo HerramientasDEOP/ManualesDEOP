@@ -526,9 +526,18 @@
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         Favoritos
       </button>
+      <button type="button" class="cx-side-link" id="sideCentroAyuda">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"></path><path d="M6.5 17A2.5 2.5 0 0 0 4 19.5 2.5 2.5 0 0 0 6.5 22H20v-5"></path></svg>
+        Centro de ayuda
+      </button>
+      <button type="button" class="cx-side-link" id="sideSeguimiento">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span class="ay-side-txt">Seguimiento de preguntas</span>
+        <span class="ay-badge ay-side-badge" data-ay-badge hidden>0</span>
+      </button>
       <button type="button" class="cx-side-link" id="sideAyuda" aria-expanded="false" aria-controls="cxHelpPanel">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        Ayuda
+        Cómo usar POLARIS
       </button>
       <div class="cx-help-panel" id="cxHelpPanel">
         <strong>Cómo usar POLARIS</strong>
@@ -556,6 +565,13 @@
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
               <label for="cxSearch" class="px-sr">Buscar una herramienta o manual</label>
               <input type="search" id="cxSearch" placeholder="Busca una herramienta o manual" autocomplete="off">
+            </div>
+            <div class="ay-hero">
+              <button type="button" class="ay-hero-btn" id="ayHeroPreguntar">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Tengo una pregunta
+              </button>
+              <span>Escríbenos sobre cualquier herramienta y sigue la respuesta aquí.</span>
             </div>
           </div>
           <div class="cx-hero-art" aria-hidden="true">
@@ -625,6 +641,14 @@
           <span id="cxEmptyText">No encontramos herramientas que coincidan con tu búsqueda.</span>
         </div>
       </main>
+
+      <section class="ay-vista" id="ayVista" hidden aria-labelledby="ayVistaTitulo">
+        <div class="ay-vista-cab">
+          <h1 id="ayVistaTitulo" tabindex="-1">Centro de ayuda</h1>
+          <p>Encuentra respuestas, haz tus preguntas y sigue cada caso en un solo lugar.</p>
+        </div>
+        <div id="ayVistaApp"></div>
+      </section>
     </div>
   </div>
 
@@ -835,9 +859,15 @@ const sideFavoritos = document.getElementById('sideFavoritos');
 const sideAyuda = document.getElementById('sideAyuda');
 const cxHelpPanel = document.getElementById('cxHelpPanel');
 
+const sideCentroAyuda = document.getElementById('sideCentroAyuda');
+const sideSeguimiento = document.getElementById('sideSeguimiento');
 function setActiveSide(link){
-  [sideInicio, sideHerramientas, sideFavoritos].forEach(l => { l.classList.remove('active'); l.removeAttribute('aria-current'); });
+  [sideInicio, sideHerramientas, sideFavoritos, sideCentroAyuda, sideSeguimiento].forEach(l => { l.classList.remove('active'); l.removeAttribute('aria-current'); });
   if (link){ link.classList.add('active'); link.setAttribute('aria-current', 'page'); }
+  // El centro de ayuda reemplaza el feed mientras está abierto.
+  const enAyuda = link === sideCentroAyuda || link === sideSeguimiento;
+  document.querySelector('.cx-main').hidden = enAyuda;
+  document.getElementById('ayVista').hidden = !enAyuda;
 }
 document.getElementById('cxBrand').addEventListener('click', e => { e.preventDefault(); sideInicio.click(); });
 sideInicio.addEventListener('click', () => {
@@ -919,6 +949,7 @@ window.PolarisBienvenida = (function(){
 })();
 </script>
 <script src="plataforma/plataforma.js"></script>
+<script src="plataforma/ayuda.js?v=1"></script>
 <script>
 /* ---------------- Plataforma: control de la pantalla de acceso ---------------- */
 (function(){
@@ -967,6 +998,7 @@ window.PolarisBienvenida = (function(){
     $('pfUser').hidden = !usuario;
     $('pfGuestBar').hidden = !!usuario;
     if (usuario) $('pfUserName').textContent = usuario.nombre || usuario.email || '';
+    document.dispatchEvent(new Event('pf:sesion'));
   }
 
   // bienvenida = true solo cuando la API acaba de confirmar un registro o ingreso
@@ -1079,6 +1111,24 @@ window.PolarisBienvenida = (function(){
   } else {
     mostrarAcceso();
   }
+})();
+</script>
+<script>
+/* ---------------- Centro de ayuda en el portal ---------------- */
+(function(){
+  if (!window.Ayuda) { ['sideCentroAyuda', 'sideSeguimiento'].forEach(id => document.getElementById(id).hidden = true); document.querySelector('.ay-hero').hidden = true; return; }
+  const vista = window.Ayuda.embeber(document.getElementById('ayVistaApp'));
+  function abrirVista(link, cual){
+    setActiveSide(link);
+    vista.ir(cual);
+    window.scrollTo(0, 0);
+    document.getElementById('ayVistaTitulo').focus({ preventScroll:true });
+  }
+  sideCentroAyuda.addEventListener('click', () => abrirVista(sideCentroAyuda, 'inicio'));
+  sideSeguimiento.addEventListener('click', () => abrirVista(sideSeguimiento, 'mias'));
+  document.getElementById('ayHeroPreguntar').addEventListener('click', () => window.Ayuda.abrir('nueva', { origen:'feed' }));
+  // Al ingresar o cerrar sesión con el centro abierto, se vuelve a pintar con la cuenta correcta.
+  document.addEventListener('pf:sesion', () => { if (!document.getElementById('ayVista').hidden) vista.refrescar(); });
 })();
 </script>
 </body>

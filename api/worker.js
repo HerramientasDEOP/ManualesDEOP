@@ -52,6 +52,14 @@ export default {
         case '/session':     return await sesion(env, body);
         case '/manual-view': return await consultaManual(env, body);
         case '/logout':      return await logout(env, body);
+        case '/ayuda/faqs':         return await faqsPublicas(env);
+        case '/ayuda/faq-voto':     return await votarFaq(env, body);
+        case '/preguntas/crear':    return await crearPregunta(env, body);
+        case '/preguntas/mias':     return await misPreguntas(env, body);
+        case '/preguntas/detalle':  return await detallePregunta(env, body);
+        case '/preguntas/responder': return await responderUsuario(env, body);
+        case '/preguntas/calificar': return await calificarPregunta(env, body);
+        case '/preguntas/cerrar':   return await cerrarPregunta(env, body);
         default:             return json({ ok: false, error: 'ruta_no_existe' }, 404);
       }
     } catch (e) {
@@ -170,6 +178,12 @@ async function admin(env, path, body) {
     case '/admin/resumen':  return await adminResumen(env, body);
     case '/admin/usuarios': return await adminUsuarios(env, body);
     case '/admin/usuario':  return await adminUsuario(env, body);
+    case '/admin/preguntas':         return await adminPreguntas(env, body);
+    case '/admin/pregunta':          return await adminPregunta(env, body);
+    case '/admin/pregunta-responder': return await adminResponder(env, body);
+    case '/admin/pregunta-estado':   return await adminEstado(env, body);
+    case '/admin/faqs':              return await adminFaqs(env);
+    case '/admin/faq-guardar':       return await adminFaqGuardar(env, body);
     default:                return json({ ok: false, error: 'ruta_no_existe' }, 404);
   }
 }
@@ -346,6 +360,303 @@ async function adminUsuario(env, body) {
   const usuario = (u.results || [])[0];
   if (!usuario) return json({ ok: false, error: 'usuario_no_existe' }, 404);
   return json({ ok: true, usuario, accesos: a.results || [], consultas: c.results || [] });
+}
+
+// ---------- Centro de ayuda ----------
+// Una pregunta es una conversación: `preguntas` guarda el caso y `pregunta_mensajes` cada mensaje.
+// autor_tipo: 'usuario' | 'agente' | 'ia' | 'sistema'. Hoy responde 'agente' (panel admin).
+// Para el asistente de IA: generar la respuesta con `faqs` como base de conocimiento y llamar a
+// registrarRespuesta(env, id, { tipo: 'ia', nombre: 'Asistente POLARIS', contenido, metadatos }).
+const CATALOGO = {
+  POLARIS: ['Acceso y cuenta', 'Portal'],
+  Eureka: ['Tiempo real', 'Histórico'],
+  Orion: ['App', 'Tablero'],
+  Locomboo: ['App', 'Tablero', 'Cemento - Cemento', 'Cemento - Caracolito', 'Cemento - Portería', 'Cemento - Nómina'],
+};
+const CATEGORIAS = ['uso', 'error', 'dato', 'sugerencia'];
+const ESTADOS = ['abierta', 'en_proceso', 'respondida', 'cerrada'];
+const MAX_PREGUNTAS_HORA = 8;
+const MAX_MENSAJES_HORA = 30;
+const NOMBRE_AGENTE = 'Equipo POLARIS';
+const SIN_SESION = () => json({ ok: false, error: 'sesion_invalida', mensaje: 'Tu sesión terminó. Ingresa de nuevo para continuar.' }, 401);
+const NO_EXISTE = () => json({ ok: false, error: 'pregunta_no_existe', mensaje: 'No encontramos esa pregunta.' }, 404);
+
+// Texto de varias líneas: quita caracteres de control y exige un largo entre min y max.
+function limpiarLargo(v, min, max) {
+  if (typeof v !== 'string') return null;
+  const t = v.replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '').trim();
+  return t.length >= min && t.length <= max ? t : null;
+}
+const idValido = (v) => { const n = Number(v); return Number.isInteger(n) && n > 0 ? n : null; };
+
+// Devuelve { herramienta, seccion } si la combinación existe en el catálogo; seccion puede ser null ("no estoy seguro").
+function destinoValido(herramienta, seccion) {
+  if (typeof herramienta !== 'string' || !Object.prototype.hasOwnProperty.call(CATALOGO, herramienta)) return null;
+  if (seccion === null || seccion === undefined || seccion === '') return { herramienta, seccion: null };
+  return CATALOGO[herramienta].includes(seccion) ? { herramienta, seccion } : null;
+}
+
+async function faqsPublicas(env) {
+  const r = await env.DB.prepare(
+    `SELECT id, herramienta, seccion, pregunta, respuesta, util_si, util_no
+     FROM faqs WHERE activa = 1 ORDER BY herramienta, orden, id`).all();
+  return json({ ok: true, faqs: r.results || [] });
+}
+
+async function votarFaq(env, body) {
+  const id = idValido(body.faq_id);
+  if (!id || typeof body.util !== 'boolean') return json({ ok: false, error: 'voto_invalido' }, 400);
+  const campo = body.util ? 'util_si' : 'util_no';
+  await env.DB.prepare(`UPDATE faqs SET ${campo} = ${campo} + 1 WHERE id = ? AND activa = 1`).bind(id).run();
+  return json({ ok: true });
+}
+
+async function crearPregunta(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const destino = destinoValido(body.herramienta, body.seccion);
+  if (!destino) return json({ ok: false, error: 'herramienta_invalida', mensaje: 'Elige la herramienta sobre la que tienes la duda.' }, 400);
+  const categoria = CATEGORIAS.includes(body.categoria) ? body.categoria : 'uso';
+  const titulo = limpiarLargo(body.titulo, 5, 140);
+  if (!titulo) return json({ ok: false, error: 'titulo_invalido', mensaje: 'Escribe tu pregunta (entre 5 y 140 caracteres).' }, 400);
+  const detalle = body.detalle ? limpiarLargo(body.detalle, 0, 2000) : '';
+  if (detalle === null) return json({ ok: false, error: 'detalle_invalido', mensaje: 'El detalle no puede pasar de 2000 caracteres.' }, 400);
+  const pagina = limpiarTexto(body.pagina, 80);
+  const origen = ['feed', 'herramienta', 'contexto', 'centro'].includes(body.origen) ? body.origen : 'centro';
+
+  const rec = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM preguntas WHERE usuario_id = ? AND creada_en > datetime('now', '-1 hour')"
+  ).bind(s.usuario_id).first();
+  if (rec.n >= MAX_PREGUNTAS_HORA) {
+    return json({ ok: false, error: 'demasiadas_preguntas', mensaje: 'Enviaste varias preguntas seguidas. Espera un momento antes de hacer otra.' }, 429);
+  }
+  const ins = await env.DB.prepare(
+    `INSERT INTO preguntas (usuario_id, herramienta, seccion, pagina, categoria, titulo, detalle, origen)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(s.usuario_id, destino.herramienta, destino.seccion, pagina, categoria, titulo, detalle, origen).run();
+  return json({ ok: true, id: ins.meta.last_row_id });
+}
+
+const CAMPOS_PREGUNTA = (p) => `${p}id, ${p}herramienta, ${p}seccion, ${p}pagina, ${p}categoria, ${p}titulo, ${p}detalle, ${p}estado, ${p}origen, ${p}calificacion,
+  ${col(p + 'creada_en')} AS creada_en, ${col(p + 'actualizada_en')} AS actualizada_en,
+  CASE WHEN ${p}respondida_en IS NULL THEN NULL ELSE ${col(p + 'respondida_en')} END AS respondida_en`;
+
+async function misPreguntas(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const r = await env.DB.prepare(
+    `SELECT ${CAMPOS_PREGUNTA('p.')}, p.no_leido_usuario AS no_leido,
+       (SELECT m.contenido FROM pregunta_mensajes m WHERE m.pregunta_id = p.id AND m.interno = 0 AND m.autor_tipo <> 'sistema'
+        ORDER BY m.id DESC LIMIT 1) AS ultimo_mensaje
+     FROM preguntas p WHERE p.usuario_id = ? ORDER BY p.actualizada_en DESC, p.id DESC LIMIT 200`
+  ).bind(s.usuario_id).all();
+  const preguntas = r.results || [];
+  return json({ ok: true, preguntas, no_leidas: preguntas.filter((x) => x.no_leido).length });
+}
+
+async function preguntaDe(env, id, usuarioId) {
+  return env.DB.prepare(`SELECT ${CAMPOS_PREGUNTA('')} FROM preguntas WHERE id = ? AND usuario_id = ?`).bind(id, usuarioId).first();
+}
+async function mensajesDe(env, id, conInternos) {
+  const r = await env.DB.prepare(
+    `SELECT id, autor_tipo, autor_nombre, contenido, interno, ${col('creado_en')} AS creado_en
+     FROM pregunta_mensajes WHERE pregunta_id = ?${conInternos ? '' : ' AND interno = 0'} ORDER BY id`
+  ).bind(id).all();
+  return r.results || [];
+}
+
+async function detallePregunta(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const id = idValido(body.id);
+  const pregunta = id && await preguntaDe(env, id, s.usuario_id);
+  if (!pregunta) return NO_EXISTE();
+  const mensajes = await mensajesDe(env, id, false);
+  await env.DB.prepare('UPDATE preguntas SET no_leido_usuario = 0 WHERE id = ?').bind(id).run();
+  return json({ ok: true, pregunta, mensajes });
+}
+
+async function responderUsuario(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const id = idValido(body.id);
+  const pregunta = id && await preguntaDe(env, id, s.usuario_id);
+  if (!pregunta) return NO_EXISTE();
+  const contenido = limpiarLargo(body.contenido, 1, 2000);
+  if (!contenido) return json({ ok: false, error: 'mensaje_invalido', mensaje: 'Escribe tu mensaje (máximo 2000 caracteres).' }, 400);
+  const rec = await env.DB.prepare(
+    `SELECT COUNT(*) AS n FROM pregunta_mensajes m JOIN preguntas p ON p.id = m.pregunta_id
+     WHERE p.usuario_id = ? AND m.autor_tipo = 'usuario' AND m.creado_en > datetime('now', '-1 hour')`
+  ).bind(s.usuario_id).first();
+  if (rec.n >= MAX_MENSAJES_HORA) {
+    return json({ ok: false, error: 'demasiados_mensajes', mensaje: 'Enviaste muchos mensajes seguidos. Espera un momento.' }, 429);
+  }
+  await env.DB.batch([
+    env.DB.prepare("INSERT INTO pregunta_mensajes (pregunta_id, autor_tipo, autor_nombre, contenido) VALUES (?, 'usuario', ?, ?)")
+      .bind(id, s.nombre, contenido),
+    // Si ya estaba respondida o cerrada, vuelve a la bandeja del equipo.
+    env.DB.prepare(
+      `UPDATE preguntas SET no_leido_admin = 1, actualizada_en = datetime('now'), cerrada_en = NULL,
+         estado = CASE WHEN estado IN ('respondida', 'cerrada') THEN 'en_proceso' ELSE estado END
+       WHERE id = ?`).bind(id),
+  ]);
+  return json({ ok: true });
+}
+
+async function calificarPregunta(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const id = idValido(body.id);
+  const pregunta = id && await preguntaDe(env, id, s.usuario_id);
+  if (!pregunta) return NO_EXISTE();
+  if (typeof body.util !== 'boolean') return json({ ok: false, error: 'voto_invalido' }, 400);
+  if (pregunta.estado !== 'respondida') return json({ ok: false, error: 'no_respondida', mensaje: 'Esta pregunta todavía no tiene una respuesta para calificar.' }, 409);
+  if (body.util) {
+    await env.DB.prepare(
+      `UPDATE preguntas SET calificacion = 1, estado = 'cerrada', cerrada_en = datetime('now'), actualizada_en = datetime('now') WHERE id = ?`
+    ).bind(id).run();
+  } else {
+    await env.DB.batch([
+      env.DB.prepare("INSERT INTO pregunta_mensajes (pregunta_id, autor_tipo, autor_nombre, contenido) VALUES (?, 'sistema', 'POLARIS', ?)")
+        .bind(id, 'La respuesta no resolvió la duda. El caso volvió a revisión.'),
+      env.DB.prepare(
+        `UPDATE preguntas SET calificacion = -1, estado = 'en_proceso', no_leido_admin = 1, actualizada_en = datetime('now') WHERE id = ?`
+      ).bind(id),
+    ]);
+  }
+  return json({ ok: true });
+}
+
+async function cerrarPregunta(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const id = idValido(body.id);
+  const pregunta = id && await preguntaDe(env, id, s.usuario_id);
+  if (!pregunta) return NO_EXISTE();
+  await env.DB.prepare(
+    `UPDATE preguntas SET estado = 'cerrada', cerrada_en = datetime('now'), actualizada_en = datetime('now'), no_leido_admin = 0 WHERE id = ?`
+  ).bind(id).run();
+  return json({ ok: true });
+}
+
+// Único punto por donde entra una respuesta (hoy el panel admin; mañana también el asistente de IA).
+async function registrarRespuesta(env, id, r) {
+  const stmts = [env.DB.prepare(
+    'INSERT INTO pregunta_mensajes (pregunta_id, autor_tipo, autor_nombre, contenido, interno, metadatos) VALUES (?, ?, ?, ?, ?, ?)'
+  ).bind(id, r.tipo, r.nombre, r.contenido, r.interno ? 1 : 0, r.metadatos ? JSON.stringify(r.metadatos) : null)];
+  if (!r.interno) {
+    stmts.push(env.DB.prepare(
+      `UPDATE preguntas SET estado = 'respondida', respondida_en = COALESCE(respondida_en, datetime('now')),
+         actualizada_en = datetime('now'), cerrada_en = NULL, no_leido_usuario = 1, no_leido_admin = 0 WHERE id = ?`
+    ).bind(id));
+  }
+  await env.DB.batch(stmts);
+}
+
+async function adminPreguntas(env, body) {
+  const donde = [], params = [];
+  if (ESTADOS.includes(body.estado)) { donde.push('p.estado = ?'); params.push(body.estado); }
+  if (typeof body.herramienta === 'string' && CATALOGO[body.herramienta]) { donde.push('p.herramienta = ?'); params.push(body.herramienta); }
+  const q = limpiarTexto(body.q, 80);
+  if (q) {
+    const like = '%' + q.replace(/[\\%_]/g, '\\$&') + '%';
+    donde.push("(p.titulo LIKE ? ESCAPE '\\' OR p.detalle LIKE ? ESCAPE '\\' OR u.nombre LIKE ? ESCAPE '\\' OR u.email LIKE ? ESCAPE '\\')");
+    params.push(like, like, like, like);
+  }
+  const where = donde.length ? 'WHERE ' + donde.join(' AND ') : '';
+  const [lista, est, por, tiempos] = await env.DB.batch([
+    env.DB.prepare(
+      `SELECT ${CAMPOS_PREGUNTA('p.')}, p.no_leido_admin AS no_leido, u.nombre, u.email
+       FROM preguntas p JOIN usuarios u ON u.id = p.usuario_id ${where}
+       ORDER BY p.no_leido_admin DESC, p.actualizada_en DESC, p.id DESC LIMIT 300`).bind(...params),
+    env.DB.prepare('SELECT estado, COUNT(*) AS n FROM preguntas GROUP BY estado'),
+    env.DB.prepare('SELECT herramienta, COUNT(*) AS n FROM preguntas GROUP BY herramienta ORDER BY n DESC'),
+    env.DB.prepare(
+      `SELECT AVG((julianday(respondida_en) - julianday(creada_en)) * 24) AS horas,
+              SUM(CASE WHEN calificacion = 1 THEN 1 ELSE 0 END) AS util_si,
+              SUM(CASE WHEN calificacion = -1 THEN 1 ELSE 0 END) AS util_no
+       FROM preguntas`),
+  ]);
+  const t = (tiempos.results || [])[0] || {};
+  return json({
+    ok: true,
+    preguntas: lista.results || [],
+    por_estado: Object.fromEntries((est.results || []).map((r) => [r.estado, r.n])),
+    por_herramienta: por.results || [],
+    horas_primera_respuesta: t.horas == null ? null : Math.round(t.horas * 10) / 10,
+    util_si: t.util_si || 0,
+    util_no: t.util_no || 0,
+  });
+}
+
+async function adminPregunta(env, body) {
+  const id = idValido(body.id);
+  const pregunta = id && await env.DB.prepare(
+    `SELECT ${CAMPOS_PREGUNTA('p.')}, p.faq_id, u.nombre, u.email FROM preguntas p JOIN usuarios u ON u.id = p.usuario_id WHERE p.id = ?`
+  ).bind(id).first();
+  if (!pregunta) return NO_EXISTE();
+  const mensajes = await mensajesDe(env, id, true);
+  await env.DB.prepare('UPDATE preguntas SET no_leido_admin = 0 WHERE id = ?').bind(id).run();
+  return json({ ok: true, pregunta, mensajes });
+}
+
+async function adminResponder(env, body) {
+  const id = idValido(body.id);
+  const existe = id && await env.DB.prepare('SELECT id FROM preguntas WHERE id = ?').bind(id).first();
+  if (!existe) return NO_EXISTE();
+  const contenido = limpiarLargo(body.contenido, 1, 4000);
+  if (!contenido) return json({ ok: false, error: 'mensaje_invalido', mensaje: 'Escribe la respuesta (máximo 4000 caracteres).' }, 400);
+  await registrarRespuesta(env, id, { tipo: 'agente', nombre: NOMBRE_AGENTE, contenido, interno: body.interno === true });
+  return json({ ok: true });
+}
+
+async function adminEstado(env, body) {
+  const id = idValido(body.id);
+  if (!id || !ESTADOS.includes(body.estado)) return json({ ok: false, error: 'estado_invalido', mensaje: 'Estado no válido.' }, 400);
+  const r = await env.DB.prepare(
+    `UPDATE preguntas SET estado = ?, actualizada_en = datetime('now'),
+       cerrada_en = CASE WHEN ? = 'cerrada' THEN datetime('now') ELSE NULL END WHERE id = ?`
+  ).bind(body.estado, body.estado, id).run();
+  if (!r.meta.changes) return NO_EXISTE();
+  return json({ ok: true });
+}
+
+async function adminFaqs(env) {
+  const r = await env.DB.prepare(
+    `SELECT id, herramienta, seccion, pregunta, respuesta, activa, util_si, util_no, pregunta_origen_id
+     FROM faqs ORDER BY herramienta, orden, id`).all();
+  return json({ ok: true, faqs: r.results || [] });
+}
+
+async function adminFaqGuardar(env, body) {
+  const destino = destinoValido(body.herramienta, body.seccion);
+  if (!destino) return json({ ok: false, error: 'herramienta_invalida', mensaje: 'Elige la herramienta de la pregunta frecuente.' }, 400);
+  const pregunta = limpiarLargo(body.pregunta, 5, 200);
+  const respuesta = limpiarLargo(body.respuesta, 5, 4000);
+  if (!pregunta || !respuesta) return json({ ok: false, error: 'faq_invalida', mensaje: 'Escribe la pregunta y la respuesta.' }, 400);
+  const activa = body.activa === false ? 0 : 1;
+  const id = idValido(body.id);
+  const origen = idValido(body.pregunta_origen_id);
+  try {
+    if (id) {
+      const r = await env.DB.prepare(
+        `UPDATE faqs SET herramienta = ?, seccion = ?, pregunta = ?, respuesta = ?, activa = ?, actualizada_en = datetime('now') WHERE id = ?`
+      ).bind(destino.herramienta, destino.seccion, pregunta, respuesta, activa, id).run();
+      if (!r.meta.changes) return json({ ok: false, error: 'faq_no_existe', mensaje: 'No encontramos esa pregunta frecuente.' }, 404);
+      return json({ ok: true, id });
+    }
+    const ins = await env.DB.prepare(
+      'INSERT INTO faqs (herramienta, seccion, pregunta, respuesta, activa, pregunta_origen_id) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(destino.herramienta, destino.seccion, pregunta, respuesta, activa, origen).run();
+    const nuevo = ins.meta.last_row_id;
+    if (origen) await env.DB.prepare('UPDATE preguntas SET faq_id = ? WHERE id = ?').bind(nuevo, origen).run();
+    return json({ ok: true, id: nuevo });
+  } catch (e) {
+    if (String(e.message).includes('UNIQUE')) {
+      return json({ ok: false, error: 'faq_repetida', mensaje: 'Ya existe una pregunta frecuente igual para esa herramienta.' }, 409);
+    }
+    throw e;
+  }
 }
 
 // ---------- Ayudas ----------
