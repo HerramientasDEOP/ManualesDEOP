@@ -2310,6 +2310,8 @@ vivo (se refresca cada 30 s), indicadores, distribución de respuestas, quiénes
 abiertas, ranking acumulado, CSV para Excel y editor del reto (pregunta, 2 a 6 opciones, correcta, fechas, publicado). Con
 participantes no deja cambiar cuántas opciones hay.
 
+**Borrar intentos (2026-11-18):** en la tabla del reto se marcan personas (también las que empezaron y no respondieron) y se borran sus intentos solo de ese reto o de todos (/admin/coliseo-borrar, pide confirmación). Sirve para limpiar las pruebas antes de lanzar. La cuenta de POLARIS de la persona no se borra y puede volver a jugar.
+
 **API:** con `token`: `/coliseo/estado`, `/coliseo/iniciar`, `/coliseo/responder`, `/coliseo/herramienta`, `/coliseo/tabla`.
 Con `clave`: `/admin/coliseo`, `/admin/coliseo-guardar`.
 

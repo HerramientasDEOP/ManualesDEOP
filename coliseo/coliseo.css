@@ -35,7 +35,7 @@ img{max-width:100%;}
 .co-volver{display:inline-flex;align-items:center;gap:6px;color:var(--marino);text-decoration:none;padding:4px 8px 4px 2px;border-radius:8px;}
 .co-volver:hover{background:#efe3cc;}
 .co-volver img{height:30px;width:auto;display:block;}
-.co-top-cemex{height:34px;width:auto;margin-left:auto;}
+.co-top-cemex{height:30px;width:auto;margin-left:auto;}
 .co-user{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--suave);padding-left:16px;border-left:1px solid var(--borde);}
 .co-user strong{color:var(--marino);}
 

@@ -76,8 +76,8 @@
         <div class="ad-table-head"><h2 class="ad-card-title">Tabla de puntuaciones</h2>
           <span class="ad-count">${r.estado === 'abierto' ? 'En vivo: se actualiza cada 30 s' : `${num(rk.length)} participantes`}</span></div>
         <div class="ad-table-wrap ad-scroll">
-          <table class="ad-table ac-tabla"><thead><tr><th class="num">Puesto</th><th>Participante</th><th>Respuesta</th><th class="num">Tiempo</th><th class="num">Puntos</th><th>Herramientas abiertas</th><th>Respondió</th></tr></thead>
-          <tbody>${rk.map(x => `<tr><td class="num"><strong>${x.puesto <= 3 ? `<span class="ac-med m${x.puesto}"></span>` : ''}#${x.puesto}</strong></td>
+          <table class="ad-table ac-tabla"><thead><tr><th class="ac-chk"><input type="checkbox" data-marcar-todos aria-label="Marcar a todos"></th><th class="num">Puesto</th><th>Participante</th><th>Respuesta</th><th class="num">Tiempo</th><th class="num">Puntos</th><th>Herramientas abiertas</th><th>Respondió</th></tr></thead>
+          <tbody>${rk.map(x => `<tr><td class="ac-chk"><input type="checkbox" data-usuario="${x.usuario_id}" data-nombre="${esc(x.nombre)}" aria-label="Marcar a ${esc(x.nombre)}"></td><td class="num"><strong>${x.puesto <= 3 ? `<span class="ac-med m${x.puesto}"></span>` : ''}#${x.puesto}</strong></td>
             <td><strong>${esc(x.nombre)}</strong><br><small>${esc(x.email)}</small></td>
             <td><span class="${x.correcta ? 'ac-si' : 'ac-no'}">${x.correcta ? '✓' : '✗'} ${esc(x.respuesta)}</span></td>
             <td class="num">${esc(tiempo(x.tiempo_ms))}</td><td class="num"><strong>${num(x.puntos)}</strong></td>
@@ -86,7 +86,12 @@
         </div>
         ${rk.length ? '' : '<div class="ad-empty" style="margin-top:10px;">Todavía nadie ha respondido este reto.</div>'}
         ${datos.pendientes.length ? `<details class="ac-pend"><summary>${datos.pendientes.length} ${datos.pendientes.length === 1 ? 'persona empezó' : 'personas empezaron'} y no ha respondido</summary>
-          <ul>${datos.pendientes.map(p => `<li><strong>${esc(p.nombre)}</strong> · ${esc(p.email)} · empezó ${esc(fecha(p.inicio_ms))}</li>`).join('')}</ul></details>` : ''}
+          <ul>${datos.pendientes.map(p => `<li><label><input type="checkbox" data-usuario="${p.usuario_id}" data-nombre="${esc(p.nombre)}"> <strong>${esc(p.nombre)}</strong> · ${esc(p.email)} · empezó ${esc(fecha(p.inicio_ms))}</label></li>`).join('')}</ul></details>` : ''}
+        ${rk.length || datos.pendientes.length ? `<div class="ac-borrar">
+          <span id="acSelCuenta">Marca a las personas cuyos intentos quieras borrar (por ejemplo, las pruebas).</span>
+          <select class="ad-text" id="acBorrarAlcance" aria-label="Qué borrar"><option value="reto">Solo de ${esc(r.titulo)}</option><option value="todos">De todos los retos</option></select>
+          <button type="button" class="ad-btn ad-btn-sm ac-btn-peligro" id="acBorrar" disabled>Borrar intentos</button>
+        </div>` : ''}
       </section>
       <div id="acEditor"></div>`;
   }
@@ -190,6 +195,7 @@
     }
     else if (b.dataset.editar) abrirEditor(datos.retos.find(r => r.id === Number(b.dataset.editar)));
     else if (b.hasAttribute('data-csv')) csv();
+    else if (b.id === 'acBorrar') borrar();
     else if (b.id === 'acCancelar'){ editando = null; $('acEditor').innerHTML = ''; }
     else if (b.id === 'acMasOp'){
       const n = $('acOps').querySelectorAll('.ac-op').length;
@@ -200,6 +206,25 @@
       $('acOps').querySelectorAll('.ac-op').forEach((f, i) => { f.querySelector('input[type=radio]').value = i; f.querySelector('.ad-text').placeholder = 'Opción ' + 'ABCDEF'[i]; });
     }
   });
+  function marcados(){ return [...$('adColiseo').querySelectorAll('input[data-usuario]:checked')]; }
+  $('adColiseo').addEventListener('change', e => {
+    if (e.target.matches('[data-marcar-todos]')) $('adColiseo').querySelectorAll('.ac-tabla input[data-usuario]').forEach(c => { c.checked = e.target.checked; });
+    if (!e.target.matches('input[type=checkbox]') || !$('acBorrar')) return;
+    const n = new Set(marcados().map(c => c.dataset.usuario)).size;
+    $('acBorrar').disabled = !n;
+    $('acSelCuenta').textContent = n ? `${n} ${n === 1 ? 'persona marcada' : 'personas marcadas'}` : 'Marca a las personas cuyos intentos quieras borrar (por ejemplo, las pruebas).';
+  });
+  function borrar(){
+    const cajas = marcados(), ids = [...new Set(cajas.map(c => Number(c.dataset.usuario)))];
+    const nombres = [...new Set(cajas.map(c => c.dataset.nombre))];
+    const todos = $('acBorrarAlcance').value === 'todos';
+    const r = datos.retos.find(x => x.id === sel);
+    const donde = todos ? 'de TODOS los retos' : `del ${r ? r.titulo : 'reto'}`;
+    if (!ids.length || !window.confirm(`Vas a borrar los intentos ${donde} de:\n\n${nombres.join('\n')}\n\nSus respuestas, tiempos y puntos desaparecen y podrán volver a jugar. No se puede deshacer. ¿Continuar?`)) return;
+    App.ejecutar(() => api('/admin/coliseo-borrar', { reto_id:sel, usuario_ids:ids, todos }).then(d => cargar().then(() => {
+      $('acSelCuenta').textContent = `Listo: ${d.borrados} ${d.borrados === 1 ? 'intento borrado' : 'intentos borrados'}.`;
+    })));
+  }
   $('adColiseo').addEventListener('submit', e => { if (e.target.id === 'acForm'){ e.preventDefault(); guardarEditor(); } });
 
   // Al abrir la pestaña: cargar y, mientras esté visible y no se esté editando, refrescar cada 30 s.

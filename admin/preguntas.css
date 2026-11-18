@@ -111,3 +111,12 @@
 .ac-op .ad-text{flex:1;}
 .ac-aviso{margin:6px 0 0;padding:8px 12px;border-radius:8px;background:#fff8e6;color:#5f4b00;font-size:12.5px;}
 @media (max-width:860px){ .ac-fila3{grid-template-columns:1fr;} .ac-dist-f{grid-template-columns:1fr 1fr 32px;} }
+
+.ac-chk{width:34px;text-align:center;}
+.ac-chk input,.ac-pend input{width:16px;height:16px;cursor:pointer;vertical-align:middle;}
+.ac-pend label{cursor:pointer;}
+.ac-borrar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding:12px 14px;border-radius:10px;background:#fbf2f2;border:1px dashed #e4b4b8;font-size:13px;color:var(--cx-muted);}
+.ac-borrar span{flex:1 1 240px;}
+.ac-borrar select{width:auto;flex:0 0 auto;}
+.ac-btn-peligro{background:#a8141d !important;border-color:#a8141d !important;color:#fff !important;}
+.ac-btn-peligro:disabled{opacity:.45;cursor:default;}

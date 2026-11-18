@@ -191,6 +191,7 @@ async function admin(env, path, body) {
     case '/admin/faq-guardar':       return await adminFaqGuardar(env, body);
     case '/admin/coliseo':           return await adminColiseo(env, body);
     case '/admin/coliseo-guardar':   return await adminColiseoGuardar(env, body);
+    case '/admin/coliseo-borrar':    return await adminColiseoBorrar(env, body);
     default:                return json({ ok: false, error: 'ruta_no_existe' }, 404);
   }
 }
@@ -862,7 +863,7 @@ async function adminColiseo(env, body) {
       return { ...x, herramientas: h, respuesta: sel.opciones[x.opcion] };
     });
     pendientes = (await env.DB.prepare(
-      `SELECT u.nombre, u.email, i.inicio_ms FROM coliseo_intentos i JOIN usuarios u ON u.id = i.usuario_id
+      `SELECT i.usuario_id, u.nombre, u.email, i.inicio_ms FROM coliseo_intentos i JOIN usuarios u ON u.id = i.usuario_id
        WHERE i.reto_id = ? AND i.respondido_ms IS NULL ORDER BY i.inicio_ms`).bind(sel.id).all()).results || [];
     distribucion = sel.opciones.map((texto, n) => ({ texto, correcta: n === sel.correcta, n: ranking.filter((x) => x.opcion === n).length }));
   }
@@ -876,6 +877,23 @@ async function adminColiseo(env, body) {
   detalle.forEach((d) => { (porUsuario[d.usuario_id] = porUsuario[d.usuario_id] || {})[d.reto_id] = d.puntos; });
   return json({ ok: true, ahora_ms: ahora, retos: lista, seleccionado: sel ? sel.id : null, ranking, pendientes, distribucion,
     general: general.map((g) => ({ ...g, por_reto: porUsuario[g.usuario_id] || {} })) });
+}
+
+// Borra intentos (para limpiar pruebas o casos puntuales). Solo toca coliseo_intentos: la cuenta de la persona sigue existiendo.
+// reto_id: borra solo en ese reto; todos: true borra a esas personas en todos los retos.
+async function adminColiseoBorrar(env, body) {
+  const ids = Array.isArray(body.usuario_ids) ? [...new Set(body.usuario_ids.map(idValido).filter(Boolean))] : [];
+  if (!ids.length || ids.length > 500) return json({ ok: false, error: 'seleccion_invalida', mensaje: 'Elige al menos una persona.' }, 400);
+  const marcas = ids.map(() => '?').join(',');
+  let r;
+  if (body.todos === true) {
+    r = await env.DB.prepare(`DELETE FROM coliseo_intentos WHERE usuario_id IN (${marcas})`).bind(...ids).run();
+  } else {
+    const reto = idValido(body.reto_id);
+    if (!reto) return json({ ok: false, error: 'reto_invalido', mensaje: 'Elige el reto.' }, 400);
+    r = await env.DB.prepare(`DELETE FROM coliseo_intentos WHERE reto_id = ? AND usuario_id IN (${marcas})`).bind(reto, ...ids).run();
+  }
+  return json({ ok: true, borrados: r.meta.changes || 0 });
 }
 
 // Fecha y hora de Colombia "AAAA-MM-DDTHH:MM" -> milisegundos UTC
