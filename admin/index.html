@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Métricas de Manuales · POLARIS</title>
 <link rel="icon" type="image/png" sizes="32x32" href="../Recursos/polaris/polaris-icono-32.png">
-<link rel="stylesheet" href="preguntas.css?v=1">
+<link rel="stylesheet" href="preguntas.css?v=2">
 <style>
   :root{
     --cx-navy:#101066;
@@ -266,6 +266,7 @@
         <button type="button" class="ap-tab on" role="tab" aria-selected="true" data-ad-tab="metricas">Métricas</button>
         <button type="button" class="ap-tab" role="tab" aria-selected="false" data-ad-tab="preguntas">Preguntas <span class="ap-badge" id="adPBadge" hidden>0</span></button>
         <button type="button" class="ap-tab" role="tab" aria-selected="false" data-ad-tab="faqs">Preguntas frecuentes</button>
+        <button type="button" class="ap-tab" role="tab" aria-selected="false" data-ad-tab="coliseo">Coliseo <span class="ap-badge" id="acBadge" hidden>0</span></button>
       </div>
       <button type="button" class="ad-btn ad-btn-sec ad-btn-sm" id="adSalir">Salir</button>
     </div>
@@ -318,6 +319,18 @@
       </div>
       <div class="ad-empty" id="adFVacio" hidden style="margin-top:10px;">No hay preguntas frecuentes con estos filtros.</div>
     </section>
+  </main>
+
+  <main class="ad-main" id="adColiseo" hidden>
+    <section class="ad-panel ad-filters" aria-label="Retos del Coliseo">
+      <div class="ad-filter-group">
+        <span>Resultados del Coliseo</span>
+        <div class="ad-seg ac-seg" id="acRetos" role="group"></div>
+      </div>
+      <button type="button" class="ad-btn ad-btn-sec ad-btn-sm" id="acNuevo">Nuevo reto</button>
+      <a class="ad-btn ad-btn-sec ad-btn-sm" href="../coliseo/index.html" target="_blank" rel="noopener">Ver la arena</a>
+    </section>
+    <div id="acCuerpo"></div>
   </main>
 
   <main class="ad-main" id="adMetricas">
@@ -876,6 +889,7 @@
   else $('adClave').focus();
 })();
 </script>
-<script src="preguntas.js?v=1"></script>
+<script src="preguntas.js?v=2"></script>
+<script src="coliseo.js?v=1"></script>
 </body>
 </html>

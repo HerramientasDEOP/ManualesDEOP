@@ -31,6 +31,7 @@
     $('adMetricas').hidden = tab !== 'metricas';
     $('adPreguntas').hidden = tab !== 'preguntas';
     $('adFaqs').hidden = tab !== 'faqs';
+    $('adColiseo').hidden = tab !== 'coliseo';
     if (tab === 'preguntas') App.ejecutar(cargarLista);
     if (tab === 'faqs') App.ejecutar(cargarFaqs);
   }

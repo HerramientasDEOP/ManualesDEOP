@@ -60,6 +60,11 @@ export default {
         case '/preguntas/responder': return await responderUsuario(env, body);
         case '/preguntas/calificar': return await calificarPregunta(env, body);
         case '/preguntas/cerrar':   return await cerrarPregunta(env, body);
+        case '/coliseo/estado':      return await coliseoEstado(env, body);
+        case '/coliseo/iniciar':     return await coliseoIniciar(env, body);
+        case '/coliseo/responder':   return await coliseoResponder(env, body);
+        case '/coliseo/herramienta': return await coliseoHerramienta(env, body);
+        case '/coliseo/tabla':       return await coliseoTabla(env, body);
         default:             return json({ ok: false, error: 'ruta_no_existe' }, 404);
       }
     } catch (e) {
@@ -184,6 +189,8 @@ async function admin(env, path, body) {
     case '/admin/pregunta-estado':   return await adminEstado(env, body);
     case '/admin/faqs':              return await adminFaqs(env);
     case '/admin/faq-guardar':       return await adminFaqGuardar(env, body);
+    case '/admin/coliseo':           return await adminColiseo(env, body);
+    case '/admin/coliseo-guardar':   return await adminColiseoGuardar(env, body);
     default:                return json({ ok: false, error: 'ruta_no_existe' }, 404);
   }
 }
@@ -657,6 +664,259 @@ async function adminFaqGuardar(env, body) {
     }
     throw e;
   }
+}
+
+// ---------- El Coliseo: retos semanales ----------
+// Cada reto es una pregunta de opción múltiple abierta de lunes 00:00 a domingo 23:59 (hora de Colombia).
+// El tiempo lo mide el servidor: empieza cuando termina la cuenta regresiva (inicio_ms) y para al responder.
+// La respuesta correcta nunca sale del servidor mientras el reto está abierto.
+// Puntos: correcta = 1000 + bono de velocidad (500 al instante, baja hasta 0 a los 30 min); incorrecta = 100 por participar.
+const COLISEO = {
+  PUNTOS_CORRECTA: 1000,
+  BONO_MAX: 500,
+  BONO_MS: 30 * 60 * 1000,
+  PUNTOS_PARTICIPACION: 100,
+  CUENTA_MS: 3000,          // la pregunta aparece al terminar la cuenta 3, 2, 1
+  GRACIA_MS: 2 * 60 * 1000, // margen para enviar si el reto cierra mientras alguien responde
+  TOP_TABLA: 100,
+};
+const HERRAMIENTAS_COLISEO = ['Orion', 'Locomboo', 'Eureka Histórico', 'Eureka Tiempo real'];
+const PUNTOS_SQL = `CASE WHEN i.opcion = r.correcta
+    THEN ${COLISEO.PUNTOS_CORRECTA} + CAST(${COLISEO.BONO_MAX} * MAX(0, 1 - i.tiempo_ms * 1.0 / ${COLISEO.BONO_MS}) AS INTEGER)
+    ELSE ${COLISEO.PUNTOS_PARTICIPACION} END`;
+
+function estadoReto(r, ahora) {
+  if (ahora < r.abre_ms) return 'proximo';
+  if (ahora > r.cierra_ms) return 'cerrado';
+  return r.publicado ? 'abierto' : 'pendiente';
+}
+const opcionesDe = (r) => { try { const o = JSON.parse(r.opciones || '[]'); return Array.isArray(o) ? o : []; } catch { return []; } };
+
+// Posiciones de un reto: más puntos primero; a igual puntaje, menor tiempo; luego quien respondió antes.
+async function rankingReto(env, retoId, conCorreo) {
+  const r = await env.DB.prepare(
+    `SELECT i.usuario_id, u.nombre${conCorreo ? ', u.email' : ''}, i.opcion, i.tiempo_ms, i.respondido_ms, i.herramientas,
+            (i.opcion = r.correcta) AS correcta, ${PUNTOS_SQL} AS puntos
+     FROM coliseo_intentos i JOIN usuarios u ON u.id = i.usuario_id JOIN coliseo_retos r ON r.id = i.reto_id
+     WHERE i.reto_id = ? AND i.respondido_ms IS NOT NULL
+     ORDER BY puntos DESC, i.tiempo_ms ASC, i.respondido_ms ASC`
+  ).bind(retoId).all();
+  return (r.results || []).map((x, n) => ({ ...x, puesto: n + 1, correcta: !!x.correcta }));
+}
+// Acumulado: suma de puntos de los retos indicados; a igual puntaje, menor tiempo total.
+async function rankingGeneral(env, retoIds, conCorreo) {
+  if (!retoIds.length) return [];
+  const marcas = retoIds.map(() => '?').join(',');
+  const r = await env.DB.prepare(
+    `SELECT i.usuario_id, u.nombre${conCorreo ? ', u.email' : ''}, SUM(${PUNTOS_SQL}) AS puntos, SUM(i.tiempo_ms) AS tiempo_ms,
+            COUNT(*) AS retos, SUM(CASE WHEN i.opcion = r.correcta THEN 1 ELSE 0 END) AS correctas
+     FROM coliseo_intentos i JOIN usuarios u ON u.id = i.usuario_id JOIN coliseo_retos r ON r.id = i.reto_id
+     WHERE i.respondido_ms IS NOT NULL AND i.reto_id IN (${marcas})
+     GROUP BY i.usuario_id ORDER BY puntos DESC, tiempo_ms ASC`
+  ).bind(...retoIds).all();
+  return (r.results || []).map((x, n) => ({ ...x, puesto: n + 1 }));
+}
+const filaPublica = (x, yo) => ({ puesto: x.puesto, nombre: x.nombre, puntos: x.puntos, tiempo_ms: x.tiempo_ms,
+  correcta: x.correcta, correctas: x.correctas, retos: x.retos, yo: x.usuario_id === yo });
+
+async function coliseoEstado(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const ahora = Date.now();
+  const [retos, mios] = await env.DB.batch([
+    env.DB.prepare('SELECT * FROM coliseo_retos ORDER BY numero'),
+    env.DB.prepare('SELECT reto_id, inicio_ms, respondido_ms, tiempo_ms, opcion FROM coliseo_intentos WHERE usuario_id = ?').bind(s.usuario_id),
+  ]);
+  const intentos = Object.fromEntries((mios.results || []).map((i) => [i.reto_id, i]));
+  const lista = [], cerrados = [];
+  for (const r of retos.results || []) {
+    const estado = estadoReto(r, ahora), i = intentos[r.id];
+    const item = { id: r.id, numero: r.numero, titulo: r.titulo, abre_ms: r.abre_ms, cierra_ms: r.cierra_ms, estado,
+      intento: !i ? 'sin_iniciar' : i.respondido_ms ? 'respondido' : 'en_curso', tiempo_ms: i ? i.tiempo_ms : null };
+    if (estado === 'cerrado' && r.publicado) {
+      cerrados.push(r.id);
+      const ranking = await rankingReto(env, r.id);
+      const mia = ranking.find((x) => x.usuario_id === s.usuario_id);
+      const ops = opcionesDe(r);
+      item.resultado = {
+        participantes: ranking.length,
+        puesto: mia ? mia.puesto : null,
+        puntos: mia ? mia.puntos : 0,
+        correcta: mia ? mia.correcta : null,
+        tu_respuesta: mia ? ops[mia.opcion] : null,
+        respuesta_correcta: ops[r.correcta],
+        pregunta: r.pregunta,
+      };
+    }
+    lista.push(item);
+  }
+  const general = await rankingGeneral(env, cerrados);
+  const yo = general.find((x) => x.usuario_id === s.usuario_id);
+  return json({ ok: true, ahora_ms: ahora, retos: lista,
+    general: { participantes: general.length, puesto: yo ? yo.puesto : null, puntos: yo ? yo.puntos : 0, retos_cerrados: cerrados.length } });
+}
+
+async function retoPorId(env, id) {
+  const n = idValido(id);
+  return n ? env.DB.prepare('SELECT * FROM coliseo_retos WHERE id = ?').bind(n).first() : null;
+}
+const RETO_NO_DISPONIBLE = () => json({ ok: false, error: 'reto_no_disponible', mensaje: 'Este reto no está abierto en este momento.' }, 409);
+
+async function coliseoIniciar(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const r = await retoPorId(env, body.reto_id);
+  const ahora = Date.now();
+  if (!r || estadoReto(r, ahora) !== 'abierto') return RETO_NO_DISPONIBLE();
+  const ops = opcionesDe(r);
+  let i = await env.DB.prepare('SELECT * FROM coliseo_intentos WHERE reto_id = ? AND usuario_id = ?').bind(r.id, s.usuario_id).first();
+  if (i && i.respondido_ms) return json({ ok: false, error: 'ya_respondiste', mensaje: 'Ya respondiste este reto. Los resultados se revelan cuando cierre.' }, 409);
+  if (!i) {
+    // Orden de opciones al azar para cada persona (que no sirva decir "es la B").
+    const orden = ops.map((_, n) => n);
+    const azar = new Uint32Array(orden.length);
+    crypto.getRandomValues(azar);
+    for (let n = orden.length - 1; n > 0; n--) { const j = azar[n] % (n + 1); [orden[n], orden[j]] = [orden[j], orden[n]]; }
+    await env.DB.prepare(
+      'INSERT OR IGNORE INTO coliseo_intentos (reto_id, usuario_id, orden, inicio_ms) VALUES (?, ?, ?, ?)'
+    ).bind(r.id, s.usuario_id, JSON.stringify(orden), ahora + COLISEO.CUENTA_MS).run();
+    i = await env.DB.prepare('SELECT * FROM coliseo_intentos WHERE reto_id = ? AND usuario_id = ?').bind(r.id, s.usuario_id).first();
+  }
+  let orden;
+  try { orden = JSON.parse(i.orden); } catch { orden = ops.map((_, n) => n); }
+  return json({ ok: true, ahora_ms: ahora, inicio_ms: i.inicio_ms, cierra_ms: r.cierra_ms,
+    reto: { id: r.id, numero: r.numero, titulo: r.titulo, pregunta: r.pregunta, opciones: orden.map((n) => ({ id: n, texto: ops[n] })) },
+    herramientas: (() => { try { return JSON.parse(i.herramientas || '[]'); } catch { return []; } })() });
+}
+
+async function coliseoResponder(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const r = await retoPorId(env, body.reto_id);
+  const ahora = Date.now();
+  if (!r || !r.publicado || ahora < r.abre_ms || ahora > r.cierra_ms + COLISEO.GRACIA_MS) return RETO_NO_DISPONIBLE();
+  const i = await env.DB.prepare('SELECT * FROM coliseo_intentos WHERE reto_id = ? AND usuario_id = ?').bind(r.id, s.usuario_id).first();
+  if (!i) return json({ ok: false, error: 'sin_iniciar', mensaje: 'Primero inicia el reto.' }, 409);
+  if (i.respondido_ms) return json({ ok: false, error: 'ya_respondiste', mensaje: 'Ya respondiste este reto.' }, 409);
+  const opcion = Number(body.opcion);
+  if (!Number.isInteger(opcion) || opcion < 0 || opcion >= opcionesDe(r).length) return json({ ok: false, error: 'opcion_invalida', mensaje: 'Elige una de las opciones.' }, 400);
+  const tiempo = Math.max(0, ahora - i.inicio_ms);
+  const u = await env.DB.prepare(
+    'UPDATE coliseo_intentos SET opcion = ?, respondido_ms = ?, tiempo_ms = ? WHERE id = ? AND respondido_ms IS NULL'
+  ).bind(opcion, ahora, tiempo, i.id).run();
+  if (!u.meta.changes) return json({ ok: false, error: 'ya_respondiste', mensaje: 'Ya respondiste este reto.' }, 409);
+  return json({ ok: true, tiempo_ms: tiempo, cierra_ms: r.cierra_ms });
+}
+
+// Registra qué herramientas abrió la persona durante el reto (solo para análisis del equipo).
+async function coliseoHerramienta(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  if (!HERRAMIENTAS_COLISEO.includes(body.herramienta)) return json({ ok: false, error: 'herramienta_invalida' }, 400);
+  const id = idValido(body.reto_id);
+  const i = id && await env.DB.prepare('SELECT id, herramientas FROM coliseo_intentos WHERE reto_id = ? AND usuario_id = ? AND respondido_ms IS NULL').bind(id, s.usuario_id).first();
+  if (!i) return json({ ok: true });
+  let lista;
+  try { lista = JSON.parse(i.herramientas || '[]'); } catch { lista = []; }
+  if (!lista.includes(body.herramienta)) {
+    lista.push(body.herramienta);
+    await env.DB.prepare('UPDATE coliseo_intentos SET herramientas = ? WHERE id = ?').bind(JSON.stringify(lista), i.id).run();
+  }
+  return json({ ok: true });
+}
+
+// Tabla de posiciones para los participantes: solo de retos cerrados (o el acumulado de los cerrados).
+async function coliseoTabla(env, body) {
+  const s = await validarSesion(env, body.token);
+  if (!s) return SIN_SESION();
+  const ahora = Date.now();
+  let filas;
+  if (body.reto_id) {
+    const r = await retoPorId(env, body.reto_id);
+    if (!r || estadoReto(r, ahora) !== 'cerrado') return json({ ok: false, error: 'reto_abierto', mensaje: 'La tabla se revela cuando el reto cierre.' }, 409);
+    filas = await rankingReto(env, r.id);
+  } else {
+    const c = await env.DB.prepare('SELECT id FROM coliseo_retos WHERE publicado = 1 AND cierra_ms < ?').bind(ahora).all();
+    filas = await rankingGeneral(env, (c.results || []).map((x) => x.id));
+  }
+  const top = filas.slice(0, COLISEO.TOP_TABLA).map((x) => filaPublica(x, s.usuario_id));
+  const mia = filas.find((x) => x.usuario_id === s.usuario_id);
+  return json({ ok: true, total: filas.length, filas: top, mia: mia && mia.puesto > COLISEO.TOP_TABLA ? filaPublica(mia, s.usuario_id) : null });
+}
+
+async function adminColiseo(env, body) {
+  const ahora = Date.now();
+  const retos = (await env.DB.prepare(
+    `SELECT r.*, (SELECT COUNT(*) FROM coliseo_intentos i WHERE i.reto_id = r.id) AS iniciados,
+            (SELECT COUNT(*) FROM coliseo_intentos i WHERE i.reto_id = r.id AND i.respondido_ms IS NOT NULL) AS respondidos
+     FROM coliseo_retos r ORDER BY r.numero`).all()).results || [];
+  const lista = retos.map((r) => ({ ...r, opciones: opcionesDe(r), estado: estadoReto(r, ahora) }));
+  // Por defecto: el reto abierto; si no hay, el último que ya abrió; si no, el primero.
+  let sel = lista.find((r) => r.id === idValido(body.reto_id))
+    || lista.find((r) => r.estado === 'abierto')
+    || [...lista].reverse().find((r) => r.abre_ms <= ahora) || lista[0] || null;
+  let ranking = [], pendientes = [], distribucion = [];
+  if (sel) {
+    ranking = (await rankingReto(env, sel.id, true)).map((x) => {
+      let h; try { h = JSON.parse(x.herramientas || '[]'); } catch { h = []; }
+      return { ...x, herramientas: h, respuesta: sel.opciones[x.opcion] };
+    });
+    pendientes = (await env.DB.prepare(
+      `SELECT u.nombre, u.email, i.inicio_ms FROM coliseo_intentos i JOIN usuarios u ON u.id = i.usuario_id
+       WHERE i.reto_id = ? AND i.respondido_ms IS NULL ORDER BY i.inicio_ms`).bind(sel.id).all()).results || [];
+    distribucion = sel.opciones.map((texto, n) => ({ texto, correcta: n === sel.correcta, n: ranking.filter((x) => x.opcion === n).length }));
+  }
+  const conRespuestas = lista.filter((r) => r.respondidos > 0).map((r) => r.id);
+  const general = await rankingGeneral(env, conRespuestas, true);
+  // Puntos de cada persona en cada reto, para la tabla acumulada
+  const detalle = conRespuestas.length ? ((await env.DB.prepare(
+    `SELECT i.usuario_id, i.reto_id, ${PUNTOS_SQL} AS puntos FROM coliseo_intentos i JOIN coliseo_retos r ON r.id = i.reto_id
+     WHERE i.respondido_ms IS NOT NULL`).all()).results || []) : [];
+  const porUsuario = {};
+  detalle.forEach((d) => { (porUsuario[d.usuario_id] = porUsuario[d.usuario_id] || {})[d.reto_id] = d.puntos; });
+  return json({ ok: true, ahora_ms: ahora, retos: lista, seleccionado: sel ? sel.id : null, ranking, pendientes, distribucion,
+    general: general.map((g) => ({ ...g, por_reto: porUsuario[g.usuario_id] || {} })) });
+}
+
+// Fecha y hora de Colombia "AAAA-MM-DDTHH:MM" -> milisegundos UTC
+function fechaColombia(v) {
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v)) return null;
+  const ms = Date.parse(v + ':00-05:00');
+  return Number.isFinite(ms) ? ms : null;
+}
+
+async function adminColiseoGuardar(env, body) {
+  const titulo = limpiarLargo(body.titulo, 2, 60);
+  const pregunta = limpiarLargo(body.pregunta || '', 0, 600);
+  const ops = Array.isArray(body.opciones) ? body.opciones.map((o) => limpiarLargo(o, 1, 120)) : [];
+  const publicado = body.publicado === true;
+  const abre = fechaColombia(body.abre), cierra = fechaColombia(body.cierra);
+  const correcta = Number(body.correcta);
+  if (!titulo) return json({ ok: false, error: 'reto_invalido', mensaje: 'Escribe el título del reto.' }, 400);
+  if (!abre || !cierra || cierra <= abre) return json({ ok: false, error: 'reto_invalido', mensaje: 'Revisa las fechas: el cierre debe ser después de la apertura.' }, 400);
+  if (publicado) {
+    if (!pregunta || pregunta.length < 5) return json({ ok: false, error: 'reto_invalido', mensaje: 'Escribe la pregunta antes de publicar.' }, 400);
+    if (ops.length < 2 || ops.length > 6 || ops.some((o) => !o)) return json({ ok: false, error: 'reto_invalido', mensaje: 'Escribe entre 2 y 6 opciones, sin dejar ninguna vacía.' }, 400);
+    if (!Number.isInteger(correcta) || correcta < 0 || correcta >= ops.length) return json({ ok: false, error: 'reto_invalido', mensaje: 'Marca cuál es la respuesta correcta.' }, 400);
+  }
+  const opciones = JSON.stringify(ops.filter((o) => o !== null));
+  const id = idValido(body.id);
+  if (id) {
+    const actual = await env.DB.prepare('SELECT r.opciones, (SELECT COUNT(*) FROM coliseo_intentos i WHERE i.reto_id = r.id) AS n FROM coliseo_retos r WHERE r.id = ?').bind(id).first();
+    if (!actual) return json({ ok: false, error: 'reto_no_existe', mensaje: 'No encontramos ese reto.' }, 404);
+    if (actual.n > 0 && opcionesDe(actual).length !== JSON.parse(opciones).length) {
+      return json({ ok: false, error: 'reto_con_respuestas', mensaje: 'Este reto ya tiene participantes: puedes corregir textos y la respuesta correcta, pero no cambiar cuántas opciones hay.' }, 409);
+    }
+    await env.DB.prepare(
+      'UPDATE coliseo_retos SET titulo = ?, pregunta = ?, opciones = ?, correcta = ?, abre_ms = ?, cierra_ms = ?, publicado = ? WHERE id = ?'
+    ).bind(titulo, pregunta, opciones, Number.isInteger(correcta) ? correcta : 0, abre, cierra, publicado ? 1 : 0, id).run();
+    return json({ ok: true, id });
+  }
+  const max = await env.DB.prepare('SELECT COALESCE(MAX(numero), 0) AS n FROM coliseo_retos').first();
+  const ins = await env.DB.prepare(
+    'INSERT INTO coliseo_retos (numero, titulo, pregunta, opciones, correcta, abre_ms, cierra_ms, publicado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).bind(max.n + 1, titulo, pregunta, opciones, Number.isInteger(correcta) ? correcta : 0, abre, cierra, publicado ? 1 : 0).run();
+  return json({ ok: true, id: ins.meta.last_row_id });
 }
 
 // ---------- Ayudas ----------

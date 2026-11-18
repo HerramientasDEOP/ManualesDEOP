@@ -99,3 +99,31 @@ CREATE TABLE IF NOT EXISTS faqs (
   actualizada_en TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_faqs_unica ON faqs(herramienta, pregunta);
+
+CREATE TABLE IF NOT EXISTS coliseo_retos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  numero INTEGER NOT NULL UNIQUE,
+  titulo TEXT NOT NULL,
+  pregunta TEXT NOT NULL DEFAULT '',
+  opciones TEXT NOT NULL DEFAULT '[]',
+  correcta INTEGER NOT NULL DEFAULT 0,
+  abre_ms INTEGER NOT NULL,
+  cierra_ms INTEGER NOT NULL,
+  publicado INTEGER NOT NULL DEFAULT 0,
+  creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS coliseo_intentos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  reto_id INTEGER NOT NULL REFERENCES coliseo_retos(id),
+  usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
+  orden TEXT NOT NULL DEFAULT '[]',
+  inicio_ms INTEGER NOT NULL,
+  respondido_ms INTEGER,
+  opcion INTEGER,
+  tiempo_ms INTEGER,
+  herramientas TEXT NOT NULL DEFAULT '[]',
+  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (reto_id, usuario_id)
+);
+CREATE INDEX IF NOT EXISTS idx_coliseo_intentos_reto ON coliseo_intentos(reto_id, respondido_ms);

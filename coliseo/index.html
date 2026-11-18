@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La conquista del Coliseo · POLARIS</title>
+<meta name="description" content="Retos semanales de El Coliseo: responde con nuestras herramientas digitales, suma puntos y conquista el Top 3.">
+<link rel="icon" type="image/png" sizes="32x32" href="../Recursos/polaris/polaris-icono-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="coliseo.css?v=1">
+</head>
+<body>
+
+<header class="co-top">
+  <div class="co-top-in">
+    <a class="co-volver" href="../index.html" aria-label="Volver a POLARIS">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      <img src="../Recursos/polaris/polaris-horizontal.png" alt="POLARIS">
+    </a>
+    <img class="co-top-cemex" src="../Recursos/Locombo/Tablero/LogoCemexDO.png" alt="CEMEX Desarrollo de Operaciones">
+    <div class="co-user" id="coUser" hidden>
+      <span>Hola, <strong id="coNombre"></strong></span>
+      <button type="button" class="co-link" id="coSalir">Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="co-main">
+
+  <!-- ================= Carga inicial ================= -->
+  <section class="co-vista co-cargando" id="vCargando">
+    <span class="co-spin" aria-hidden="true"></span>
+    <p>Abriendo las puertas del Coliseo…</p>
+  </section>
+
+  <!-- ================= Acceso ================= -->
+  <section class="co-vista co-acceso" id="vAcceso" hidden>
+    <div class="co-acceso-arte" aria-hidden="true"></div>
+    <div class="co-acceso-caja">
+      <div class="co-marca">
+        <span class="co-raya"></span>
+        <p class="co-marca-1">La conquista del</p>
+        <p class="co-marca-2">Coliseo</p>
+        <span class="co-raya doble"></span>
+      </div>
+      <h1 class="co-acceso-tit">Entra a la arena</h1>
+      <p class="co-acceso-sub">Ingresa con tu correo corporativo <strong>@cemex.com</strong> o <strong>@ext.cemex.com</strong>. Si es tu primera vez en POLARIS, regístrate en un minuto.</p>
+      <div class="co-tabs" role="tablist">
+        <button type="button" class="co-tab on" role="tab" data-tab="ingreso">Ya tengo cuenta</button>
+        <button type="button" class="co-tab" role="tab" data-tab="registro">Registrarme</button>
+      </div>
+      <form id="coFormIngreso" class="co-form" novalidate>
+        <label>Correo corporativo<input type="email" id="coCorreoIngreso" autocomplete="email" placeholder="nombre.apellido@cemex.com"></label>
+        <button type="submit" class="co-btn">Entrar al Coliseo</button>
+      </form>
+      <form id="coFormRegistro" class="co-form" novalidate hidden>
+        <label>Nombre completo<input type="text" id="coNombreRegistro" autocomplete="name" placeholder="Ej. Ana Gómez"></label>
+        <label>Correo corporativo<input type="email" id="coCorreoRegistro" autocomplete="email" placeholder="nombre.apellido@cemex.com"></label>
+        <button type="submit" class="co-btn">Crear cuenta y entrar</button>
+      </form>
+      <p class="co-msg" id="coAccesoMsg" role="alert" hidden></p>
+      <div class="co-zscaler" data-zscaler hidden>
+        <p>No pudimos conectar con el servidor. Desde la red de CEMEX, haz clic en <strong>Activar conexión</strong> y luego en <strong>Continuar</strong> en la advertencia que aparece.</p>
+        <div class="co-fila"><button type="button" class="co-btn peq" data-activar>Activar conexión</button><button type="button" class="co-btn sec peq" data-reintentar>Reintentar</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Arena (inicio) ================= -->
+  <section class="co-vista" id="vArena" hidden>
+    <div class="co-hero">
+      <div class="co-hero-arte" aria-hidden="true"></div>
+      <div class="co-hero-txt">
+        <span class="co-raya"></span>
+        <p class="co-marca-1">La conquista del</p>
+        <h1 class="co-marca-2">Coliseo</h1>
+        <span class="co-raya doble"></span>
+        <div id="coActual" class="co-actual" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="co-resultado-banda" id="coBanda" hidden></div>
+
+    <section class="co-bloque" aria-labelledby="coRetosTit">
+      <div class="co-bloque-cab">
+        <h2 id="coRetosTit">El camino a la gloria</h2>
+        <button type="button" class="co-link" data-reglas>¿Cómo se juega?</button>
+      </div>
+      <ol class="co-retos" id="coRetos"></ol>
+    </section>
+
+    <section class="co-bloque co-gana" aria-label="Cómo se gana">
+      <article><img src="../Recursos/Coliseo/icono-retos.jpg" alt=""><span class="co-raya corta"></span><h3>Retos semanales</h3><p>Cada lunes se abre una pregunta. La respuesta está en Eureka, Orion o Locomboo: tú decides dónde buscar.</p></article>
+      <article><img src="../Recursos/Coliseo/icono-ranking.jpg" alt=""><span class="co-raya corta"></span><h3>Puntos acumulados</h3><p>Acertar vale 1.000 puntos más un bono por rapidez. Participar suma 100. Los puntos de cada semana se suman.</p></article>
+      <article><img src="../Recursos/Coliseo/icono-premios.jpg" alt=""><span class="co-raya corta"></span><h3>Premios para el Top 3</h3><p>Reconocimiento y premios para los tres participantes con mayor puntaje acumulado al final de la conquista.</p></article>
+    </section>
+
+    <section class="co-bloque" aria-labelledby="coTablaTit">
+      <div class="co-bloque-cab">
+        <h2 id="coTablaTit">Tabla de posiciones</h2>
+      </div>
+      <div class="co-tabla-tabs" id="coTablaTabs" role="tablist"></div>
+      <div id="coTabla" aria-live="polite"></div>
+    </section>
+  </section>
+
+  <!-- ================= Reto en curso ================= -->
+  <section class="co-vista co-reto" id="vReto" hidden>
+    <div class="co-reto-cab">
+      <div><span class="co-chip" id="coRetoNum">Reto</span><span class="co-intento">Un solo intento</span></div>
+      <div class="co-reloj" aria-live="off"><span class="co-reloj-et">Tu tiempo</span><span class="co-reloj-v" id="coReloj">00:00.0</span></div>
+    </div>
+    <article class="co-pregunta">
+      <span class="co-raya corta"></span>
+      <h2 id="coPregunta"></h2>
+    </article>
+    <section class="co-herr" aria-labelledby="coHerrTit">
+      <h3 id="coHerrTit">¿Qué herramienta te da la respuesta?</h3>
+      <p>Ábrela en otra pestaña, busca el dato y vuelve aquí. El reloj sigue corriendo mientras buscas.</p>
+      <div class="co-herr-grid" id="coHerr"></div>
+    </section>
+    <section class="co-ops-wrap" aria-labelledby="coOpsTit">
+      <h3 id="coOpsTit">Elige tu respuesta</h3>
+      <div class="co-ops" id="coOps" role="radiogroup" aria-labelledby="coOpsTit"></div>
+      <button type="button" class="co-btn grande" id="coEnviar" disabled>Enviar respuesta</button>
+      <p class="co-msg" id="coRetoMsg" role="alert" hidden></p>
+    </section>
+  </section>
+
+  <!-- ================= Respuesta registrada ================= -->
+  <section class="co-vista co-enviado" id="vEnviado" hidden>
+    <div class="co-laurel" aria-hidden="true"><img src="../Recursos/Coliseo/icono-ranking.jpg" alt=""></div>
+    <p class="co-eyebrow">Respuesta registrada</p>
+    <h2>¡Diste la batalla!</h2>
+    <p class="co-tiempo-final">Tu tiempo: <strong id="coTiempoFinal"></strong></p>
+    <p class="co-enviado-txt" id="coEnviadoTxt"></p>
+    <button type="button" class="co-btn" data-ir-arena>Volver a la arena</button>
+  </section>
+</main>
+
+<footer class="co-pie">
+  <span>POLARIS · El Coliseo</span>
+  <img src="../Recursos/Desarrollo.png" alt="CEMEX Desarrollo de Operaciones">
+</footer>
+
+<!-- Cuenta regresiva -->
+<div class="co-cuenta" id="coCuenta" hidden aria-live="assertive">
+  <div class="co-cuenta-in">
+    <p class="co-cuenta-et" id="coCuentaEt">Prepárate</p>
+    <span class="co-cuenta-n" id="coCuentaN">3</span>
+  </div>
+</div>
+
+<!-- Ventanas -->
+<div class="co-modal-fondo" id="coModalFondo" hidden></div>
+<div class="co-modal" id="coModal" role="dialog" aria-modal="true" aria-labelledby="coModalTit" hidden>
+  <button type="button" class="co-x" data-cerrar-modal aria-label="Cerrar">×</button>
+  <h2 id="coModalTit"></h2>
+  <div id="coModalCuerpo"></div>
+</div>
+
+<div class="co-confeti" id="coConfeti" aria-hidden="true"></div>
+
+<script src="../plataforma/plataforma.js"></script>
+<script src="coliseo.js?v=1"></script>
+</body>
+</html>

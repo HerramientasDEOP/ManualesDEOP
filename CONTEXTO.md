@@ -2272,3 +2272,50 @@ filtrado cruzado, orden, filas perezosas, matriz, pivote, en construcción, nave
 - Eureka, Calidad: el manual dice "Viajes con retrabajo ÷ viajes totales", pero el valor (95–97%) y el texto del Histórico indican que es el porcentaje **sin** retrabajo. La pregunta frecuente lo explica como "sin retrabajo"; conviene confirmar la fórmula con el equipo.
 
 **Verificado con Playwright:** la interfaz real contra el `worker.js` real corriendo en Chromium y el binding D1 simulado con SQLite (script en el scratchpad, no en el repo). No se probó en el D1 real de Cloudflare.
+
+---
+
+# El Coliseo: retos semanales (2026-11-18)
+
+Sección aparte de los manuales: [`coliseo/`](coliseo/) (`index.html`, `coliseo.css`, `coliseo.js`). Link para el correo:
+`https://herramientasdeop.github.io/ManualesDEOP/coliseo/index.html`. También hay un aviso en el feed del portal (`.px-coliseo`) y el enlace
+"El Coliseo" en el menú lateral. Estilo tomado de `Recursos/Coliseo/ConquistaColiseo.png` (crema, azul marino, rojo, oro;
+fuente Montserrat de Google Fonts con Segoe UI de respaldo). Recortes livianos en `Recursos/Coliseo/` (`coliseo-arena.jpg`, `icono-*.jpg`).
+
+**Requiere Cloudflare, en este orden:** 1) pegar [`api/migracion_coliseo.sql`](api/migracion_coliseo.sql) en la consola de D1
+(`manuales-db`); 2) pegar [`api/worker.js`](api/worker.js) en el Worker `manuales-api` → Deploy. Sin eso la página dice
+"El Coliseo se está preparando".
+
+**Cómo funciona:**
+- Acceso con la misma cuenta de POLARIS (ingresar o registrarse ahí mismo). Sin cuenta no se juega.
+- "Comenzar el reto" → cuenta 3, 2, 1 → pregunta con reloj. El servidor guarda `inicio_ms = ahora + 3 s` y mide el tiempo al
+  responder (`tiempo_ms`); el reloj de la pantalla solo se sincroniza con `ahora_ms` del servidor.
+- Un solo intento por persona y reto (`UNIQUE(reto_id, usuario_id)`). Si recarga, el reloj sigue. Las opciones salen en orden
+  aleatorio para cada persona y la respuesta correcta no llega al navegador hasta que el reto cierra.
+- Los 4 botones de herramientas abren Power BI en otra pestaña y quedan registrados en `coliseo_intentos.herramientas`.
+- Mientras el reto está abierto, quien ya respondió solo ve su tiempo. Al cerrar ve "Ocupaste el puesto #N de M esta semana",
+  la respuesta correcta y la tabla (reto y acumulado, primeros 100 + su fila).
+- **Puntos** (constantes `COLISEO` en el Worker): correcta = 1000 + bono de rapidez de hasta 500 que baja lineal y se agota a
+  los 30 min; incorrecta = 100 por participar. Orden de la semana: puntos, luego menor tiempo. Acumulado: suma de puntos de
+  los retos cerrados, luego menor tiempo total. Se calculan al consultar, así que corregir la respuesta correcta recalcula todo.
+
+**Retos:** tabla `coliseo_retos` (número, título, pregunta, opciones JSON, índice de la correcta, `abre_ms`/`cierra_ms` en
+milisegundos UTC, publicado). Sembrados: Reto #1 del miércoles 18 nov 00:00 al domingo 22 nov 23:59:59 (hora Colombia),
+publicado, opciones 88%, 97%, **102%**, 110% (97% y 110% inventadas). Retos #2–#4 de lunes a domingo (23–29 nov, 30 nov–6 dic,
+7–13 dic) **sin pregunta y sin publicar**: se cargan desde el admin y se abren solos en su fecha. "Nuevo reto" crea el #5 en
+adelante, por defecto la semana siguiente al último.
+
+**Admin → pestaña Coliseo** ([`admin/coliseo.js`](admin/coliseo.js), estilos al final de `admin/preguntas.css`): resultados en
+vivo (se refresca cada 30 s), indicadores, distribución de respuestas, quiénes empezaron y no respondieron, herramientas
+abiertas, ranking acumulado, CSV para Excel y editor del reto (pregunta, 2 a 6 opciones, correcta, fechas, publicado). Con
+participantes no deja cambiar cuántas opciones hay.
+
+**API:** con `token`: `/coliseo/estado`, `/coliseo/iniciar`, `/coliseo/responder`, `/coliseo/herramienta`, `/coliseo/tabla`.
+Con `clave`: `/admin/coliseo`, `/admin/coliseo-guardar`.
+
+**Verificado con Playwright** contra el `worker.js` real en Chromium con D1 simulado en SQLite: 65 comprobaciones (acceso,
+cuenta regresiva, reloj, recarga, herramientas, un solo intento, la respuesta no se filtra, cierre, puestos y puntos, admin,
+edición, CSV, móvil 375 px). No se probó en el D1 real.
+
+**A tener en cuenta:** el ingreso solo pide el correo, así que alguien podría jugar con la cuenta de otra persona. La tabla
+muestra el nombre completo de los participantes a todos.
