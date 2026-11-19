@@ -118,5 +118,6 @@
 .ac-borrar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding:12px 14px;border-radius:10px;background:#fbf2f2;border:1px dashed #e4b4b8;font-size:13px;color:var(--cx-muted);}
 .ac-borrar span{flex:1 1 240px;}
 .ac-borrar select{width:auto;flex:0 0 auto;}
+.ac-borrar .ac-error{color:#a8141d;font-weight:700;}
 .ac-btn-peligro{background:#a8141d !important;border-color:#a8141d !important;color:#fff !important;}
 .ac-btn-peligro:disabled{opacity:.45;cursor:default;}

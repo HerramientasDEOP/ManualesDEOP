@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biométricos ZKTeco · Planta Centenario · POLARIS</title>
+<meta name="description" content="Manual interactivo de los biométricos ZKTeco de la Planta Centenario: registro de personal y configuración del equipo.">
+<link rel="icon" type="image/png" sizes="32x32" href="../Recursos/polaris/polaris-icono-32.png">
+<link rel="apple-touch-icon" href="../Recursos/polaris/polaris-icono-180.png">
+<link rel="stylesheet" href="zk.css?v=1">
+</head>
+<body>
+
+<!-- ================= Elegir guía ================= -->
+<div id="zkInicio">
+  <header class="cx-navbar">
+    <div class="cx-navbar-inner">
+      <a class="cx-brand" href="../index.html" aria-label="POLARIS, volver al inicio"><img src="../Recursos/polaris/polaris-horizontal.png" alt="POLARIS CEMEX" class="cx-brand-logo"></a>
+      <a class="cx-navbar-link" href="../index.html">← Volver al inicio</a>
+    </div>
+  </header>
+  <nav class="cx-crumb" aria-label="Ruta">
+    <a href="../index.html">Inicio</a><span class="sep">›</span><a href="../index.html">Herramientas</a><span class="sep">›</span><span class="current">Biométricos ZKTeco</span>
+  </nav>
+  <div class="cx-tool-header">
+    <a class="cx-back" href="../index.html" aria-label="Volver a herramientas">←</a>
+    <div class="cx-tool-header-icon zk-ico-herr" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11c0 3.5-1 6.5-3 9"/><path d="M8.5 8.6A4 4 0 0 1 16 11c0 2-.3 4-1 6"/><path d="M5.5 7.5A8 8 0 0 1 20 11c0 1.4-.1 2.8-.4 4"/><path d="M4.4 13c.1-1 .1-2 .1-2"/><path d="M12 15c0 2-.5 4-1.5 5.5"/></svg>
+    </div>
+    <div>
+      <h1>Biométricos ZKTeco · Planta Centenario</h1>
+      <p>Registro del personal en el biométrico de la planta y configuración del equipo.</p>
+    </div>
+  </div>
+  <section class="cx-manual-section">
+    <h2>¿Qué guía necesitas?</h2>
+    <div class="cx-manual-grid">
+      <button type="button" class="cx-manual-card" id="btnGuiaCoord">
+        <span class="cx-manual-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">Guía para coordinadores y jefes de planta</span>
+          <span class="cx-manual-desc">Crear un usuario con su cédula, huella y rostro; editarlo o borrarlo.</span>
+          <span class="cx-manual-cta">Abrir guía →</span>
+        </span>
+      </button>
+      <button type="button" class="cx-manual-card" id="btnGuiaAdmin">
+        <span class="cx-manual-icon rojo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+        <span class="cx-manual-body">
+          <span class="cx-manual-title">Guía para administradores DEOP</span>
+          <span class="cx-manual-desc">Configuración inicial del equipo: tipo de dispositivo, red, servidor y seguridad. Requiere contraseña.</span>
+          <span class="cx-manual-cta">Abrir guía →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- ================= Guía ================= -->
+<div id="zkGuia" hidden>
+  <div class="page-header">
+    <button type="button" class="ph-back" id="zkVolver" aria-label="Volver" title="Volver a elegir guía">←</button>
+    <p class="cx-ph-eyebrow">Manual interactivo · Biométricos ZKTeco</p>
+    <h1><span id="zkGuiaTitulo"></span> <span class="badge" id="zkGuiaBadge"></span></h1>
+    <p id="zkGuiaSub"></p>
+  </div>
+
+  <div class="zk-layout">
+    <aside class="zk-panel" id="zkPanel">
+      <div class="zk-modos" role="tablist" aria-label="Modo de navegación">
+        <button type="button" class="zk-modo on" role="tab" data-modo="guiado" aria-selected="true">Recorridos guiados</button>
+        <button type="button" class="zk-modo" role="tab" data-modo="libre" aria-selected="false">Navegación libre</button>
+      </div>
+
+      <div id="zkSql" class="zk-sql" hidden>
+        <strong>Antes de empezar: registra el equipo en SQL</strong>
+        <p>Todos los biométricos se mapean en la tabla <code>scac_at_catalogo_biometricos_zkteco</code>. Por cada equipo se necesita:</p>
+        <ul><li><b>Serial</b> del equipo</li><li><b>IP</b></li><li><b>Planta</b> donde está instalado</li><li><b>Ubicación exacta</b> dentro de la planta</li></ul>
+      </div>
+
+      <div id="zkPanelGuiado">
+        <p class="zk-panel-tit">Elige qué quieres aprender</p>
+        <div class="zk-tours" id="zkTours"></div>
+      </div>
+
+      <div id="zkPanelLibre" hidden>
+        <p class="zk-panel-tit">Estás en</p>
+        <div class="zk-info" aria-live="polite">
+          <h3 id="zkInfoTit"></h3>
+          <p id="zkInfoTxt"></p>
+        </div>
+        <p class="zk-nota">Usa el equipo como si estuvieras en la planta. Solo responden las opciones de esta guía; las demás se ven pero no hacen nada.</p>
+        <button type="button" class="zk-link" id="zkReiniciarDemo">Volver el equipo al estado inicial</button>
+      </div>
+    </aside>
+
+    <div class="zk-stage" id="zkStage">
+      <div class="zk-escala" id="zkEscala">
+        <div class="zk-equipo" id="zkEquipo" aria-label="Biométrico ZKTeco">
+          <div class="zk-camaras" aria-hidden="true"><i></i><i></i><b></b></div>
+          <div class="zk-pantalla" id="zkPantalla" role="application" aria-label="Pantalla del biométrico"></div>
+          <button type="button" class="zk-sensor" id="zkSensor" data-t="sensor" aria-label="Lector de huella"><span></span></button>
+          <span class="zk-sensor-ico" aria-hidden="true"></span>
+          <span class="zk-marca" aria-hidden="true">ZKTeco</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contraseña de administradores -->
+<div class="zk-modal-fondo" id="zkClaveFondo" hidden></div>
+<div class="zk-modal" id="zkClave" role="dialog" aria-modal="true" aria-labelledby="zkClaveTit" hidden>
+  <h2 id="zkClaveTit">Guía para administradores</h2>
+  <p>Esta guía es para el equipo de Desarrollo de Operaciones. Escribe la contraseña para continuar.</p>
+  <form id="zkClaveForm" novalidate>
+    <label for="zkClaveInput">Contraseña</label>
+    <input type="password" id="zkClaveInput" autocomplete="off">
+    <p class="zk-error" id="zkClaveError" role="alert" hidden>Contraseña incorrecta.</p>
+    <div class="zk-fila"><button type="button" class="zk-btn sec" id="zkClaveCancelar">Cancelar</button><button type="submit" class="zk-btn">Entrar</button></div>
+  </form>
+</div>
+
+<!-- Recorrido -->
+<div id="zkBurbuja" class="zk-burbuja" role="status" aria-live="polite" hidden></div>
+<div class="zk-modal-fondo" id="zkFinFondo" hidden></div>
+<div class="zk-modal" id="zkFin" role="dialog" aria-modal="true" aria-labelledby="zkFinTit" hidden>
+  <div class="zk-fin-ok" aria-hidden="true">✓</div>
+  <h2 id="zkFinTit">¡Recorrido completado!</h2>
+  <p id="zkFinTxt"></p>
+  <div class="zk-fila centro"><button type="button" class="zk-btn sec" id="zkFinLibre">Seguir explorando</button><button type="button" class="zk-btn" id="zkFinOtro">Ver otro recorrido</button></div>
+</div>
+
+<script src="../plataforma/plataforma.js"></script>
+<script src="zk.js?v=1"></script>
+</body>
+</html>

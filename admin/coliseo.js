@@ -221,9 +221,20 @@
     const r = datos.retos.find(x => x.id === sel);
     const donde = todos ? 'de TODOS los retos' : `del ${r ? r.titulo : 'reto'}`;
     if (!ids.length || !window.confirm(`Vas a borrar los intentos ${donde} de:\n\n${nombres.join('\n')}\n\nSus respuestas, tiempos y puntos desaparecen y podrán volver a jugar. No se puede deshacer. ¿Continuar?`)) return;
-    App.ejecutar(() => api('/admin/coliseo-borrar', { reto_id:sel, usuario_ids:ids, todos }).then(d => cargar().then(() => {
-      $('acSelCuenta').textContent = `Listo: ${d.borrados} ${d.borrados === 1 ? 'intento borrado' : 'intentos borrados'}.`;
-    })));
+    const aviso = (texto, error) => { const el = $('acSelCuenta'); if (el){ el.textContent = texto; el.classList.toggle('ac-error', !!error); } };
+    $('acBorrar').disabled = true;
+    aviso('Borrando…');
+    // El resultado (o el error) se muestra aquí mismo, junto al botón, no arriba de la página.
+    api('/admin/coliseo-borrar', { reto_id:sel, usuario_ids:ids, todos }).then(d => cargar().then(() => {
+      aviso(d.borrados
+        ? `Listo: ${d.borrados} ${d.borrados === 1 ? 'intento borrado' : 'intentos borrados'}.`
+        : 'No se borró nada: esas personas no tenían intentos en este reto.', !d.borrados);
+    }), err => {
+      $('acBorrar').disabled = false;
+      if (err && err.error === 'ruta_no_existe') aviso('El servidor todavía no tiene esta función. Pega de nuevo api/worker.js en el Worker manuales-api de Cloudflare y dale Deploy.', true);
+      else if (err && err.tipo === 'red') aviso('Sin conexión con el servidor. Revisa la red (Activar conexión) e intenta de nuevo.', true);
+      else aviso((err && err.mensaje) || 'No se pudo borrar. Intenta de nuevo.', true);
+    });
   }
   $('adColiseo').addEventListener('submit', e => { if (e.target.id === 'acForm'){ e.preventDefault(); guardarEditor(); } });
 

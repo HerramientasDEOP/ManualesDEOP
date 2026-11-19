@@ -2321,3 +2321,17 @@ edición, CSV, móvil 375 px). No se probó en el D1 real.
 
 **A tener en cuenta:** el ingreso solo pide el correo, así que alguien podría jugar con la cuenta de otra persona. La tabla
 muestra el nombre completo de los participantes a todos.
+
+# Biométricos ZKTeco · Planta Centenario (2026-11-19)
+
+Manual nuevo en `4.Biometricos/` (`index.html`, `zk.css`, `zk.js`) + tarjeta "Biométricos ZKTeco" en el portal (`#btnBiometricos`, ícono SVG de huella).
+
+- **Equipo simulado** (vista frontal: cámaras, pantalla 300×500 lógicos, lector de huella pequeño, logo). Se escala con `transform` según el espacio: en escritorio cabe debajo del encabezado; en celular ocupa el ancho y, durante un recorrido, se encuadra encima de la burbuja (que va abajo como hoja).
+- **Dos guías**: coordinadores/jefes de planta (crear, editar y borrar usuarios) y administradores DEOP (configuración inicial), esta última con contraseña. La contraseña se compara por SHA-256 en el navegador y se recuerda en `sessionStorage`: es solo una barrera (el repo es público y los valores de configuración se leen en el código).
+- **Pantallas que responden**: inicio → menú → Usuarios (Nuevo Usuario, Todos los Usuarios → Editar/Borrar), Red (Ethernet, Conexión a PC, Conf. Srvr. de Nube), Sistema (Tipo de Dispositivo, Configuración de seguridad). El resto se ve pero no hace nada (`.off`).
+- **Valores de la configuración**: tipo de dispositivo `PUSH de T&A` con protocolo `Protocolo PUSH` (primer paso: reinicia y borra lo guardado), DHCP activo, clave de comunicación `123456`, HTTPS apagado, servidor `10.80.8.105`, seguridad: Standalone, SSH, Enmascaramiento de ID y Guardar foto como plantilla activos; las dos de "Mostrar…" apagadas. Los cambios que reinician el equipo muestran confirmación y animación de reinicio.
+- **Antes de configurar**: registrar el equipo en SQL en `scac_at_catalogo_biometricos_zkteco` (serial, IP, planta, ubicación exacta). Se muestra en el panel de la guía de admins y como primer paso del recorrido.
+- **Datos de ejemplo inventados**: usuarios con nombres y cédulas ficticias (las fotos 7.png y 8.png de `Recursos/Zkteco/` tienen una persona y datos reales, no se usan). El rostro se dibuja como silueta.
+- **Recorridos**: cada paso resalta un elemento (`data-t`) y avanza con un evento del equipo (`emitir(...)`); clics fuera del resaltado se bloquean. Si el teclado se cierra con ESC o se escribe una clave/IP distinta a la esperada, el recorrido vuelve al paso que abre el teclado.
+- **Métricas**: `Plataforma.registrarConsulta('Biométricos', ...)` al abrir cada guía y cada recorrido. El centro de ayuda todavía no tiene "Biométricos" en su catálogo (`plataforma/ayuda.js` + worker).
+- Pruebas: Playwright, escritorio 1366×768 y celular 375×740, los 4 recorridos de punta a punta, navegación libre, contraseña, sin errores de consola.
